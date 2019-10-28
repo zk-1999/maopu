@@ -1,0 +1,56 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body,
+#app {
+    height: 100%;
+}
+
+
+/* 解决cascader-menu的bug */
+
+.el-cascader-menu {
+    height: 240px;
+}
+
+.el-card {
+    margin-top: 15px;
+    /* min-width: 1300px; */
+}
+
+.min1500 {
+    min-width: 1600px;
+}
+
+.el-dialog__header {
+    padding: 0px;
+}
+
+.el-dialog__title {
+    background: #797979;
+    display: block;
+    padding: 5px;
+    /* border-radius: 5px; */
+    color: #fff;
+}
+
+.el-icon-close:before {
+    position: absolute;
+    top: -10px;
+    right: 1px;
+}
+
+.el-table .el-button {
+    margin-top: -15px;
+}
+
+.el-date-editor.el-input {
+    width: 150px;
+}
+
+.el-date-editor--daterange.el-input__inner {
+    width: 300px;
+}

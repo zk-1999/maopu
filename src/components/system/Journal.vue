@@ -22,9 +22,9 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next"
+          
+          :page-size="10"
+          layout="total,  prev, pager, next"
           :total="total">
         </el-pagination>
       </el-card>

@@ -43,9 +43,9 @@
           <el-table border stripe :data="productList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" align="center" label="序号"></el-table-column>
-            <el-table-column prop="" label="设计稿编码" align="center">
+            <el-table-column prop="designName" label="设计稿编码" align="center">
               <template slot-scope="scope">
-                {{scope.row.designModel+'-'+scope.row.designDate+'-'+scope.row.designName}}
+                {{scope.row.designModel+'-'+scope.row.designName+'-'+scope.row.designDate}}
               </template>
             </el-table-column>
             <!-- <el-table-column prop="b" label="名称"></el-table-column> -->
@@ -121,9 +121,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[ 4]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+       
+        :page-size="4"
+        layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
       </el-card>
@@ -133,12 +133,33 @@
         width="40%"
         :before-close="handleClose"
         @closed="dialogClosed">
-        <el-form :label-position="labelPosition" label-width="120px" :model="addProductForm"
+        <el-form :label-position="labelPosition" label-width="130px" :model="addProductForm"
         ref="addProductRef"
         :rules="addProductRules">
-            <el-form-item label="产品型号：" prop="designModel"><el-input placeholder="请输入产品型号" v-model="addProductForm.designModel"></el-input></el-form-item>      
-            <el-form-item label="产品日期：" prop="designDate"><el-input placeholder="请输入产品日期" v-model="addProductForm.designDate"></el-input></el-form-item>
-            <el-form-item label="产品名称：" prop="designName"><el-input placeholder="请输入产品名称" v-model="addProductForm.designName"></el-input></el-form-item>      
+            <el-form-item label="产品规格：" prop="designModel">
+              <!-- <el-input placeholder="请输入产品型号" v-model="addProductForm.designModel"></el-input> -->
+            
+             <el-select class="tiantou" v-model="addProductForm.designModel" placeholder="请选择类型">
+                    <el-option
+                  v-for="item in chanpingguige"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicRetainone"
+                ></el-option>
+                  </el-select>
+            </el-form-item>      
+            <el-form-item label="设计稿名称：" prop="designName">
+              <!-- <el-input placeholder="请输入产品名称" v-model="addProductForm.designName"></el-input> -->
+            <el-select class="tiantou" v-model="addProductForm.designName" placeholder="请选择类型">
+                    <el-option
+                  v-for="item in shejigaomingcehg"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicRetainone"
+                ></el-option>
+                  </el-select>
+            </el-form-item>      
+            <el-form-item label="确定日期：" prop="designDate"><el-input placeholder="请输入产品日期" v-model="addProductForm.designDate" class="xiang"></el-input></el-form-item>
 
               <el-row>
                 <el-col :span="12">
@@ -215,12 +236,31 @@
         width="40%"
         :before-close="handleClose"
         @closed="dialogClosed">
-        <el-form :label-position="labelPosition" label-width="120px" :model="editProductForm"
+        <el-form :label-position="labelPosition" label-width="130px" :model="editProductForm"
         ref="editProductRef"
         :rules="addProductRules">
-            <el-form-item label="产品型号：" prop="designModel"><el-input placeholder="请输入产品型号" v-model="editProductForm.designModel"></el-input></el-form-item>      
-            <el-form-item label="产品日期：" prop="designDate"><el-input placeholder="请输入产品日期" v-model="editProductForm.designDate"></el-input></el-form-item>
-            <el-form-item label="产品名称：" prop="designName"><el-input placeholder="请输入产品名称" v-model="editProductForm.designName"></el-input></el-form-item>      
+        <el-form-item label="产品规格：" prop="designModel">
+            <el-select class="tiantou" v-model="editProductForm.designModel" placeholder="请选择类型">
+                    <el-option
+                  v-for="item in chanpingguige"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicRetainone"
+                ></el-option>
+                  </el-select>
+            </el-form-item>      
+            <el-form-item label="设计稿名称：" prop="designName">
+              <!-- <el-input placeholder="请输入产品名称" v-model="addProductForm.designName"></el-input> -->
+            <el-select class="tiantou" v-model="editProductForm.designName" placeholder="请选择类型">
+                    <el-option
+                  v-for="item in shejigaomingcehg"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicRetainone"
+                ></el-option>
+                  </el-select>
+            </el-form-item>      
+            <el-form-item label="确定日期：" prop="designDate"><el-input placeholder="请输入产品日期" v-model="editProductForm.designDate" class="xiang"></el-input></el-form-item>
               <el-row>
                 <el-col :span="12">
                   <el-form-item label="颜色：" prop="designCol1">
@@ -340,6 +380,7 @@ export default {
         pageSize: 4,//每页显示的记录数
       },
       total:0,
+      chanpingguige:[],
       addProductForm:{
         designName:'',
         designModel:'',
@@ -369,10 +410,11 @@ export default {
         designCol8:'',
       },
       tupainfangda:'',
+      shejigaomingcehg:[],
       addProductRules: {
           designName:[
-          { required: true, message: '请输入内容', trigger: 'blur' },
-          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          // { required: true, message: '请输入内容', trigger: 'blur' },
+          // { min: 1, max: 10, message: '长度在 1 到 1000个字符', trigger: 'blur' }
           ],},
           url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       srcList: [
@@ -388,13 +430,20 @@ export default {
   },
   created () {
     this.getProductList();
-    
+    this.list();
   },
   methods:{
     a(url){
       this.tupainfangdadialogVisible=true;
       this.tupainfangda=url;
       
+    },
+   async list(){
+     const { data: res1 } = await this.$http.post("jc/Basic/selectbox");
+     this.shejigaomingcehg=res1;
+      const { data: res } = await this.$http.post("jc/Basic/selectProductcode");
+      
+      this.chanpingguige=res;
     },
     //文件上传成功的钩子函数
         handleSuccess(res, file) {
@@ -654,7 +703,7 @@ export default {
       width: 265px;
     }
     .xiang{
-      width: 400px;
+      width: 270px;
     }
     .hu{
       width: 133px;

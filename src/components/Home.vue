@@ -115,9 +115,10 @@ export default {
             iconsObj:{
                 '14':'iconfont icon-user',
                 '12':'iconfont icon-tijikongjian',
-                '28':'iconfont icon-shangpin',
-                '102':'iconfont icon-danju',
-                '145':'iconfont icon-baobiao'
+                '41':'iconfont icon-shangpin',
+                '48':'iconfont icon-danju',
+                '34':'iconfont icon-baobiao',
+                '28':'iconfont icon-baobiao'
             },
             //是否折叠
             isCollapse:false,
@@ -132,7 +133,7 @@ export default {
         this.getUser();
     },
     methods:{
-        //文件上传成功的钩子函数
+        //文件上传成功的钩子函数v
         handleSuccess(res, file) {
             this.$message({
                 type: 'info',

@@ -36,9 +36,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+        
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total="total"
       ></el-pagination>
       </el-card>
@@ -178,6 +178,7 @@ export default {
         this.getMenuList();
         this.getMenuList1();
         this.addbumenDialogVisible = false;
+        this.addbumenDialogVisible1 = false;
         if (res.body.respCode==500) {
           this.$message({
             type: "info",

@@ -120,9 +120,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+       
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total="total"
       ></el-pagination>
           </el-col>
@@ -224,7 +224,7 @@
             </el-form-item>
           </el-col>
             <el-col :span="8">
-            <el-form-item  prop="supTown" label-width="0px">
+            <el-form-item  prop="district" label-width="0px">
           <el-select
             v-model="addUserForm.district"
             @change="choseBlock"
@@ -387,9 +387,9 @@
            </el-form-item>
           </el-col>
             <el-col :span="8">
-            <el-form-item  prop="supCity" label-width="60px">
+            <el-form-item  prop="city" label-width="60px">
           <el-select
-           v-model="editUserForm.City"
+           v-model="editUserForm.city"
             @change="choseCity"
             placeholder="市级地区">
             <el-option
@@ -402,7 +402,7 @@
             </el-form-item>
           </el-col>
             <el-col :span="8">
-            <el-form-item  prop="supTown" label-width="0px">
+            <el-form-item  prop="district" label-width="0px">
           <el-select
             v-model="editUserForm.district"
             @change="choseBlock"

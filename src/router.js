@@ -24,6 +24,24 @@ import Cancel from './components/purchase/Cancel.vue'
 import First from './components/purchase/First.vue'
 import Order from './components/purchase/Order.vue'
 import Stored from './components/purchase/Stored.vue'
+import Ordermanagement from './components/sales/Ordermanagement.vue'
+import Orderauditing from './components/sales/Orderauditing.vue'
+import Ordertobeshipped from './components/sales/Ordertobeshipped.vue'
+import Cancellationorder from './components/sales/Cancellationorder.vue'
+import Shippedorder from './components/sales/Shippedorder.vue'
+import Finishedorder from './components/sales/Finishedorder.vue'
+import Input from './components/stock/Input.vue'
+import Output from './components/stock/Output.vue'
+import QueryIAndO from './components/stock/QueryIAndO.vue'
+import QueryStock from './components/stock/QueryStock.vue'
+import CheckStock from './components/stock/CheckStock.vue'
+import WarningOfStock from './components/stock/WarningOfStock.vue'
+import Receipt from './components/finance/Receipt.vue'
+import PaymentSlip from './components/finance/PaymentSlip.vue'
+import DispatchList from './components/finance/DispatchList.vue'
+import FirstCheckDL from './components/finance/FirstCheckDL.vue'
+import SecondCheckDL from './components/finance/SecondCheckDL.vue'
+import Detail from './components/finance/Detail.vue'
 
 Vue.use(Router)
 
@@ -58,6 +76,24 @@ const router = new Router({
                 { path: '/params', component: Params },
                 { path: '/goods', component: Goods },
                 { path: '/goodsadd', component: Add },
+                { path: '/ordermanagement', component: Ordermanagement },
+                { path: '/orderauditing', component: Orderauditing },
+                { path: '/ordertobeshipped', component: Ordertobeshipped },
+                { path: '/cancellationorder', component: Cancellationorder },
+                { path: '/shippedorder', component: Shippedorder },
+                { path: '/finishedorder', component: Finishedorder },
+                { path: '/input', component: Input },
+                { path: '/output', component: Output },
+                { path: '/queryIAndO', component: QueryIAndO },
+                { path: '/queryStock', component: QueryStock },
+                { path: '/checkStock', component: CheckStock },
+                { path: '/warningOfStock', component: WarningOfStock },
+                { path: '/receipt', component: Receipt },
+                { path: '/paymentSlip', component: PaymentSlip },
+                { path: '/dispatchList', component: DispatchList },
+                { path: '/secondCheckDL', component: SecondCheckDL },
+                { path: '/firstCheckDL', component: FirstCheckDL },
+                { path: '/detail', component: Detail },
             ]
         }
     ]

@@ -11,13 +11,13 @@
           <el-col :span="24">
              <el-row :gutter="20">
                 <el-form :inline="true" class="demo-form-inline" :model="chaPrintingForm" ref="chaPrintingRef">
-                    <el-form-item label="编号：" prop="parametersId">
+                    <!-- <el-form-item label="编号：" prop="parametersId">
                     <el-input placeholder="请输入编号" v-model="chaPrintingForm.parametersId"></el-input>
-                    </el-form-item>
-                    <el-form-item label="类型：" prop="productType">
-                    <el-select v-model="chaPrintingForm.productType" placeholder="请选择">
+                    </el-form-item> -->
+                    <el-form-item label="产品规格与名称：" prop="parametersName">
+                    <el-select v-model="chaPrintingForm.parametersName" placeholder="请选择">
                   <el-option
-                    v-for="item in chanpingleixing"
+                    v-for="item in chanpinguigeyumingcheng"
                     :key="item.basicId"
                     :label="item.basicRetainone"
                     :value="item.basicRetainone">
@@ -40,7 +40,7 @@
           <el-table border stripe :data="PrintingList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="35" fixed="left"></el-table-column>
             <el-table-column type="index" width="55" align="center" label="序号" fixed="left"></el-table-column>
-            <el-table-column prop="parametersId" label="编号" ></el-table-column>
+            <!-- <el-table-column prop="parametersId" label="编号" ></el-table-column>
             <el-table-column prop="parametersName" label="型号"></el-table-column>
             <el-table-column prop="productType" label="类型"></el-table-column>
             <el-table-column prop="parametersSingle" label="单齿长"></el-table-column>
@@ -57,7 +57,15 @@
             <el-table-column prop="parametersWeight" label="印刷重量"></el-table-column>
             <el-table-column prop="parametersMachine" label="机台号"></el-table-column>
             <el-table-column prop="parametersMould" label="模具号"></el-table-column>
-            <el-table-column prop="parametersCapacity" label="产能"></el-table-column>
+            <el-table-column prop="parametersCapacity" label="产能"></el-table-column> -->
+            <!-- <el-table-column prop="parametersName" label="纸张"  width="90px"></el-table-column> -->
+            <el-table-column prop="parametersName" label="产品规格与名称" ></el-table-column>
+            <el-table-column prop="parametersSingle" label="版辊齿数"></el-table-column>
+            <el-table-column prop="parametersSinglenum" label="版辊周长"></el-table-column>
+            <el-table-column prop="parametersTeethnum" label="周长片数"></el-table-column>
+            <el-table-column prop="parametersDoorwidth" label="纸张门幅"></el-table-column>
+            <el-table-column prop="parametersDoornum" label="门幅片数"></el-table-column>
+            <el-table-column prop="parametersNumber" label="总片数"></el-table-column>
             <el-table-column label="状态" width="60px" fixed="right">
               <template slot-scope="scope">
                 <!-- {{scope.row}} -->
@@ -88,23 +96,69 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+        
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
       </el-card>
       <el-dialog
         title="新增印刷参数"
         :visible.sync="addyonghuDialogVisible"
-        width="50%"
+        width="30%"
         :before-close="handleClose"
         @closed="dialogClosed">
-        <el-form :label-position="labelPosition" label-width="120px" 
-        :model="addPrintingForm"
-        ref="addPrintingRef"
+        <el-form :label-position="labelPosition" label-width="150px" 
+        :model="addPrintingForm" 
+        ref="addPrintingRef" 
         :rules="addPrintingRules">
-            <el-row>
+                <el-form-item label="产品规格与名称：" prop="parametersName">
+                  <!-- <el-input placeholder="请输入产品名称与类型" v-model="addPrintingForm.parametersName"></el-input> -->
+                  <el-select v-model="addPrintingForm.parametersName" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinguigeyumingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
+                  </el-form-item>
+                <el-form-item label="版辊齿数：" prop="parametersSingle">
+                  <!-- <el-input placeholder="请输入版辊齿数" v-model="addPrintingForm.parametersSingle"></el-input> -->
+                  <el-select v-model="addPrintingForm.parametersSingle" placeholder="请选择">
+                  <el-option
+                    v-for="item in bangunchishu"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
+                  </el-form-item>          
+                <el-form-item label="版辊周长：" prop="parametersSinglenum">
+                  <el-input placeholder="请输入版辊周长" v-model="addPrintingForm.parametersSingle*3.175" :disabled="true"></el-input>
+                  </el-form-item>
+                <el-form-item label="周长片数：" prop="parametersTeethnum">
+                  <el-input placeholder="请输入周长片数" v-model="addPrintingForm.parametersTeethnum"></el-input>
+                </el-form-item>
+                <el-form-item label="纸张门幅：" prop="parametersDoorwidth">
+                  <!-- <el-input placeholder="请输入纸张门幅" v-model="addPrintingForm.parametersDoorwidth"></el-input> -->
+                  <el-select v-model="addPrintingForm.parametersDoorwidth" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangmenfu"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
+                  </el-form-item>          
+                <el-form-item label="门幅片数：" prop="parametersDoornum">
+                  <el-input placeholder="请输入门幅片数" v-model="addPrintingForm.parametersDoornum"></el-input>
+                
+                </el-form-item>
+                <el-form-item label="总片数：" prop="parametersNumber">
+                  <el-input placeholder="请输入总片数" v-model="addPrintingForm.parametersTeethnum*addPrintingForm.parametersDoornum" :disabled="true"></el-input>
+                  </el-form-item>
+            <!-- <el-row>
                 <el-col :span="12">
                 <el-form-item label="产品编号：" prop="parametersId"><el-input placeholder="请输入产品编号" v-model="addPrintingForm.parametersId"></el-input></el-form-item>
                 <el-form-item label="产品型号：" prop="parametersName"><el-input placeholder="请输入产品型号" v-model="addPrintingForm.parametersName"></el-input></el-form-item>
@@ -136,7 +190,7 @@
                 <el-form-item label="模具号：" prop="parametersMould"><el-input placeholder="请输入模具号" v-model="addPrintingForm.parametersMould"></el-input></el-form-item>          
                 <el-form-item label="产能：" prop="parametersCapacity"><el-input placeholder="请输入产能" v-model="addPrintingForm.parametersCapacity"></el-input></el-form-item>
                 </el-col>
-            </el-row>
+            </el-row> -->
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible = false">取 消</el-button>
@@ -146,11 +200,57 @@
       <el-dialog
         title="编辑印刷参数"
         :visible.sync="edityonghuDialogVisible"
-        width="48%"
+        width="30%"
         :before-close="handleClose"
         @closed="dialogClosed">
-       <el-form :label-position="labelPosition" label-width="120px" :model="editPrintingForm" ref="addPrintingRef" :rules="addPrintingRules">
-            <el-row>
+       <el-form :label-position="labelPosition" label-width="140px" :model="editPrintingForm" ref="addPrintingRef" :rules="addPrintingRules">
+          <el-form-item label="产品规格与名称：" prop="parametersName">
+                  <!-- <el-input placeholder="请输入产品名称与类型" v-model="addPrintingForm.parametersName"></el-input> -->
+                  <el-select v-model="editPrintingForm.parametersName" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinguigeyumingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
+                  </el-form-item>
+                <el-form-item label="版辊齿数：" prop="parametersSingle">
+                  <!-- <el-input placeholder="请输入版辊齿数" v-model="addPrintingForm.parametersSingle"></el-input> -->
+                  <el-select v-model="editPrintingForm.parametersSingle" placeholder="请选择">
+                  <el-option
+                    v-for="item in bangunchishu"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
+                  </el-form-item>          
+                <el-form-item label="版辊周长：" prop="parametersSinglenum">
+                  <el-input placeholder="请输入版辊周长" v-model="editPrintingForm.parametersSingle*3.175" :disabled="true"></el-input>
+                  </el-form-item>
+                <el-form-item label="周长片数：" prop="parametersTeethnum">
+                  <el-input placeholder="请输入周长片数" v-model="editPrintingForm.parametersTeethnum"></el-input>
+                </el-form-item>
+                <el-form-item label="纸张门幅：" prop="parametersDoorwidth">
+                  <!-- <el-input placeholder="请输入纸张门幅" v-model="addPrintingForm.parametersDoorwidth"></el-input> -->
+                  <el-select v-model="editPrintingForm.parametersDoorwidth" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangmenfu"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
+                  </el-form-item>          
+                <el-form-item label="门幅片数：" prop="parametersDoornum">
+                  <el-input placeholder="请输入门幅片数" v-model="editPrintingForm.parametersDoornum"></el-input>
+                
+                </el-form-item>
+                <el-form-item label="总片数：" prop="parametersNumber">
+                  <el-input placeholder="请输入总片数" v-model="editPrintingForm.parametersTeethnum*editPrintingForm.parametersDoornum" :disabled="true"></el-input>
+                  </el-form-item>
+            <!-- <el-row>
                 <el-col :span="12">
                 <el-form-item label="产品编号：" prop="parametersId"><el-input placeholder="请输入产品编号" v-model="editPrintingForm.parametersId"></el-input></el-form-item>
                 <el-form-item label="产品型号：" prop="parametersName"><el-input placeholder="请输入产品型号" v-model="editPrintingForm.parametersName"></el-input></el-form-item>
@@ -182,7 +282,7 @@
                 <el-form-item label="模具号：" prop="parametersMould"><el-input placeholder="请输入模具号" v-model="editPrintingForm.parametersMould"></el-input></el-form-item>          
                 <el-form-item label="产能：" prop="parametersCapacity"><el-input placeholder="请输入产能" v-model="editPrintingForm.parametersCapacity"></el-input></el-form-item>
                 </el-col>
-            </el-row>
+            </el-row> -->
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible = false">取 消</el-button>
@@ -221,43 +321,57 @@ export default {
       delarr:[],
       addPrintingForm:{
         parametersId:'',
+        // parametersName:'',
+        // productType:'',
+        // parametersSingle:'',
+        // parametersSinglenum:'',
+        // parametersPaperwidth:'',
+        // parametersTeethnum:'',
+        // parametersDoorwidth:'',
+        // parametersDoornum:'',
+        // parametersUsablepaper:'',
+        // parametersPlanpaper:'',
+        // parametersVolume:'',
+        // parametersNueditPrintingFormmber:'',
+        // parametersMetre:'',
+        // parametersWeight:'',
+        // parametersMachine:'',
+        // parametersMould:'',
+        // parametersCapacity:'',
         parametersName:'',
-        productType:'',
-        parametersSingle:'',
-        parametersSinglenum:'',
-        parametersPaperwidth:'',
-        parametersTeethnum:'',
         parametersDoorwidth:'',
         parametersDoornum:'',
-        parametersUsablepaper:'',
-        parametersPlanpaper:'',
-        parametersVolume:'',
+        parametersSingle:'',
+        parametersSinglenum:'',
         parametersNumber:'',
-        parametersMetre:'',
-        parametersWeight:'',
-        parametersMachine:'',
-        parametersMould:'',
-        parametersCapacity:'',
+        parametersTeethnum:'',
       },
       editPrintingForm:{
         parametersId:'',
+        // parametersName:'',
+        // productType:'',
+        // parametersSingle:'',
+        // parametersSinglenum:'',
+        // parametersPaperwidth:'',
+        // parametersTeethnum:'',
+        // parametersDoorwidth:'',
+        // parametersDoornum:'',
+        // parametersUsablepaper:'',
+        // parametersPlanpaper:'',
+        // parametersVolume:'',
+        // parametersNumber:'',
+        // parametersMetre:'',
+        // parametersWeight:'',
+        // parametersMachine:'',
+        // parametersMould:'',
+        // parametersCapacity:'',
         parametersName:'',
-        productType:'',
-        parametersSingle:'',
-        parametersSinglenum:'',
-        parametersPaperwidth:'',
-        parametersTeethnum:'',
         parametersDoorwidth:'',
         parametersDoornum:'',
-        parametersUsablepaper:'',
-        parametersPlanpaper:'',
-        parametersVolume:'',
+        parametersSingle:'',
+        parametersSinglenum:'',
         parametersNumber:'',
-        parametersMetre:'',
-        parametersWeight:'',
-        parametersMachine:'',
-        parametersMould:'',
-        parametersCapacity:'',
+        parametersTeethnum:'',
       },
       chaPrintingForm:{
         parametersId:'',
@@ -272,22 +386,51 @@ export default {
           { required: true, message: '请输入内容', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
           ],},
+          chanpinguigeyumingcheng:[],
+          bangunchishu:[],
+          zhizhangmenfu:[],
     }
+    
   },
   created () {
     this.getPrintingList();
-    this.getPrintingList1();
+    this.list();
   },
   methods:{
+    async list(){
+      const { data: res } = await this.$http.post("jc/Basic/selectspecificationsname");
+      const { data: res1 } = await this.$http.post("jc/Basic/selectsinglenum");
+      const { data: res2 } = await this.$http.post("jc/Basic/selectparperdoor");
+      for (let index = 0; index < res.length; index++) {
+      if(res[index].basicRetainone.indexOf("*")!=-1){
+       res[index].basicRetainone=res[index].basicRetainone.substr(0, res[index].basicRetainone.indexOf("*"))
+    }
+      }
+      this.chanpinguigeyumingcheng=res;
+      this.bangunchishu=res1;
+      this.zhizhangmenfu=res2;
+    },
     async getPrintingList() {
       const { data: res } = await this.$http.post("jc/Parameters/selectParameter",this.chaPrintingForm);
+      for (let index = 0; index < res.body.rows.length; index++) {
+      if(res.body.rows[index].parametersName.indexOf("*")!=-1){
+       res.body.rows[index].parametersName=res.body.rows[index].parametersName.substr(0, res.body.rows[index].parametersName.indexOf("*"))
+    }
+      }
       this.total=res.body.total;
       this.PrintingList = res.body.rows;
+      
     },
-    async getPrintingList1() {
-      const { data: res } = await this.$http.post("jc/Basic/selectProducttype");
-      this.chanpingleixing = res;
-    },
+    // async getPrintingList1() {
+    //   const { data: res } = await this.$http.post("jc/Basic/selectspecificationsname");
+    //   for (let index = 0; index < res.length; index++) {
+    //   if(res[index].basicRetainone.indexOf("*")!=-1){
+    //    res[index].basicRetainone=res[index].basicRetainone.substr(0, res[index].basicRetainone.indexOf("*"))
+    // }
+    //   }
+    //   this.chanpingleixing = res;
+      
+    // },
     async userStateChanged(userInfo) {
       const { data: res } = await this.$http.post("jc/Parameters/updateparameterstate",userInfo);
       this.getPrintingList();
@@ -306,10 +449,14 @@ export default {
     addPrinting() {
       this.$refs.addPrintingRef.validate(async valid => {
         if (!valid) return;    
+        this.addPrintingForm.parametersSinglenum=this.addPrintingForm.parametersSingle*3.175;
+        this.addPrintingForm.parametersNumber=this.addPrintingForm.parametersTeethnum*this.addPrintingForm.parametersDoornum;
         const { data: res } = await this.$http.post("jc/Parameters/addParameters",this.addPrintingForm);
-        this.$message.success("用户创建成功！");
-        this.getPrintingList();
+        // this.$message.success("用户创建成功！");
         this.addyonghuDialogVisible = false;
+        this.getPrintingList();
+        // this.getPrintingList1();
+        
         if (res.body.respCode==500) {
           this.$message({
             type: "info",
@@ -331,9 +478,12 @@ export default {
       this.edityonghuDialogVisible=true;
     },
     async editPrinting(){
+      this.editPrintingForm.parametersSinglenum=this.editPrintingForm.parametersSingle*3.175;
+        this.editPrintingForm.parametersNumber=this.editPrintingForm.parametersTeethnum*this.editPrintingForm.parametersDoornum;
        const {data:res} = await this.$http.post('jc/Parameters/updateParameter',this.editPrintingForm);
-       this.getPrintingList();
        this.edityonghuDialogVisible=false;
+       this.getPrintingList();
+       
        if (res.body.respCode==500) {
           this.$message({
             type: "info",
@@ -470,7 +620,7 @@ export default {
       width: 170px;
     }
     .el-select{
-      width: 230px;
+      width: 300px;
     }
     .xiang{
       width: 400px;
@@ -478,14 +628,14 @@ export default {
     .hu{
       width: 133px;
     }
-    .el-col{
+  
         .el-input{
-            width: 200px;
+            width: 300px;
         }
-        .el-form-item{
-          .el-select{
-            width: 200px;
-          }
-        }
-    }
+        // .el-form-item{
+        //   .el-select{
+        //     width: 200px;
+        //   }
+        // }
+    // }
 </style>

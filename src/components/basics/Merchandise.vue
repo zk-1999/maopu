@@ -52,9 +52,9 @@
             <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column>
             <el-table-column prop="supgoolssmallType" label="商品小类型"  align="center"></el-table-column>
             <el-table-column prop="supgoolCoated" label="淋膜类型"  align="center"></el-table-column>
-            <el-table-column prop="supgoolsBrand" label="品牌" align="center"></el-table-column>
-            <el-table-column prop="supgoolsWeight" label="克重" align="center"></el-table-column>
-            <el-table-column prop="supgoolsWidths" label="门幅" align="center"></el-table-column>
+            <el-table-column prop="supgoolsBrand" label="纸张品牌" align="center"></el-table-column>
+            <el-table-column prop="supgoolsWeight" label="纸张克重" align="center"></el-table-column>
+            <el-table-column prop="supgoolsWidths" label="纸张门幅" align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -83,9 +83,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+        
+        :page-size="10"
+        layout="total, prev, pager, next"
         :total=total
       ></el-pagination>
     </el-tab-pane>
@@ -133,7 +133,7 @@
             <el-table-column prop="supgoolsBigType" label="商品大类型" align="center"></el-table-column>
             <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column>
             <el-table-column prop="supgoolssmallType" label="商品小类型" align="center"></el-table-column>
-            <el-table-column prop="supgoolsWeight" label="克重" align="center"></el-table-column>
+            <el-table-column prop="supgoolsWeight" label="纸箱克重" align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -162,9 +162,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+     
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
     </el-tab-pane>
@@ -210,6 +210,8 @@
             <el-table-column prop="supName" label="供应商名称" width="100px" align="center"></el-table-column>
             <el-table-column prop="supgoolsBigType" label="商品大类型" width="100px" align="center"></el-table-column>
             <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column>
+            <el-table-column prop="supgoolssmallType" label="商品小类型" align="center"></el-table-column>
+
             <el-table-column prop="supgoolsLength" label="尺寸/长" align="center"></el-table-column>
             <el-table-column prop="supgoolsWidth" label="尺寸/宽" align="center"></el-table-column>
             <el-table-column prop="supgoolsHeight" label="尺寸/厚" align="center"></el-table-column>
@@ -241,9 +243,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+        
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
     </el-tab-pane>
@@ -318,9 +320,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+       
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
     </el-tab-pane>
@@ -397,9 +399,9 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[10]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next"
+       
+        :page-size="10"
+        layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
     </el-tab-pane>
@@ -459,7 +461,7 @@
           <el-form-item label="商品小类型：" prop="supgoolssmallType">
             <el-input placeholder="请输入商品小类型" class="xiang" v-model="addMerchandiseFrom.supgoolssmallType"></el-input>
           </el-form-item>
-          <el-form-item label="品牌：" prop="supgoolsBrand">
+          <el-form-item label="纸张品牌：" prop="supgoolsBrand">
             <!-- <el-input placeholder="请输入品牌" class="xiang" v-model="addMerchandiseFrom.supgoolsBrand"></el-input> -->
             <el-select v-model="addMerchandiseFrom.supgoolsBrand" placeholder="请选择" class="gongse1">
                   <el-option
@@ -470,7 +472,7 @@
                   </el-option>
                 </el-select>
           </el-form-item>
-          <el-form-item label="克重：" prop="supgoolsWeight">
+          <el-form-item label="纸张克重：" prop="supgoolsWeight">
             <!-- <el-input placeholder="请输入克重" class="xiang" v-model="addMerchandiseFrom.supgoolsWeight"></el-input> -->
             <el-select v-model="addMerchandiseFrom.supgoolsWeight" placeholder="请选择" class="gongse1">
                   <el-option
@@ -481,8 +483,17 @@
                   </el-option>
                 </el-select>
           </el-form-item>
-          <el-form-item label="门幅：" prop="supgoolsWidths">
-            <el-input placeholder="请输入门幅" class="xiang" v-model="addMerchandiseFrom.supgoolsWidths"></el-input>
+          <el-form-item label="纸张门幅：" prop="supgoolsWidths">
+            
+            <!-- <el-input placeholder="请输入门幅" class="xiang" v-model="addMerchandiseFrom.supgoolsWidths"></el-input> -->
+             <el-select v-model="addMerchandiseFrom.supgoolsWidths" placeholder="请选择" class="gongse1">
+                  <el-option
+                    v-for="item in zhizhangmenfu"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
           </el-form-item>
           <el-form-item label="淋膜类型：" prop="supgoolCoated">
             <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="addMerchandiseFrom."></el-input> -->
@@ -500,11 +511,11 @@
           <el-form-item label="商品小类型：" prop="supgoolssmallType">
             <el-input placeholder="请输入商品小类型" class="xiang" v-model="addMerchandiseFrom.supgoolssmallType"></el-input>
           </el-form-item>
-          <el-form-item label="克重：" prop="supgoolsWeight">
+          <el-form-item label="纸箱克重：" prop="supgoolsWeight">
             <!-- <el-input placeholder="请输入克重" class="xiang" v-model="addMerchandiseFrom.supgoolsWeight"></el-input> -->
             <el-select v-model="addMerchandiseFrom.supgoolsWeight" placeholder="请选择" class="gongse1">
                   <el-option
-                    v-for="item in kezhong"
+                    v-for="item in zhixiangkezhong"
                     :key="item.basicId"
                     :label="item.basicRetainone"
                     :value="item.basicRetainone">
@@ -516,6 +527,9 @@
           <!-- <el-form-item label="商品小类型：" prop="">
             <el-input placeholder="请输入商品小类型" class="xiang"></el-input>
           </el-form-item> -->
+          <el-form-item label="商品小类型：" prop="supgoolssmallType">
+            <el-input placeholder="请输入商品小类型" class="xiang" v-model="addMerchandiseFrom.supgoolssmallType"></el-input>
+          </el-form-item>
           <el-form-item label="尺寸/长：" prop="supgoolsLength">
             <el-input placeholder="请输入尺寸/长" class="xiang" v-model="addMerchandiseFrom.supgoolsLength"></el-input>
           </el-form-item>
@@ -600,7 +614,7 @@
           <el-form-item label="商品小类型：" prop="supgoolssmallType">
             <el-input placeholder="请输入商品小类型" class="xiang" v-model="editMerchandiseFrom.supgoolssmallType"></el-input>
           </el-form-item>
-          <el-form-item label="品牌：" prop="supgoolsBrand">
+          <el-form-item label="纸张品牌：" prop="supgoolsBrand">
             <!-- <el-input placeholder="请输入品牌" class="xiang" v-model="editMerchandiseFrom.supgoolsBrand"></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolsBrand" placeholder="请选择" class="gongse1">
                   <el-option
@@ -611,7 +625,7 @@
                   </el-option>
                 </el-select>
           </el-form-item>
-          <el-form-item label="克重：" prop="supgoolsWeight">
+          <el-form-item label="纸张克重：" prop="supgoolsWeight">
             <!-- <el-input placeholder="请输入克重" class="xiang" v-model="editMerchandiseFrom.supgoolsWeight"></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolsWeight" placeholder="请选择" class="gongse1">
                   <el-option
@@ -622,8 +636,16 @@
                   </el-option>
                 </el-select>
           </el-form-item>
-          <el-form-item label="门幅：" prop="supgoolsWidths">
-            <el-input placeholder="请输入门幅" class="xiang" v-model="editMerchandiseFrom.supgoolsWidths"></el-input>
+          <el-form-item label="纸张门幅：" prop="supgoolsWidths">
+            <!-- <el-input placeholder="请输入门幅" class="xiang" v-model="editMerchandiseFrom.supgoolsWidths"></el-input> -->
+            <el-select v-model="editMerchandiseFrom.supgoolsWidths" placeholder="请选择" class="gongse1">
+                  <el-option
+                    v-for="item in zhizhangmenfu"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicRetainone">
+                  </el-option>
+                </el-select>
           </el-form-item>
           <el-form-item label="淋膜类型：" prop="supgoolCoated">
             <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="editMerchandiseFrom.supgoolCoated"></!--> 
@@ -641,11 +663,11 @@
           <el-form-item label="商品小类型：" prop="supgoolssmallType">
             <el-input placeholder="请输入商品小类型" class="xiang" v-model="editMerchandiseFrom.supgoolssmallType"></el-input>
           </el-form-item>
-          <el-form-item label="克重：" prop="supgoolsWeight">
+          <el-form-item label="纸箱克重：" prop="supgoolsWeight">
             <!-- <el-input placeholder="请输入克重" class="xiang" v-model="editMerchandiseFrom.supgoolsWeight"></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolsWeight" placeholder="请选择" class="gongse1">
                   <el-option
-                    v-for="item in kezhong"
+                    v-for="item in zhixiangkezhong"
                     :key="item.basicId"
                     :label="item.basicRetainone"
                     :value="item.basicRetainone">
@@ -654,6 +676,9 @@
           </el-form-item>
         </div>
         <div v-show="bigType == '袋子'">
+          <el-form-item label="商品小类型：" prop="supgoolssmallType">
+            <el-input placeholder="请输入商品小类型" class="xiang" v-model="editMerchandiseFrom.supgoolssmallType"></el-input>
+          </el-form-item>
           <el-form-item label="尺寸/长：" prop="supgoolsLength">
             <el-input placeholder="请输入尺寸/长" class="xiang" v-model="editMerchandiseFrom.supgoolsLength"></el-input>
           </el-form-item>
@@ -771,6 +796,8 @@ export default {
       zhizhangpinpai:[],
       linmo:[],
       kezhong:[],
+      zhixiangkezhong:[],
+      zhizhangmenfu:[],
       addMerchandiseRules: {
           supgoolsId:[
           { required: true, message: '请输入内容', trigger: 'blur' },
@@ -788,11 +815,17 @@ export default {
       const { data: res } = await this.$http.post("jc/Basic/selectparper");
       const { data: res1 } = await this.$http.post("jc/Basic/selectcoated");
       const { data: res2 } = await this.$http.post("jc/Basic/selectparperheight");
+      const { data: res3 } = await this.$http.post("jc/Basic/selectparweight");
+      const { data: res4 } = await this.$http.post("jc/Basic/selectparperdoor");
       this.zhizhangpinpai=res;
       this.linmo=res1;
       this.kezhong=res2;
+      this.zhixiangkezhong=res3;
+      this.zhizhangmenfu=res4;
     },
    async handleClick(tab) {
+     console.log(tab);
+     
         this.chamerchandiseForm.pageCode=1;
         this.chamerchandiseForm.pageSize=3;
         this.currentPage=0;

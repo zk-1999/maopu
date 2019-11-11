@@ -43,6 +43,25 @@ import FirstCheckDL from './components/finance/FirstCheckDL.vue'
 import SecondCheckDL from './components/finance/SecondCheckDL.vue'
 import Detail from './components/finance/Detail.vue'
 
+import Ordermanagement from './components/sales/Ordermanagement.vue'
+import Orderauditing from './components/sales/Orderauditing.vue'
+import Ordertobeshipped from './components/sales/Ordertobeshipped.vue'
+import Cancellationorder from './components/sales/Cancellationorder.vue'
+import Shippedorder from './components/sales/Shippedorder.vue'
+import Finishedorder from './components/sales/Finishedorder.vue'
+import Input from './components/stock/Input.vue'
+import Output from './components/stock/Output.vue'
+import QueryIAndO from './components/stock/QueryIAndO.vue'
+import QueryStock from './components/stock/QueryStock.vue'
+import CheckStock from './components/stock/CheckStock.vue'
+import WarningOfStock from './components/stock/WarningOfStock.vue'
+import Receipt from './components/finance/Receipt.vue'
+import PaymentSlip from './components/finance/PaymentSlip.vue'
+import DispatchList from './components/finance/DispatchList.vue'
+import FirstCheckDL from './components/finance/FirstCheckDL.vue'
+import SecondCheckDL from './components/finance/SecondCheckDL.vue'
+import Detail from './components/finance/Detail.vue'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -76,6 +95,10 @@ const router = new Router({
                 { path: '/params', component: Params },
                 { path: '/goods', component: Goods },
                 { path: '/goodsadd', component: Add },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                 { path: '/ordermanagement', component: Ordermanagement },
                 { path: '/orderauditing', component: Orderauditing },
                 { path: '/ordertobeshipped', component: Ordertobeshipped },
@@ -92,8 +115,14 @@ const router = new Router({
                 { path: '/paymentSlip', component: PaymentSlip },
                 { path: '/dispatchList', component: DispatchList },
                 { path: '/secondCheckDL', component: SecondCheckDL },
+<<<<<<< HEAD
                 { path: '/firstCheckDL', component: FirstCheckDL },
                 { path: '/detail', component: Detail },
+=======
+                { path: '/detail', component: Detail },
+                { path: '/firstCheckDL', component: FirstCheckDL },
+
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
             ]
         }
     ]

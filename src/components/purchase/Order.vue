@@ -73,11 +73,19 @@
                 <el-table-column prop="porderPalnmoney" label="预付款金额"></el-table-column>
                 <el-table-column prop="porderTotalmoney" label="采购总价"></el-table-column>
                 <el-table-column prop="porderTotalnum" label="采购总数量"></el-table-column>
+<<<<<<< HEAD
                 <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column>
                 <el-table-column prop="basicId" label="入库仓库"></el-table-column>
                 <el-table-column prop="porderArrivalstatus" label="到货情况"></el-table-column>
                 <el-table-column prop="porderProducer" label="制单人员"></el-table-column>
                 <el-table-column prop="porderBuyer" label="采购人"></el-table-column>
+=======
+                <el-table-column prop="" label="差异数量"></el-table-column>
+                <el-table-column prop="" label="入库仓库"></el-table-column>
+                <el-table-column prop="" label="到货情况"></el-table-column>
+                <el-table-column prop="porderProducer" label="制单人员"></el-table-column>
+                <el-table-column prop="" label="采购人"></el-table-column>
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                 <!-- <el-table-column prop="porderCompletenum" label="已采购数量"></el-table-column> -->
                 <el-table-column prop="porderStarttime" label="采购周期" width="200">
                     <template slot-scope="scope">
@@ -85,6 +93,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="porderTime" label="制单时间"></el-table-column>
+<<<<<<< HEAD
                 <el-table-column prop="porderReviewedtime" label="审批时间"></el-table-column>
                 <el-table-column prop="porderState" label="订单状态" width="105px">
                     <template slot-scope="scope">
@@ -99,6 +108,11 @@
                         <el-tag type="danger" v-if="scope.row.porderState==8">已完成</el-tag> 
                     </template>
                 </el-table-column>
+=======
+                <el-table-column prop="" label="审批时间"></el-table-column>
+
+                <el-table-column prop="porderState" label="订单状态"></el-table-column>
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                 <el-table-column label="操作" width="190px">
                     <template slot-scope="scope">
                         <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditOrder(scope.row.porderCode)">修改</el-button>
@@ -208,6 +222,7 @@
                     <el-table-column prop="pcommodityPalnnum" label="采购数量" align="center">
                         <template scope="scope">
                            <el-input v-model="scope.row.pcommodityPalnnum" @blur="jisuan"></el-input>
+<<<<<<< HEAD
                         </template>
                     </el-table-column>
                     <el-table-column prop="spmc" label="采购金额" align="center">
@@ -215,6 +230,15 @@
                            {{scope.row.pcommodityPalnnum*scope.row.pcommodityPrice}}
                         </template>
                     </el-table-column>
+=======
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="spmc" label="采购金额" align="center">
+                        <template scope="scope">
+                           {{scope.row.pcommodityPalnnum*scope.row.pcommodityPrice}}
+                        </template>
+                    </el-table-column>
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                     
                 </el-table>
                 <!-- <div class="jisuan">
@@ -286,8 +310,13 @@
                     <el-form-item label="制单人员：" prop="porderProducer">
                         <el-input v-model="editOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
                     </el-form-item>
+<<<<<<< HEAD
                     <el-form-item label="选择仓库：" prop="basicId">
                         <el-select v-model="editOrderForm.basicId" placeholder="请选择" class="_small">
+=======
+                    <el-form-item label="选择仓库：" prop="porderWarehouse">
+                        <el-select v-model="editOrderForm.porderWarehouse" placeholder="请选择" class="_small">
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                             <el-option
                             v-for="item in cangku"
                             :key="item.basicId"
@@ -297,7 +326,11 @@
                         </el-select>
                     </el-form-item>
                         <el-form-item label="选择供应商：" prop="supplierId">
+<<<<<<< HEAD
                         <el-select v-model="editOrderForm.supplierId" placeholder="请选择" class="_small">
+=======
+                        <el-select v-model="addOrderForm.supplierId" placeholder="请选择" class="_small">
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                             <el-option
                             v-for="item in gongyinshang"
                             :key="item.supplierId"
@@ -517,7 +550,11 @@
                 },
                 editOrderForm:{
                     porderProducer:'',
+<<<<<<< HEAD
                     basicId:'',
+=======
+                    porderWarehouse:'',
+>>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
                     supplierId:'',
                     time:'',
                     suppliergoolsId:'',

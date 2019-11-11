@@ -2214,6 +2214,7 @@ this.chaProductionForm.productLeixing="0";
         const { data: res } = await this.$http.post("jc/Produconggoods/addProducing",this.addProductionForm);
         this.getProductionList();
         this.getProductionList1();
+        // this.handleClick();
         this.addyonghuDialogVisible = false;
         this.addyonghuDialogVisible1 = false;
         this.addyonghuDialogVisible2 = false;
@@ -2261,6 +2262,7 @@ this.chaProductionForm.productLeixing="0";
        const {data:res} = await this.$http.post('jc/Produconggoods/updateProducing',this.editProductionForm);
        this.getProductionList();
        this.getProductionList1();
+      //  this.handleClick();
        this.edityonghuDialogVisible=false;
        this.edityonghuDialogVisible1=false;
        this.edityonghuDialogVisible2=false;
@@ -2282,6 +2284,7 @@ this.chaProductionForm.productLeixing="0";
       const { data: res } = await this.$http.post("jc/Produconggoods/updateProducingstate",userInfo);
       this.getProductionList();
       this.getProductionList1();
+      // this.handleClick();
       if (res.body.respCode==500) {
           this.$message({
             type: "info",

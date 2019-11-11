@@ -30,13 +30,8 @@ axios.interceptors.request.use(config => {
     // axios.defaults.baseURL = "http://192.168.31.212:8080/maopu/";
     // axios.defaults.baseURL = "http://192.168.1.100:8080/maopu/";
     // axios.defaults.baseURL = "http://192.168.31.234:8090/";
-<<<<<<< HEAD
-axios.defaults.baseURL = "/api";
-// axios.defaults.baseURL = "/maopu";
-=======
 
 axios.defaults.baseURL = "/api";
->>>>>>> 1d9abc08d59577ec640c7bc6345a91bf60a615cd
 
 //把axios请求放到vue原型上使用this调用￥http发送请求
 Vue.prototype.$http = axios;

@@ -24,6 +24,8 @@ import Cancel from './components/purchase/Cancel.vue'
 import First from './components/purchase/First.vue'
 import Order from './components/purchase/Order.vue'
 import Stored from './components/purchase/Stored.vue'
+import Second from './components/purchase/Second.vue'
+
 import Ordermanagement from './components/sales/Ordermanagement.vue'
 import Orderauditing from './components/sales/Orderauditing.vue'
 import Ordertobeshipped from './components/sales/Ordertobeshipped.vue'
@@ -72,6 +74,8 @@ const router = new Router({
                 { path: '/first', component: First },
                 { path: '/order', component: Order },
                 { path: '/stored', component: Stored },
+                { path: '/second', component: Second },
+
                 { path: '/categories', component: Cate },
                 { path: '/params', component: Params },
                 { path: '/goods', component: Goods },

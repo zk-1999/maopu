@@ -66,7 +66,7 @@
             <el-table-column prop="parametersDoorwidth" label="纸张门幅"></el-table-column>
             <el-table-column prop="parametersDoornum" label="门幅片数"></el-table-column>
             <el-table-column prop="parametersNumber" label="总片数"></el-table-column>
-            <el-table-column label="状态" width="60px" fixed="right">
+            <el-table-column label="状态" width="65px" fixed="right">
               <template slot-scope="scope">
                 <!-- {{scope.row}} -->
                 <el-switch

@@ -93,7 +93,7 @@
   <el-tab-pane label="单层">
     <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef">
             
-              <el-form-item label="产品规格与名称：" prop="productType">
+              <el-form-item label="产品名称：" prop="productType">
                     <el-select v-model="chaProductionForm.productType" placeholder="请选择">
                   <el-option
                     v-for="item in chanpinguigeyumingcheng"
@@ -115,18 +115,20 @@
             :disabled="selectedList.length == 0"
           >批量启用/禁用</el-button>
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
-      <el-table :data="ProductionList" border @selection-change="handleSelectionChange">
+      <!-- <el-table :data="ProductionList" border @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
-            <!-- <el-table-column prop="productName" label="名称"  align="center"></el-table-column> -->
-            <el-table-column prop="list" label="名称"  align="center"></el-table-column>
 
-            <el-table-column prop="productType" label="产品规格与名称"  align="center" width="120px"></el-table-column>
+            <el-table-column prop="list" label="名称"  align="center"></el-table-column>
+            <el-table-column prop="productType" label="商品名称"  align="center" ></el-table-column>
+            <el-table-column prop="productType" label="产品名称"  align="center" ></el-table-column>
             <el-table-column prop="productBrandinner" label="纸张品牌"  align="center"></el-table-column>
+            <el-table-column prop="productBrandinner" label="纸张类型"  align="center"></el-table-column>
             <el-table-column prop="productGraminner" label="纸张克重" align="center"></el-table-column>
             <el-table-column prop="productCoatedinner" label="淋膜类型"  align="center"></el-table-column>
-            <el-table-column prop="productBoxMark" label="箱唛" align="center"></el-table-column>
-            <el-table-column prop="productLabel" label="标唛" align="center"></el-table-column>
+            <el-table-column prop="productCoatedinner" label="单个克重"  align="center"></el-table-column>
+            <el-table-column prop="productCoatedinner" label="尺寸"  align="center"></el-table-column>
+            <el-table-column prop="productBoxMark" label="设计稿" align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -150,7 +152,50 @@
                 >删除</el-button>
               </template>
             </el-table-column>
-          </el-table>
+          </el-table> -->
+                 <el-table
+    :data="tableData"
+    style="width: 100%" border  >
+    <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="55">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            <span>{{ props.row.name }}</span>,
+        
+            <span>{{ props.row.shop }}</span>,
+       
+            <span>{{ props.row.id }}</span>,
+       
+            <span>{{ props.row.shopId }}</span>,
+       
+            <span>{{ props.row.category }}</span>,
+        
+         
+            <span>{{ props.row.address }}</span>,
+         
+          
+            <span>{{ props.row.desc }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="商品 ID"
+      prop="id">
+    </el-table-column>
+    <el-table-column
+      label="商品名称"
+      prop="name">
+    </el-table-column>
+    <el-table-column
+      label="描述"
+      prop="desc">
+    </el-table-column>
+  </el-table>
+
           <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -2029,6 +2074,39 @@
 export default {
   data () {
     return {
+       tableData: [{
+          id: '12987122',
+          name: '好滋好味鸡蛋仔',
+          category: '江浙小吃、小吃零食',
+          desc: '荷兰优质淡奶，奶香浓而不腻',
+          address: '上海市普陀区真北路',
+          shop: '王小虎夫妻店',
+          shopId: '10333'
+        }, {
+          id: '12987123',
+          name: '好滋好味鸡蛋仔',
+          category: '江浙小吃、小吃零食',
+          desc: '荷兰优质淡奶，奶香浓而不腻',
+          address: '上海市普陀区真北路',
+          shop: '王小虎夫妻店',
+          shopId: '10333'
+        }, {
+          id: '12987125',
+          name: '好滋好味鸡蛋仔',
+          category: '江浙小吃、小吃零食',
+          desc: '荷兰优质淡奶，奶香浓而不腻',
+          address: '上海市普陀区真北路',
+          shop: '王小虎夫妻店',
+          shopId: '10333'
+        }, {
+          id: '12987126',
+          name: '好滋好味鸡蛋仔',
+          category: '江浙小吃、小吃零食',
+          desc: '荷兰优质淡奶，奶香浓而不腻',
+          address: '上海市普陀区真北路',
+          shop: '王小虎夫妻店',
+          shopId: '10333'
+        }],
       labelPosition: 'right',
       addyonghuDialogVisible: false,
       addyonghuDialogVisible1: false,
@@ -2174,13 +2252,13 @@ this.chaProductionForm.productLeixing="0";
       const { data: res4 } = await this.$http.post("jc/Design/selectdesignname");
       const { data: res5 } = await this.$http.post("jc/Basic/selectspecificationsname");
       const { data: res6 } = await this.$http.post("jc/Basic/selectparperheight");
-       const { data: res7 } = await this.$http.post("jc/Basic/selectbox");
-        const { data: res8 } = await this.$http.post("jc/Basic/selectlabel");
-        const { data: res9 } = await this.$http.post("jc/Produconggoods/selectProducingdan",this.a);
-        const { data: res10 } = await this.$http.post("jc/Basic/selectshoubing");
-        const { data: res11 } = await this.$http.post("jc/Basic/selectwaleng");
-        const { data: res12 } = await this.$http.post("jc/Basic/selectsheji");
-       for (let index = 0; index < res12.length; index++) {
+      const { data: res7 } = await this.$http.post("jc/Basic/selectbox");
+      const { data: res8 } = await this.$http.post("jc/Basic/selectlabel");
+      const { data: res9 } = await this.$http.post("jc/Produconggoods/selectProducingdan",this.a);
+      const { data: res10 } = await this.$http.post("jc/Basic/selectshoubing");
+      const { data: res11 } = await this.$http.post("jc/Basic/selectwaleng");
+      const { data: res12 } = await this.$http.post("jc/Basic/selectsheji");
+      for (let index = 0; index < res12.length; index++) {
       if(res12[index].basicRetainone.indexOf("*")!=-1){
        res12[index].basicRetainone=res12[index].basicRetainone.substr(0, res12[index].basicRetainone.indexOf("*"))
     }
@@ -2434,4 +2512,8 @@ this.chaProductionForm.productLeixing="0";
     .el-select{
       width: 300px;
     }
+     .demo-table-expand {
+    text-align:center;
+  }
+  
 </style>

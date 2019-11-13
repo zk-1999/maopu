@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>进货管理</el-breadcrumb-item>
-      <el-breadcrumb-item>采购订单-初审</el-breadcrumb-item>
+      <el-breadcrumb-item>采购订单-财务审批</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
       <el-form :inline="true" class="demo-form-inline search" :model="chaOrderFrom" ref="chaOrderFrom">

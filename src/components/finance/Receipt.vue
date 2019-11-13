@@ -103,12 +103,12 @@
           <template slot-scope="scope">{{ scope.row.no }}</template>
         </el-table-column>
 
-        <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
+        <!-- <el-table-column prop="no" label="序号"></el-table-column> -->2
         <el-table-column prop label="收款编号"></el-table-column>
         <el-table-column prop label="收款供应商编码"></el-table-column>
         <el-table-column prop label="收款供应商名称"></el-table-column>
         <el-table-column prop label="收款方式"></el-table-column>
-        <el-table-column prop label="收款制单人"></el-table-column>
+        <el-table-column prop label="收款制单人"></el-table-column>   
         <el-table-column prop label="结算总额"></el-table-column>
         <el-table-column prop label="收款类型"></el-table-column>
         <el-table-column prop label="制单时间"></el-table-column>

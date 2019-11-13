@@ -75,7 +75,7 @@
           <el-input placeholder="请输入部门名称" v-model="addDepartmentForm.name"></el-input>
         </el-form-item>
         <el-form-item label="备注内容：" prop="orderNum">
-          <el-input type="textarea" :rows="2" placeholder="请输入备注内容" v-model="addDepartmentForm.orderNum"></el-input>
+          <el-input placeholder="请输入备注内容" v-model="addDepartmentForm.orderNum"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -98,7 +98,7 @@
           <el-input placeholder="请输入部门名称" v-model="editDepartmentForm.name"></el-input>
         </el-form-item>
         <el-form-item label="备注内容：" prop="orderNum">
-          <el-input type="textarea" :rows="2" placeholder="请输入备注内容" v-model="editDepartmentForm.orderNum"></el-input>
+          <el-input  placeholder="请输入备注内容" v-model="editDepartmentForm.orderNum"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -326,4 +326,5 @@ export default {
 .chongzhi {
   margin-top: 0px;
 }
+
 </style>

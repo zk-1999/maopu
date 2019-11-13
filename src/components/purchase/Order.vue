@@ -7,66 +7,62 @@
             <el-breadcrumb-item>采购订单</el-breadcrumb-item>
         </el-breadcrumb>
         <el-card>
-            <el-form :inline="true" class="demo-form-inline search" :model="chaOrderFrom" ref="search">
+            <el-form :inline="true" class="demo-form-inline search" :model="chaOrderFrom" ref="chaOrderFrom" label-width="80px" label-position="left">
                 <el-row :gutter="20" class="row">
                     <el-col :span="24">
-                        <el-form-item label="订单编号：">
+                        <el-form-item label="订单编号" prop="porderCode">
                             <el-input placeholder="请输入订单编号" class="_small" v-model="chaOrderFrom.porderCode"></el-input>
                         </el-form-item>
-                        <el-form-item prop="rylx" >
-                            <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="input-with-select" style="width: 250px" >
-                                <el-select v-model="search.rylx" slot="prepend" placeholder="请选择"  style="width: 110px">
-                                <el-option
-                                    v-for="item in rylx"
-                                    :key="item.Id"
-                                    :label="item.Name"
-                                    :value="item.Name">
-                                </el-option>
-                                </el-select>
+                        <el-form-item label="制单人员" prop="porderProducer" >
+                            <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="_small" >
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="订单状态：" prop="ddzt">
-                            <el-select v-model="chaOrderFrom.porderState" placeholder="请选择" class="_small">
-                                <el-option
-                                    v-for="item in ddzt"
-                                    :key="item.Id"
-                                    :label="item.Name"
-                                    :value="item.Name">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="制单时间："  prop="zdsj" >
+                        <el-form-item label="制单时间" prop="time" >
                             <el-date-picker
-                                v-model="search.zdsj"
-                                type="date"
-                                format="yyyy年MM月dd日"
-                                value-format="yyyy-MM-dd"
-                                placeholder="选择日期时间" >
-                            </el-date-picker>
-                        </el-form-item >
-                        <el-form-item label="采购周期" >
-                            <el-date-picker
-                            v-model="value1"
+                            v-model="chaOrderFrom.time"
                             type="daterange"
+                            value-format="yyyy-MM-dd"
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期">
                             </el-date-picker>
                         </el-form-item>
+                        <el-form-item label="到货情况" prop="porderArrivalstatus">
+                            <el-select v-model="chaOrderFrom.porderArrivalstatus" placeholder="请选择" class="_small">
+                                <el-option value="" label="全部"></el-option>
+                                <el-option value="0" label="未到货"></el-option>
+                                <el-option value="1" label="部分到货"></el-option>
+                                <el-option value="2" label="全部到货"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="订单状态" prop="porderState">
+                            <el-select v-model="chaOrderFrom.porderState" placeholder="请选择" class="_small">
+                                <el-option value="" label="全部"></el-option>
+                                <el-option value="0" label="初始化"></el-option>
+                                <el-option value="1" label="待初审"></el-option>
+                                <el-option value="2" label="初审未通过"></el-option>
+                                <el-option value="3" label="待复审"></el-option>
+                                <el-option value="4" label="复审未通过"></el-option>
+                                <el-option value="5" label="采购中"></el-option>
+                                <el-option value="6" label="待入库"></el-option>
+                                <el-option value="7" label="部分入库"></el-option>
+                                <el-option value="8" label="已完成"></el-option>
+                                <el-option value="9" label="结束"></el-option>
+                            </el-select>
+                        </el-form-item>
                         <el-form-item>
-                            <el-button @click="getList">查询</el-button>
-                            <el-button type="primary" @click="ResetForm('search')">重置</el-button>
+                            <el-button @click="getList">查 询</el-button>
+                            <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
             </el-form>
             <el-button type="success" @click="addOrderVisible = true;editOrde  = false">新增</el-button>
-            <el-button @click="edit" :disabled="selectedList.length == 0">编辑</el-button>
+            <!-- <el-button @click="edit" :disabled="selectedList.length == 0">编辑</el-button>
             <el-button @click="del" :disabled="selectedList.length == 0">删除</el-button>
-            <el-button @click="getList">提审</el-button>
+            <el-button @click="check">提审</el-button> -->
             <!-- <el-button @click="stop">终止采购</el-button> -->
             <el-table border :data="orderList" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="40"></el-table-column>
                 <el-table-column type="index"></el-table-column>
                 <el-table-column prop="porderCode" label="订单编号"></el-table-column>
                 <el-table-column prop="supplierDOs.supName" label="供应商" :show-overflow-tooltip='true'></el-table-column>
@@ -84,14 +80,29 @@
                         {{scope.row.porderStarttime+"-"+scope.row.porderStoptime}}
                     </template>
                 </el-table-column>
-                <el-table-column prop="porderTime" label="制单时间"></el-table-column>
-                <el-table-column prop="" label="审批时间"></el-table-column>
-
-                <el-table-column prop="porderState" label="订单状态"></el-table-column>
-                <el-table-column label="操作" width="190px">
+                <el-table-column prop="porderTime" label="制单时间" sortable></el-table-column>
+                <el-table-column prop="porderReviewedtime" label="审批时间"></el-table-column>
+                <el-table-column prop="porderState" label="订单状态" width="105px">
                     <template slot-scope="scope">
-                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditOrder(scope.row.porderCode)">修改</el-button>
-                        <el-button type="danger" icon="el-icon-delete" size="mini" @click="deletebumen(scope.row.porderCode)">删除</el-button>
+                        <el-tag type="danger" v-if="scope.row.porderState==0">初始化</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==1">待初审</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==2">初审未通过</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==3">待复审</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==4">复审未通过</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==5">采购中</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==6">待入库</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==7">部分入库</el-tag>
+                        <el-tag type="danger" v-if="scope.row.porderState==8">已完成</el-tag> 
+                        <el-tag type="danger" v-if="scope.row.porderState==9">结束</el-tag> 
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="270px">
+                    <template slot-scope="scope">
+                        <el-button type="primary" icon="el-icon-edit" size="mini" v-if="scope.row.porderState==0||scope.row.porderState==2||scope.row.porderState==4" @click="showEditOrder(scope.row.porderCode)">编辑</el-button>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" v-if="scope.row.porderState==0" @click="editPurOrderState(scope.row,1)">提审</el-button>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" v-if="scope.row.porderState==2||scope.row.porderState==4" @click="showLookUpOrder(scope.row.porderCode)">查看</el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini" v-if="scope.row.porderState==0||scope.row.porderState==2||scope.row.porderState==4" @click="deletebumen(scope.row.porderCode)">删除</el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini" v-if="scope.row.porderState==5||scope.row.porderState==6||scope.row.porderState==7" @click="editPurOrderState(scope.row,9)">终止</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -106,7 +117,7 @@
             ></el-pagination>
         </el-card>
         <el-dialog
-            :title="editOrde ? '修改订单':'新增订单'"
+            title="新增订单"
             :visible.sync="addOrderVisible"
             width="75%"
             :before-close="handleClose"
@@ -123,10 +134,20 @@
                     <!-- <el-form-item label="订单编号 ：" prop="Id">
                         <el-input v-model="addOrderForm.Id" placeholder="订单编号" class="_small"></el-input>
                     </el-form-item> -->
-                    <el-form-item label="制单人员：" prop="porderProducer">
+                    <el-form-item label="制单人员" prop="porderProducer">
                         <el-input v-model="addOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
                     </el-form-item>
-                    <el-form-item label="选择仓库：" prop="basicId">
+                    <el-form-item label="采购周期" prop="time">
+                            <el-date-picker
+                            v-model="addOrderForm.time"
+                            type="daterange"
+                            value-format=yyyy-MM-dd
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期">
+                            </el-date-picker>
+                        </el-form-item>
+                    <!-- <el-form-item label="选择仓库：" prop="basicId">
                         <el-select v-model="addOrderForm.basicId" placeholder="请选择" class="_small">
                             <el-option
                             v-for="item in cangku"
@@ -134,9 +155,10 @@
                             :label="item.basicRetainone"
                             :value="item.basicId">
                             </el-option>
-                        </el-select>
-                    </el-form-item>
-                        <el-form-item label="选择供应商：" prop="supplierId">
+                        </el-select> -->
+                    <!-- </el-form-item> -->
+                    <!-- 不需要 -->
+                        <el-form-item label="选择供应商" prop="supplierId">
                         <el-select v-model="addOrderForm.supplierId" placeholder="请选择" class="_small">
                             <el-option
                             v-for="item in gongyinshang"
@@ -146,17 +168,9 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="选购周期：" prop="time">
-                        <el-date-picker
-                        v-model="addOrderForm.time"
-                        type="daterange"
-                        format="yyyy年MM月dd日"
-                        value-format="yyyy-MM-dd"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                        </el-date-picker>
-                    </el-form-item>
+                    <!-- <el-form-item label="采购描述" prop="tporderBuyexplainime">
+                        <el-input type="textarea" v-model="addOrderForm.porderBuyexplain"></el-input>
+                    </el-form-item> -->
                 </el-row>
                 <hr>
                 <el-button type="primary" @click="gongyingshangpi">添加商品</el-button>
@@ -224,24 +238,24 @@
                 :total="total"
             ></el-pagination>     -->
                 <hr>
-                <el-form-item label="订单数量：" prop="porderTotalnum">
+                <el-form-item label="订单数量" prop="porderTotalnum">
                     <el-input v-model="addOrderForm.porderTotalnum" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="订单金额：" prop="porderTotalmoney">
+                <el-form-item label="订单金额" prop="porderTotalmoney">
                     <el-input v-model="addOrderForm.porderTotalmoney" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="预付款金额：" prop="porderPalnmoney">
+                <el-form-item label="预付款金额" prop="porderPalnmoney">
                     <el-input v-model="addOrderForm.porderPalnmoney"></el-input>
                 </el-form-item>
                 
-                <el-form-item label="付款说明：" prop="porderExplain">
+                <el-form-item label="付款说明" prop="porderExplain">
                     <el-input
                     type="textarea"
                         placeholder="请输入内容"
                         v-model="addOrderForm.porderExplain" style="width: 600px"  >
                     </el-input>
                 </el-form-item>
-                <el-form-item label="采购描述：" class="w500" prop="porderBuyexplain">
+                <el-form-item label="采购描述" class="w500" prop="porderBuyexplain">
                     <el-input
                     type="textarea"
                         placeholder="请输入内容"
@@ -250,12 +264,12 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="addOrderVisible=false">取消</el-button>
+                <el-button @click="addCancel()">取消</el-button>
                 <el-button @click="addSave" type="primary">保存</el-button>
             </span>
         </el-dialog>
         <el-dialog
-            title="修改订单"
+            :title="lookUpState?'查看订单':'修改订单' "
             :visible.sync="editOrderVisible"
             width="75%"
             :before-close="handleClose"
@@ -272,10 +286,10 @@
                     <!-- <el-form-item label="订单编号 ：" prop="Id">
                         <el-input v-model="addOrderForm.Id" placeholder="订单编号" class="_small"></el-input>
                     </el-form-item> -->
-                    <el-form-item label="制单人员：" prop="porderProducer">
+                    <el-form-item label="制单人员" prop="porderProducer">
                         <el-input v-model="editOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
                     </el-form-item>
-                    <el-form-item label="选择仓库：" prop="basicId">
+                    <!-- <el-form-item label="选择仓库：" prop="basicId">
                         <el-select v-model="editOrderForm.basicId" placeholder="请选择" class="_small">
                             <el-option
                             v-for="item in cangku"
@@ -284,9 +298,22 @@
                             :value="item.basicId">
                             </el-option>
                         </el-select>
+                    </el-form-item> -->
+                    <el-form-item label="采购周期" prop="time">
+                        <el-date-picker
+                        v-model="editOrderForm.time"
+                        type="daterange"
+                        format="yyyy年MM月dd日"
+                        value-format="yyyy-MM-dd"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        :disabled="lookUpState"
+                        >
+                        </el-date-picker>
                     </el-form-item>
-                        <el-form-item label="选择供应商：" prop="supplierId">
-                        <el-select v-model="editOrderForm.supplierId" placeholder="请选择" class="_small">
+                        <el-form-item label="选择供应商" prop="supName">
+                        <el-select v-model="editOrderForm.supName" placeholder="请选择" class="_small" :disabled="lookUpState">
                             <el-option
                             v-for="item in gongyinshang"
                             :key="item.supplierId"
@@ -295,20 +322,13 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="选购周期：" prop="time">
-                        <el-date-picker
-                        v-model="editOrderForm.time"
-                        type="daterange"
-                        format="yyyy年MM月dd日"
-                        value-format="yyyy-MM-dd"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                        </el-date-picker>
-                    </el-form-item>
+                    
+                    <!-- <el-form-item label="采购描述" prop="porderBuyexplain">
+                        <el-input type="textarea" v-model="editOrderForm.porderBuyexplain"></el-input>
+                    </el-form-item> -->
                 </el-row>
                 <hr>
-                <el-button type="primary" @click="gongyingshangpi">添加商品</el-button>
+                <el-button type="primary" @click="gongyingshangpi" :disabled="lookUpState">添加商品</el-button>
                 <el-button type="dange" :disabled="addSelectedList.length == 0 && addSelectedList_two == 0" @click="deleteAddbumen">删除商品</el-button>
                 <el-table border :data="editOrderForm.pcommodityDos" @selection-change="addSelectionChange">
                     
@@ -340,12 +360,12 @@
                     </el-table-column>
                     <el-table-column prop="pcommodityPrice" label="采购价" align="center">  
                         <template scope="scope">
-                           <el-input v-model="scope.row.pcommodityPrice" @blur="jisuan"></el-input>
+                           <el-input v-model="scope.row.pcommodityPrice" @blur="jisuan" :disabled="lookUpState"></el-input>
                         </template>
                     </el-table-column>
                     <el-table-column prop="pcommodityPalnnum" label="采购数量" align="center">
                         <template scope="scope">
-                           <el-input v-model="scope.row.pcommodityPalnnum" @blur="jisuan"></el-input>
+                           <el-input v-model="scope.row.pcommodityPalnnum" @blur="jisuan" :disabled="lookUpState"></el-input>
                         </template>
                     </el-table-column>
                     <el-table-column prop="spmc" label="采购金额" align="center">
@@ -377,34 +397,37 @@
                     
                 <hr>
                 
-                <el-form-item label="订单数量：" prop="porderTotalnum">
+                <el-form-item label="订单数量" prop="porderTotalnum">
                     <el-input v-model="editOrderForm.porderTotalnum" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="订单金额：" prop="porderTotalmoney">
+                <el-form-item label="订单金额" prop="porderTotalmoney">
                     <el-input v-model="editOrderForm.porderTotalmoney" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="预付款金额：" prop="porderPalnmoney">
-                    <el-input v-model="editOrderForm.porderPalnmoney"></el-input>
+                <el-form-item label="预付款金额" prop="porderPalnmoney">
+                    <el-input v-model="editOrderForm.porderPalnmoney" :disabled="lookUpState"></el-input>
                 </el-form-item>
                 
-                <el-form-item label="付款说明：" prop="porderExplain">
+                <el-form-item label="付款说明" prop="porderExplain">
                     <el-input
                     type="textarea"
                         placeholder="请输入内容"
-                        v-model="editOrderForm.porderExplain" style="width: 600px"  >
+                        v-model="editOrderForm.porderExplain" style="width: 600px" :disabled="lookUpState">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="采购描述：" class="w500" prop="porderBuyexplain">
+                <el-form-item label="采购描述" class="w500" prop="porderBuyexplain">
                     <el-input
                     type="textarea"
                         placeholder="请输入内容"
-                        v-model="editOrderForm.porderBuyexplain" style="width: 600px" >
+                        v-model="editOrderForm.porderBuyexplain" style="width: 600px" :disabled="lookUpState">
                     </el-input>
                 </el-form-item>
             </el-form>
-            <span slot="footer" class="dialog-footer">
+            <span slot="footer" class="dialog-footer" v-show="!lookUpState">
                 <el-button @click="editOrderVisible=false">取消</el-button>
                 <el-button @click="editOrder" type="primary">保存</el-button>
+            </span>
+            <span slot="footer" class="dialog-footer" v-show="lookUpState">
+                <el-button @click="lookUpState=editOrderVisible=false" type="primary">确定</el-button>
             </span>
         </el-dialog>
         <el-dialog title="新增商品" :visible.sync="addOrder_addgoods" width="58%" :before-close="handleClose" @closed="closeAddGoods">
@@ -490,10 +513,12 @@
                 labelPosition: "right",
                 total:0,
                 addOrderForm:{
-                    porderProducer:'',
+                    porderProducer:'',//制单人员
+                    time:[],//采购周期范围
+                    porderBuyexplain:"",//采购描述 
+                    // time:'',
                     basicId:'',
                     supplierId:'',
-                    time:'',
                     suppliergoolsId:'',
                     porderTotalnum:0,
                     porderTotalmoney:0,
@@ -505,27 +530,29 @@
                     pageSize: 10,//每页显示的记录数
                 },
                 editOrderForm:{
+                    porderBuyexplain:'',//采购描述
                     porderProducer:'',
                     basicId:'',
-                    supplierId:'',
+                    supName:'',
                     time:'',
                     suppliergoolsId:'',
                     porderTotalnum:0,
                     porderTotalmoney:0,
-                    porderBuyexplain:'',
+                    // porderBuyexplain:'',
                     porderExplain:'',
                     pcommodityDos:[],
                     lab:'纸张',
                     pageCode: 1, //当前页
                     pageSize: 10,//每页显示的记录数
                 },
+                lookUpState:false,
                 chaOrderFrom:{
-                    porderCode:'',
-                    porderProducer:'',
-                    porderState:'',
-                    porderTime:'',
-                    porderStarttime:'',
-                     pageCode: 1, //当前页
+                    porderCode:'',//订单编号
+                    porderProducer:'',//制单人员
+                    time:[],//制单时间范围
+                    porderArrivalstatus:'',//到货情况
+                    porderState:'',//订单状态
+                    pageCode: 1, //当前页
                     pageSize: 10,//每页显示的记录数
                 },
                 chaSupplierForm:{
@@ -623,8 +650,11 @@
           }
       },
             ResetForm(formName){
-                this.$refs.formName.resetFields();
-                this.getList()
+                this.$refs[formName].resetFields();
+                // this.chaOrderFrom.porderProducer="";
+                // this.porderTime
+                // this.porderStarttime
+                // this.getList()
             },
             async getCha(){
             const { data: res } = await this.$http.post("jc/supplier/selectSupplier",{params:this.chaSupplierForm});
@@ -727,29 +757,73 @@
             // }
             // console.log(this.delarr);
             // },
+
+            // 原本的
+            // async deleteRow(){
+            //     for (let i = 0; i < this.selectedList.length; i++) {
+            //         console.log(this.selectedList[i]);
+            //         this.delarr.push(this.selectedList[i])
+            //         this.delarr1.push(this.selectedList[i])
+
+            //     }
+            //     console.log(this.delarr);
+            //     this.addOrderForm.pcommodityDos=this.delarr;
+            //     this.addOrder_addgoods=false;
+            // },
             async deleteRow(){
                 for (let i = 0; i < this.selectedList.length; i++) {
                     console.log(this.selectedList[i]);
-                    this.delarr.push(this.selectedList[i])
+                    this.addOrderForm.pcommodityDos.push(this.selectedList[i])
                     this.delarr1.push(this.selectedList[i])
 
                 }
-                console.log(this.delarr);
-                this.addOrderForm.pcommodityDos=this.delarr;
+                // console.log(this.delarr);
+                // this.addOrderForm.pcommodityDos=this.delarr;
                 this.addOrder_addgoods=false;
             },
             async getList() {
                 // const { data: res1 } = await this.$http.post("jh/purchase/dtjresultMap");
-                const { data: res } = await this.$http.post("jh/purchase/selectpurc",this.chaOrderFrom);
+                const { data: res } = await this.$http.post("jh/purchase/selectpurc2",this.chaOrderFrom);
                 // console.log(res1);
                 this.orderList = res.body.rows;
                 this.total=res.body.total;
             },
+            // 订单单独审核
+            async check(val) {
+                // addSelectedList所有被选中的订单
+                // 批量提审
+                // const statusChangeList = [];
+                // console.log(this.selectedList.length)
+                // for(let i = 0;i<this.selectedList.length;i++ ){
+                //     statusChangeList.push(this.selectedList[i].porderCode)
+                // }
+
+                const { data: res } = await this.$http.post("/jh/purchase/tishen",{
+                    // "statusChangeList":statusChangeList
+                    "porderCode":val
+                });
+                this.getList();
+                // console.log(res1);
+            },
+            // 终止订单
+            async stopOrder(val) {
+                const { data: res } = await this.$http.post("/jh/purchase/tishen",{
+                    // "statusChangeList":statusChangeList
+                    "porderCode":val
+                });
+                this.getList();
+            },
             async del(){
 
             },
-            async edit(){
-
+            // 修改订单状态，可用于提审、终止
+            async editPurOrderState(purchase,state){
+                purchase.porderState = state;
+               const { data: res } = await this.$http.post("/jh/purchase/tishen",
+                    // "statusChangeList":statusChangeList
+                    porderState
+                );
+                this.getList();
             },
             async stop(){
 
@@ -771,6 +845,7 @@
             handleClose(done) {
                 this.$confirm("确认关闭？")
                     .then(_ => {
+                        this.lookUpState = false;
                         done();
                     })
                     .catch(_ => {});
@@ -784,7 +859,7 @@
            
             addSelectionChange(val) {
                 this.addSelectedList = val
-                console.log(val)
+                console.log(this.addSelectedList)
             },
             addSelectionChange_two(val){
                 this.addSelectedList_two = val
@@ -806,6 +881,31 @@
                         console.log(supplierId);
                         // this.getSupplierList();
 
+                        // supgoolsId 商品id
+                        // this.addSelectedList所有被选中的商品list
+                        // addOrderForm.pcommodityDos table中的数据来源
+
+                        let array = [];
+
+                        // 第一层循环，遍历已选择的商品table绑定的所有数据
+                        for(let i = 0;i<this.addOrderForm.pcommodityDos.length;i++){
+                            // 第二层循环，遍历已选择的商品table中被选中的所有数据
+                            for(let j = 0;j<this.addSelectedList.length;j++){
+                                // 如果两个元素相等，那么新数组不添加该数据
+                                if (this.addOrderForm.pcommodityDos[i] == this.addSelectedList[j]) {
+                                    break;
+                                }
+                                // 如果遍历到了内层循环最后一次循环，那么说明该数据不该被删除，添加进数组
+                                if (j == this.addSelectedList.length-1) {
+                                    array.push(this.addOrderForm.pcommodityDos[i]);
+                                }
+                            }
+                        }
+                        // 将已选择的商品table重新赋值
+                        this.addOrderForm.pcommodityDos = array
+
+                        this.jisuan();
+
                         this.$message({
                             type: "success",
                             message: "删除成功!"
@@ -817,6 +917,11 @@
                             message: "已取消删除"
                         });
                     });
+            },
+            // 新增订单取消
+            addCancel(){
+                this.addOrderVisible=false;
+                this.addOrderForm.pcommodityDos = [];
             },
             addSave(){//保存采购订单
                this.$refs.addOrderRef.validate(async valid => {
@@ -838,10 +943,13 @@
                 //    this.panduan.supgoolsWeight1= false
                 //    this.panduan.supgoolsWidth1=false
                 //    this.panduan.supgoolsWidths1= false
-                let param = new URLSearchParams();
-                param.append("porderCode", porderCode);
-                const {data:res} = await this.$http.post('jh/purchase/dtjresultMap',param);
-                // console.log(res);
+
+
+                // let param = new URLSearchParams();
+                // param.append("porderCode", porderCode);
+                console.log(porderCode)
+                const {data:res} = await this.$http.post('jh/purchase/dtjresultMap',{"porderCode":porderCode});
+                console.log(res);
                 
                 for (let i = 0; i < res[0].pcommodityDos.length; i++) {
                     this.delarr.push(res[0].pcommodityDos[i].suppliergoolsId)
@@ -930,8 +1038,17 @@
                 // console.log(res[0]);
                 this.editOrderForm=res[0];
                 this.editOrderVisible = true;
+
+                let time = [res[0].porderStarttime,res[0].porderStoptime]
+                this.editOrderForm.time = time;
+                
          
                 },   
+                //查看订单
+                showLookUpOrder(porderCode){
+                    this.lookUpState = true;
+                    this.showEditOrder(porderCode)
+                },
                 async editOrder(){
                 const {data:res} = await this.$http.post('/jh/purchase/bianji',this.editOrderForm);
                 this.getList();

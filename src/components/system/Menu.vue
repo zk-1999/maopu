@@ -26,7 +26,7 @@
                 ></el-switch>
               </template>
             </el-table-column>
-            <el-table-column  label="操作" width="90px">
+            <el-table-column  label="操作" width="95px">
               <template slot-scope="scope">
                 <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditMenu(scope.row.menuId)">修改</el-button>
               </template>

@@ -85,7 +85,7 @@
         ref="addDutyRef"
         :rules="addDutyRules">
           <el-form-item label="职务名称：" prop="roleName"><el-input placeholder="请输入职务名称" v-model="addDutyForm.roleName"></el-input></el-form-item>
-          <el-form-item label="备注内容：" prop="remark"><el-input type="textarea" :rows="2" placeholder="请输入备注内容" v-model="addDutyForm.remark"></el-input></el-form-item>
+          <el-form-item label="备注内容：" prop="remark"><el-input  placeholder="请输入备注内容" v-model="addDutyForm.remark"></el-input></el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addbumenDialogVisible = false">取 消</el-button>
@@ -103,7 +103,7 @@
         ref="addDutyRef"
         :rules="addDutyRules">
           <el-form-item label="职务名称：" prop="roleName"><el-input placeholder="请输入职务名称" v-model="editDutyForm.roleName"></el-input></el-form-item>
-          <el-form-item label="备注内容：" prop="remark"><el-input type="textarea" :rows="2" placeholder="请输入备注内容" v-model="editDutyForm.remark"></el-input></el-form-item>
+          <el-form-item label="备注内容：" prop="remark"><el-input  placeholder="请输入备注内容" v-model="editDutyForm.remark"></el-input></el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editbumenDialogVisible = false">取 消</el-button>
@@ -459,4 +459,5 @@ export default {
     .chongzhi{
       margin-top: 0px;
     }
+  
 </style>

@@ -11,6 +11,12 @@ import TreeTable from 'vue-table-with-tree-grid'
 import qs from 'qs'
 Vue.component('tree-table', TreeTable)
 
+
+
+
+
+
+
 Vue.filter('datefomat', function(str) {
     var date = new Date(str * 1000)
     var y = date.getFullYear()
@@ -28,7 +34,7 @@ axios.interceptors.request.use(config => {
     })
     //配置请求的根路径
     // axios.defaults.baseURL = "http://192.168.31.212:8080/maopu/";
-    // axios.defaults.baseURL = "http://192.168.1.100:8080/maopu/";
+    // axios.defaults.baseURL = "http://localhost:8090/maopu";
     // axios.defaults.baseURL = "http://192.168.31.234:8090/";
 
 axios.defaults.baseURL = "/api";

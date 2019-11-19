@@ -91,15 +91,15 @@
 
 <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="单层">
-    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef">
+    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef" :model="chaProductionForm">
             
               <el-form-item label="产品名称：" prop="productType">
                     <el-select v-model="chaProductionForm.productType" placeholder="请选择">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
@@ -153,9 +153,9 @@
               </template>
             </el-table-column>
           </el-table> -->
-                 <el-table
-    :data="tableData"
-    style="width: 100%" border  >
+  <el-table
+    :data="ProductionList"
+    style="width: 100%" border   @selection-change="handleSelectionChange">
     <!-- default-expand-all -->
     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
@@ -163,36 +163,53 @@
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
           <el-form-item label="">
-            <span>{{ props.row.name }}</span>,
-        
-            <span>{{ props.row.shop }}</span>,
-       
-            <span>{{ props.row.id }}</span>,
-       
-            <span>{{ props.row.shopId }}</span>,
-       
-            <span>{{ props.row.category }}</span>,
-        
-         
-            <span>{{ props.row.address }}</span>,
-         
-          
-            <span>{{ props.row.desc }}</span>
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
           </el-form-item>
         </el-form>
       </template>
     </el-table-column>
-    <el-table-column
-      label="商品 ID"
-      prop="id">
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品名称" prop="productType"></el-table-column>
+    <el-table-column label="纸张品牌" prop="productBrandinner"></el-table-column>
+    <el-table-column label="纸张类型" prop="productZhizleix"></el-table-column>
+    <el-table-column label="纸张克重" prop="productGraminner"></el-table-column>
+    <el-table-column label="淋膜类型" prop="productCoatedinner"></el-table-column>
+    <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="设计稿" prop="designId">
+       <template slot-scope="scope">
+                {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
+              </template>
     </el-table-column>
-    <el-table-column
-      label="商品名称"
-      prop="name">
-    </el-table-column>
-    <el-table-column
-      label="描述"
-      prop="desc">
+     <el-table-column label="状态" width="65px" align="center">
+              <template slot-scope="scope">
+                <el-switch
+                  v-model="scope.row.productState"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0"
+                  @change="userStateChanged(scope.row)"
+                ></el-switch>
+              </template>
+            </el-table-column>
+    <el-table-column label="操作" width="190px" align="center">
+      <template slot-scope="scope">
+        <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditProduction(scope.row.productgoodsId,0)">修改</el-button>
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          @click="deletebumen(scope.row.productgoodsId)"
+          size="mini"
+        >删除</el-button>
+      </template>
     </el-table-column>
   </el-table>
 
@@ -207,15 +224,15 @@
       ></el-pagination>
   </el-tab-pane>
   <el-tab-pane label="双层">
-    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef">
+    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef" :model="chaProductionForm">
               
-              <el-form-item label="产品规格与名称：" prop="productType">
+              <el-form-item label="产品名称：" prop="productType">
                     <el-select v-model="chaProductionForm.productType" placeholder="请选择">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
@@ -231,19 +248,42 @@
             :disabled="selectedList.length == 0"
           >批量启用/禁用</el-button>
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
-      <el-table :data="ProductionList" border @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="35" align="center"></el-table-column>
-            <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
-            <el-table-column prop="list" label="名称"  align="center"></el-table-column>
-            <el-table-column prop="productName1" label="内杯"  align="center"></el-table-column>
-            <el-table-column prop="productType" label="产品规格与名称"  align="center" width="120px"></el-table-column>
-            <el-table-column prop="productBrandabroad" label="纸张品牌"  align="center"></el-table-column>
-            <el-table-column prop="productGramabroad" label="纸张克重" align="center"></el-table-column>
-            <el-table-column prop="productCoatedabroad" label="淋膜类型"  align="center"></el-table-column>
-            <!-- <el-table-column prop="list" label="设计稿"  align="center"></el-table-column> -->
-            <el-table-column prop="productBoxMark" label="箱唛" align="center"></el-table-column>
-            <el-table-column prop="productLabel" label="标唛" align="center"></el-table-column>
-            <el-table-column label="状态" width="65px" align="center">
+       <el-table
+    :data="ProductionList"
+    style="width: 100%" border   @selection-change="handleSelectionChange">
+    <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="55">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品名称" prop="productType"></el-table-column>
+    <el-table-column label="纸张品牌" prop="productBrandabroad"></el-table-column>
+    <el-table-column label="纸张类型" prop="productZhizleix"></el-table-column>
+    <el-table-column label="纸张克重" prop="productGramabroad"></el-table-column>
+    <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
+    <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="设计稿" prop="designId">
+      <template slot-scope="scope">
+                {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
+              </template>
+    </el-table-column>
+     <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
                   v-model="scope.row.productState"
@@ -278,14 +318,14 @@
       ></el-pagination>
   </el-tab-pane>
   <el-tab-pane label="瓦楞">
-    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef">
-              <el-form-item label="产品规格与名称：" prop="productType">
+    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef" :model="chaProductionForm">
+               <el-form-item label="产品名称：" prop="productType">
                     <el-select v-model="chaProductionForm.productType" placeholder="请选择">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
@@ -301,24 +341,41 @@
             :disabled="selectedList.length == 0"
           >批量启用/禁用</el-button>
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
-      <el-table :data="ProductionList" border @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="35" align="center"></el-table-column>
-            <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
-            <!-- <el-table-column prop="productName" label="名称"  align="center"></el-table-column> -->
-            <el-table-column prop="list" label="名称"  align="center"></el-table-column>
-            <el-table-column prop="productName1" label="内杯"  align="center"></el-table-column>
-            <el-table-column prop="productType" label="产品规格与名称"  align="center" width="120px"></el-table-column>
-            <el-table-column prop="productBrandabroad" label="纸张品牌"  align="center"></el-table-column>
-            <el-table-column prop="productGramabroad" label="纸张克重" align="center"></el-table-column>
-            <el-table-column prop="productCoatedabroad" label="淋膜类型"  align="center"></el-table-column>
-            <!-- <el-table-column prop="designId" label="设计稿"  align="center"></el-table-column> -->
-            <el-table-column prop="productBoxMark" label="箱唛" align="center"></el-table-column>
-            <el-table-column prop="productLabel" label="标唛" align="center"></el-table-column>
-            <el-table-column prop="productBrandmid" label="纸张品牌/夹"  align="center"></el-table-column>
-            <el-table-column prop="productGrammid" label="纸张克重/夹" align="center"></el-table-column>
-            <el-table-column prop="productCoatedmid" label="淋膜类型/夹"  align="center"></el-table-column>
-            <el-table-column prop="productCorrugated" label="瓦楞形状/夹"  align="center"></el-table-column>
-
+       <el-table
+    :data="ProductionList"
+    style="width: 100%" border  @selection-change="handleSelectionChange" >
+    <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="55">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品名称" prop="productType"></el-table-column>
+    <el-table-column label="纸张品牌" prop="productBrandabroad"></el-table-column>
+    <el-table-column label="纸张类型" prop="productZhizleix"></el-table-column>
+    <el-table-column label="纸张克重" prop="productGramabroad"></el-table-column>
+    <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
+    <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="设计稿" prop="designId">
+       <template slot-scope="scope">
+                {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
+              </template>
+    </el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -354,15 +411,15 @@
       ></el-pagination>
   </el-tab-pane>
   <el-tab-pane label="杯套">
-    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef">
+    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef" :model="chaProductionForm">
               
-              <el-form-item label="产品规格与名称：" prop="productType">
+               <el-form-item label="产品名称：" prop="productType">
                     <el-select v-model="chaProductionForm.productType" placeholder="请选择">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
@@ -378,23 +435,41 @@
             :disabled="selectedList.length == 0"
           >批量启用/禁用</el-button>
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
-      <el-table :data="ProductionList" border @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="35" align="center"></el-table-column>
-            <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
-<el-table-column prop="list" label="名称"  align="center"></el-table-column>
-                  <!-- <el-table-column prop="productName" label="名称"  align="center"></el-table-column> -->
-            <!-- <el-table-column prop="productName1" label="内杯"  align="center"></el-table-column> -->
-            <el-table-column prop="productType" label="产品规格与名称"  align="center" width="120px"></el-table-column>
-            <el-table-column prop="productBrandabroad" label="纸张品牌"  align="center"></el-table-column>
-            <el-table-column prop="productGramabroad" label="纸张克重" align="center"></el-table-column>
-            <el-table-column prop="productCoatedabroad" label="淋膜类型"  align="center"></el-table-column>
-            <!-- <el-table-column prop="list" label="设计稿"  align="center"></el-table-column> -->
-            <el-table-column prop="productBoxMark" label="箱唛" align="center"></el-table-column>
-            <el-table-column prop="productLabel" label="标唛" align="center"></el-table-column>
-            <el-table-column prop="productBrandmid" label="纸张品牌/夹"  align="center"></el-table-column>
-            <el-table-column prop="productGrammid" label="纸张克重/夹" align="center"></el-table-column>
-            <el-table-column prop="productCoatedmid" label="淋膜类型/夹"  align="center"></el-table-column>
-            <el-table-column prop="productCorrugated" label="瓦楞形状/夹"  align="center"></el-table-column>
+       <el-table
+    :data="ProductionList"
+    style="width: 100%" border   @selection-change="handleSelectionChange">
+    <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="55">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品名称" prop="productType"></el-table-column>
+    <el-table-column label="纸张品牌" prop="productBrandabroad"></el-table-column>
+    <el-table-column label="纸张类型" prop="productZhizleix"></el-table-column>
+    <el-table-column label="纸张克重" prop="productGramabroad"></el-table-column>
+    <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
+    <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="设计稿" prop="designId">
+       <template slot-scope="scope">
+                {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
+              </template>
+    </el-table-column>
 
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
@@ -431,14 +506,14 @@
       ></el-pagination>
   </el-tab-pane>
   <el-tab-pane label="手柄">
-    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef">
-             <el-form-item label="产品规格与名称：" prop="productType">
+    <el-form :inline="true" class="demo-form-inline" ref="chamerchandiseRef" :model="chaProductionForm">
+              <el-form-item label="产品名称：" prop="productType">
                     <el-select v-model="chaProductionForm.productType" placeholder="请选择">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
@@ -454,23 +529,41 @@
             :disabled="selectedList.length == 0"
           >批量启用/禁用</el-button>
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
-      <el-table :data="ProductionList" border @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="35" align="center"></el-table-column>
-            <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
-            <el-table-column prop="list" label="名称"  align="center"></el-table-column>
-            <!-- <el-table-column prop="productName" label="名称"  align="center"></el-table-column> -->
-            <!-- <el-table-column prop="productName1" label="内杯"  align="center"></el-table-column> -->
-            <el-table-column prop="productType" label="产品规格与名称"  align="center" width="120px"></el-table-column>
-            <el-table-column prop="productBrandabroad" label="纸张品牌"  align="center"></el-table-column>
-            <el-table-column prop="productGramabroad" label="纸张克重" align="center"></el-table-column>
-            <el-table-column prop="productCoatedabroad" label="淋膜类型"  align="center"></el-table-column>
-            <!-- <el-table-column prop="list" label="设计稿"  align="center"></el-table-column> -->
-            <el-table-column prop="productBoxMark" label="箱唛" align="center"></el-table-column>
-            <el-table-column prop="productLabel" label="标唛" align="center"></el-table-column>
-            <el-table-column prop="productBrandmid" label="纸张品牌/手"  align="center"></el-table-column>
-            <el-table-column prop="productGrammid" label="纸张克重/手" align="center"></el-table-column>
-            <el-table-column prop="productCoatedmid" label="淋膜类型/手"  align="center"></el-table-column>
-            <el-table-column prop="productHandle" label="手柄形状/手"  align="center"></el-table-column>
+      <el-table
+    :data="ProductionList"
+    style="width: 100%" border   @selection-change="handleSelectionChange">
+    <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="55">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品名称" prop="productType"></el-table-column>
+    <el-table-column label="纸张品牌" prop="productBrandabroad"></el-table-column>
+    <el-table-column label="纸张类型" prop="productZhizleix"></el-table-column>
+    <el-table-column label="纸张克重" prop="productGramabroad"></el-table-column>
+    <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
+    <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="设计稿" prop="designId">
+      <template slot-scope="scope">
+                {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
+              </template>
+    </el-table-column>
 
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
@@ -666,95 +759,148 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
+        <div class="fenge">单层信息</div>
             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="addProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                    <el-form-item label="名称：" prop="designId">
-            <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="addProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="addProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType" >
+                    <el-select v-model="addProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId" >
                   </el-option>
                 </el-select>
                     </el-form-item>
                     
-                    <el-form-item label="纸张品牌/内：" prop="productBrandinner">
-                    
-                    <el-select v-model="addProductionForm.productBrandinner" placeholder="请选择">
+                    <el-form-item label="纸张品牌：" prop="productBrandinner">
+                    <el-select v-model="addProductionForm.productBrandinner" placeholder="请选择" >
                         <el-option
                           v-for="item in zhizhang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
                     </el-form-item>     
-                    </el-col>
-                <el-col :span="12">
-                    
-                    <el-form-item label="淋膜类型/内：" prop="productCoatedinner">
-                    <el-select v-model="addProductionForm.productCoatedinner" placeholder="请选择">
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="addProductionForm.productZhizleix" placeholder="请选择">
                         <el-option
-                          v-for="item in linmo"
+                          v-for="item in xiaoleixing"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
-                    <el-form-item label="箱唛/内：" prop="productBoxMark">
-                    <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/内：" prop="productLabel">
-                    <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                         </el-col>
-            </el-row>
-              <el-form-item label="纸张克数/内：" prop="productGraminner">
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGraminner">
                     <el-select v-model="addProductionForm.productGraminner" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangkezhong"
                           :key="item.basicId"
                           :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedinner">
+                    <el-select v-model="addProductionForm.productCoatedinner" placeholder="请选择">
+                        <el-option
+                          v-for="item in linmo"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
+                    <el-form-item label="箱唛：" prop="productBoxMark">
+                    <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
+                    <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
                     </el-form-item>
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in waibaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="addProductionForm.productInnerbao*addProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="addProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+              
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible = false">取 消</el-button>
@@ -770,40 +916,150 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+        <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="addProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                     <el-form-item label="名称：" prop="designId">
-            <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="addProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-                      
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="addProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="addProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    <el-form-item label="内杯：" prop="productId">
+                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
+                    <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>     
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="addProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
+                    <el-select v-model="addProductionForm.productGramabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhangkezhong"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
+                    <el-select v-model="addProductionForm.productCoatedabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in linmo"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
+                    <el-form-item label="箱唛：" prop="productBoxMark">
+                    <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
+                    <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in waibaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="addProductionForm.productInnerbao*addProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="addProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+            <div class="fenge1">内杯信息</div>
+            <el-form-item label="内杯：" prop="productId">
                     <el-select v-model="addProductionForm.productId" placeholder="请选择">
                   <el-option
                     v-for="item in neibei"
@@ -813,64 +1069,6 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                   <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
-                    <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>   
-                    
-                    </el-col>
-                <el-col :span="12">
-                  <el-form-item label="纸张克数/外：" prop="productGramabroad">
-                    <el-select v-model="addProductionForm.productGramabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
-                    <el-select v-model="addProductionForm.productCoatedabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
-                    <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/外：" prop="productLabel">
-                    <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                       
-                </el-col>
-            </el-row>
-            
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible1 = false">取 消</el-button>
@@ -886,39 +1084,151 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+        <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="addProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                    <el-form-item label="名称：" prop="designId">
-            <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="addProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="addProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="addProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                   <el-form-item label="内杯：" prop="productId">
+                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
+                    <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>     
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="addProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
+                    <el-select v-model="addProductionForm.productGramabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhangkezhong"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
+                    <el-select v-model="addProductionForm.productCoatedabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in linmo"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                   
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
+                    <el-form-item label="箱唛：" prop="productBoxMark">
+                    <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
+                    <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in waibaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="addProductionForm.productInnerbao*addProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="addProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+            <div class="fenge1">内杯信息</div>
+            <el-form-item label="内杯：" prop="productId">
                     <el-select v-model="addProductionForm.productId" placeholder="请选择">
                   <el-option
                     v-for="item in neibei"
@@ -929,108 +1239,65 @@
                 </el-select>
                     </el-form-item>
                     
+            <div class="fenge1">夹层信息</div>
+            <el-row>
+              <el-col :span="12">
             <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
-                    
-                    <el-select v-model="addProductionForm.productBrandmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/夹：" prop="productGrammid">
-                    <el-select v-model="addProductionForm.productGrammid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
-                    <el-select v-model="addProductionForm.productCoatedmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    
-                </el-col>
-                <el-col :span="12"> 
-                   <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
-                    <el-select v-model="addProductionForm.productCorrugated" placeholder="请选择">
-                        <el-option
-                          v-for="item in waleng"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                  <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
-                    <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/外：" prop="productGramabroad">
-                    <el-select v-model="addProductionForm.productGramabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
-                    <el-select v-model="addProductionForm.productCoatedabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
-                    <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/外：" prop="productLabel">
-                    <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-
-                </el-col>
+                                
+                <el-select v-model="addProductionForm.productBrandmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in zhizhang"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicRetainone">
+                    </el-option>
+                  </el-select>
+                </el-form-item>     
+                <el-form-item label="纸张类型：" prop="productZhizleixone">
+                <el-select v-model="addProductionForm.productZhizleixone" placeholder="请选择">
+                    <el-option
+                      v-for="item in xiaoleixing"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+            <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
+                <el-select v-model="addProductionForm.productCoatedmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in linmo"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicRetainone">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+                <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
+                <el-select v-model="addProductionForm.productCorrugated" placeholder="请选择">
+                    <el-option
+                      v-for="item in waleng"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+              </el-col>
             </el-row>
-                  
-                    
-                       
               
+              <el-form-item label="纸张克数/夹：" prop="productGrammid">
+              <el-select v-model="addProductionForm.productGrammid" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangkezhong"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible2 = false">取 消</el-button>
@@ -1046,157 +1313,207 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+           <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="addProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                    <el-form-item label="名称：" prop="designId">
-            <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="addProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-                    <!-- <el-form-item label="设计稿型号：" prop="designId">
-            <el-select v-model="addProductionForm.designId" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="addProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designDate+'-'+item.designName"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
-            </el-form-item> -->
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="addProductionForm.productType" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                   <!-- <el-form-item label="内杯：" prop="parametersName">
-                    <el-select v-model="addProductionForm.parametersName" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpinguigeyumingcheng"
-                    :key="item.basicId"
-                    :label="item.basicRetainone"
-                    :value="item.basicRetainone">
-                  </el-option>
-                </el-select>
-                    </el-form-item> -->
                     
-            <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
-                    
-                    <el-select v-model="addProductionForm.productBrandmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/夹：" prop="productGrammid">
-                    <el-select v-model="addProductionForm.productGrammid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                     <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
-                    <el-select v-model="addProductionForm.productCoatedmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                </el-col>
-                <el-col :span="12"> 
-                   
-                  <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
                     </el-form-item>     
-                    <el-form-item label="纸张克数/外：" prop="productGramabroad">
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="addProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
                     <el-select v-model="addProductionForm.productGramabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangkezhong"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
                     <el-select v-model="addProductionForm.productCoatedabroad" placeholder="请选择">
                         <el-option
                           v-for="item in linmo"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                   <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
                         </el-option>
                       </el-select>
                     </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
+                    <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
-                   <el-form-item label="标唛/外：" prop="productLabel">
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
                     <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
                     </el-form-item>
-
-                </el-col>
-            </el-row>
-            <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
-                    <el-select v-model="addProductionForm.productCorrugated" placeholder="请选择">
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择">
                         <el-option
-                          v-for="item in waleng"
+                          v-for="item in waibaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="addProductionForm.productInnerbao*addProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="addProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+                    
+            <div class="fenge1">夹层信息</div>
+            <el-row>
+              <el-col :span="12">
+            <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
+                                
+                <el-select v-model="addProductionForm.productBrandmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in zhizhang"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>     
+                <el-form-item label="纸张类型：" prop="productZhizleixone">
+                <el-select v-model="addProductionForm.productZhizleixone" placeholder="请选择">
+                    <el-option
+                      v-for="item in xiaoleixing"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+            <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
+                <el-select v-model="addProductionForm.productCoatedmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in linmo"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+                <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
+                <el-select v-model="addProductionForm.productCorrugated" placeholder="请选择">
+                    <el-option
+                      v-for="item in waleng"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+              </el-col>
+            </el-row>
+              
+              <el-form-item label="纸张克数/夹：" prop="productGrammid">
+              <el-select v-model="addProductionForm.productGrammid" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangkezhong"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible3 = false">取 消</el-button>
@@ -1212,148 +1529,207 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+           <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="addProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                     <el-form-item label="名称：" prop="designId">
-            <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="addProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-     <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="addProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="addProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
-                
                     </el-form-item>
-                   <!-- <el-form-item label="内杯：" prop="parametersName">
-                    <el-select v-model="addProductionForm.parametersName" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpinguigeyumingcheng"
-                    :key="item.basicId"
-                    :label="item.basicRetainone"
-                    :value="item.basicRetainone">
-                  </el-option>
-                </el-select>
-                    </el-form-item> -->
-                   
-            <el-form-item label="纸张品牌/手：" prop="productBrandmid">
                     
-                    <el-select v-model="addProductionForm.productBrandmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/手：" prop="productGrammid">
-                    <el-select v-model="addProductionForm.productGrammid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                     <el-form-item label="淋膜类型/手：" prop="productCoatedmid">
-                    <el-select v-model="addProductionForm.productCoatedmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                </el-col>
-                <el-col :span="12"> 
-                   
-                  <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
                     </el-form-item>     
-                    <el-form-item label="纸张克数/外：" prop="productGramabroad">
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="addProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
                     <el-select v-model="addProductionForm.productGramabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangkezhong"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
                     <el-select v-model="addProductionForm.productCoatedabroad" placeholder="请选择">
                         <el-option
                           v-for="item in linmo"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                   <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
                         </el-option>
                       </el-select>
                     </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
+                    <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/外：" prop="productLabel">
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
                     <el-select v-model="addProductionForm.productLabel" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
                     </el-form-item>
-
-                </el-col>
-            </el-row>
-            <el-form-item label="手柄形状/手：" prop="productHandle">
-                    <el-select v-model="addProductionForm.productHandle" placeholder="请选择">
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择">
                         <el-option
-                          v-for="item in shoubin"
+                          v-for="item in waibaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="addProductionForm.productInnerbao*addProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="addProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+
+            <div class="fenge1">夹层信息</div>
+            <el-row>
+              <el-col :span="12">
+            <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
+                                
+                <el-select v-model="addProductionForm.productBrandmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in zhizhang"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>     
+                <el-form-item label="纸张类型：" prop="productZhizleixone">
+                <el-select v-model="addProductionForm.productZhizleixone" placeholder="请选择">
+                    <el-option
+                      v-for="item in xiaoleixing"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+            <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
+                <el-select v-model="addProductionForm.productCoatedmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in linmo"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+               <el-form-item label="手柄形状/手：" prop="productHandle">
+                    <el-select v-model="addProductionForm.productHandle" placeholder="请选择">
+                        <el-option
+                          v-for="item in shoubin"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
                     </el-form-item>  
+              </el-col>
+            </el-row>
+              
+              <el-form-item label="纸张克数/夹：" prop="productGrammid">
+              <el-select v-model="addProductionForm.productGrammid" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangkezhong"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible4 = false">取 消</el-button>
@@ -1369,95 +1745,147 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
+            <div class="fenge">单层信息</div>
             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="editProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                      <el-form-item label="名称：" prop="designId">
-            <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="editProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="editProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType" >
+                    <el-select v-model="editProductionForm.productType" placeholder="请选择"   @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                  
-                    <el-form-item label="纸张品牌/内：" prop="productBrandinner">
                     
-                    <el-select v-model="editProductionForm.productBrandinner" placeholder="请选择">
+                    <el-form-item label="纸张品牌：" prop="productBrandinner">
+                    <el-select v-model="editProductionForm.productBrandinner" placeholder="请选择" >
                         <el-option
                           v-for="item in zhizhang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
                     </el-form-item>     
-                    </el-col>
-                <el-col :span="12">
-                    
-                    <el-form-item label="淋膜类型/内：" prop="productCoatedinner">
-                    <el-select v-model="editProductionForm.productCoatedinner" placeholder="请选择">
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="editProductionForm.productZhizleix" placeholder="请选择">
                         <el-option
-                          v-for="item in linmo"
+                          v-for="item in xiaoleixing"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
-                    <el-form-item label="箱唛/内：" prop="productBoxMark">
-                    <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/内：" prop="productLabel">
-                    <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                         </el-col>
-            </el-row>
-            <el-form-item label="纸张克数/内：" prop="productGraminner">
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGraminner">
                     <el-select v-model="editProductionForm.productGraminner" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangkezhong"
                           :key="item.basicId"
                           :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedinner">
+                    <el-select v-model="editProductionForm.productCoatedinner" placeholder="请选择">
+                        <el-option
+                          v-for="item in linmo"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
+                    <el-form-item label="箱唛：" prop="productBoxMark">
+                    <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
+                    <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="editProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
                     </el-form-item>
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="editProductionForm.productOutbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in waibaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="editProductionForm.productInnerbao*editProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="editProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible = false">取 消</el-button>
@@ -1474,39 +1902,150 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-           <el-row>
+           <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                    <el-select class="tiantou" v-model="editProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                    <el-form-item label="名称：" prop="designId">
-            <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="editProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="editProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="editProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    <el-form-item label="内杯：" prop="productId">
+                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
+                    <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>     
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="editProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
+                    <el-select v-model="editProductionForm.productGramabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhangkezhong"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
+                    <el-select v-model="editProductionForm.productCoatedabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in linmo"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
+                    <el-form-item label="箱唛：" prop="productBoxMark">
+                    <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
+                    <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="editProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="editProductionForm.productOutbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in waibaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="editProductionForm.productInnerbao*editProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="editProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+            <div class="fenge1">内杯信息</div>
+            <el-form-item label="内杯：" prop="productId">
                     <el-select v-model="editProductionForm.productId" placeholder="请选择">
                   <el-option
                     v-for="item in neibei"
@@ -1516,65 +2055,6 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
-                       <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
-                    <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
-                  <el-form-item label="纸张克数/外：" prop="productGramabroad">
-                    <el-select v-model="editProductionForm.productGramabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
-                    <el-select v-model="editProductionForm.productCoatedabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
-                    <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/外：" prop="productLabel">
-                    <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                       
-                </el-col>
-            </el-row>
-           
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible1 = false">取 消</el-button>
@@ -1591,39 +2071,151 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+            <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="editProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                    <el-form-item label="名称：" prop="designId">
-            <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="editProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="editProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="editProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                   <el-form-item label="内杯：" prop="productId">
+                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
+                    <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>     
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="editProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
+                    <el-select v-model="editProductionForm.productGramabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in zhizhangkezhong"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
+                    <el-select v-model="editProductionForm.productCoatedabroad" placeholder="请选择">
+                        <el-option
+                          v-for="item in linmo"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                   
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
+                    <el-form-item label="箱唛：" prop="productBoxMark">
+                    <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
+                    <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
+                        <el-option
+                          v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="editProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="editProductionForm.productOutbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in waibaozhuang"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicRetainone">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="editProductionForm.productInnerbao*editProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="editProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+            <div class="fenge1">内杯信息</div>
+            <el-form-item label="内杯：" prop="productId">
                     <el-select v-model="editProductionForm.productId" placeholder="请选择">
                   <el-option
                     v-for="item in neibei"
@@ -1634,104 +2226,65 @@
                 </el-select>
                     </el-form-item>
                     
+            <div class="fenge1">夹层信息</div>
+            <el-row>
+              <el-col :span="12">
             <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
-                    
-                    <el-select v-model="editProductionForm.productBrandmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/夹：" prop="productGrammid">
-                    <el-select v-model="editProductionForm.productGrammid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
-                    <el-select v-model="editProductionForm.productCoatedmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                </el-col>
-                <el-col :span="12"> 
-                   <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
-                    <el-select v-model="editProductionForm.productCorrugated" placeholder="请选择">
-                        <el-option
-                          v-for="item in waleng"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                  <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
-                    <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/外：" prop="productGramabroad">
-                    <el-select v-model="editProductionForm.productGramabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
-                    <el-select v-model="editProductionForm.productCoatedabroad" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
-                    <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/外：" prop="productLabel">
-                    <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
-                        <el-option
-                          v-for="item in biaomai"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-
-                </el-col>
+                                
+                <el-select v-model="editProductionForm.productBrandmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in zhizhang"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>     
+                <el-form-item label="纸张类型：" prop="productZhizleixone">
+                <el-select v-model="editProductionForm.productZhizleixone" placeholder="请选择">
+                    <el-option
+                      v-for="item in xiaoleixing"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+            <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
+                <el-select v-model="editProductionForm.productCoatedmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in linmo"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+                <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
+                <el-select v-model="editProductionForm.productCorrugated" placeholder="请选择">
+                    <el-option
+                      v-for="item in waleng"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+              </el-col>
             </el-row>
-                  
+              
+              <el-form-item label="纸张克数/夹：" prop="productGrammid">
+              <el-select v-model="editProductionForm.productGrammid" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangkezhong"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible2 = false">取 消</el-button>
@@ -1748,147 +2301,220 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+            <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="editProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                     <el-form-item label="名称：" prop="designId">
-            <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="editProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-      <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="editProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="editProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
-                   <!-- <el-form-item label="内杯：" prop="parametersName">
-                    <el-select v-model="addProductionForm.parametersName" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpinguigeyumingcheng"
-                    :key="item.basicId"
-                    :label="item.basicRetainone"
-                    :value="item.basicRetainone">
-                  </el-option>
-                </el-select>
-                    </el-form-item> -->
-                   
-            <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
                     
-                    <el-select v-model="editProductionForm.productBrandmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/夹：" prop="productGrammid">
-                    <el-select v-model="editProductionForm.productGrammid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                     <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
-                    <el-select v-model="editProductionForm.productCoatedmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                </el-col>
-                <el-col :span="12"> 
-                   
-                  <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
                     </el-form-item>     
-                    <el-form-item label="纸张克数/外：" prop="productGramabroad">
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="editProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
                     <el-select v-model="editProductionForm.productGramabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangkezhong"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
                     <el-select v-model="editProductionForm.productCoatedabroad" placeholder="请选择">
                         <el-option
                           v-for="item in linmo"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                   
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
                         </el-option>
                       </el-select>
                     </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
+                    <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
-                   <el-form-item label="标唛/外：" prop="productLabel">
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
                     <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="editProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
                     </el-form-item>
-
-                </el-col>
-            </el-row>
-            <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
-                    <el-select v-model="editProductionForm.productCorrugated" placeholder="请选择">
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="editProductionForm.productOutbao" placeholder="请选择">
                         <el-option
-                          v-for="item in waleng"
+                          v-for="item in waibaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="editProductionForm.productInnerbao*editProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="editProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+            <div class="fenge1">内杯信息</div>
+            <el-form-item label="内杯：" prop="productId">
+                    <el-select v-model="editProductionForm.productId" placeholder="请选择">
+                  <el-option
+                    v-for="item in neibei"
+                    :key="item.productgoodsId"
+                    :label="item.productName+'-'+item.productType+'-'+item.productBrandinner+'-'+item.productGraminner+'-'+item.productCoatedinner+'-'+item.productBoxMark+'-'+item.productBoxMark"
+                    :value="item.productgoodsId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+                    
+            <div class="fenge1">夹层信息</div>
+            <el-row>
+              <el-col :span="12">
+            <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
+                                
+                <el-select v-model="editProductionForm.productBrandmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in zhizhang"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>     
+                <el-form-item label="纸张类型：" prop="productZhizleixone">
+                <el-select v-model="editProductionForm.productZhizleixone" placeholder="请选择">
+                    <el-option
+                      v-for="item in xiaoleixing"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+            <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
+                <el-select v-model="editProductionForm.productCoatedmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in linmo"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+                <el-form-item label="瓦楞形状/夹：" prop="productCorrugated">
+                <el-select v-model="editProductionForm.productCorrugated" placeholder="请选择">
+                    <el-option
+                      v-for="item in waleng"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+              </el-col>
+            </el-row>
+              
+              <el-form-item label="纸张克数/夹：" prop="productGrammid">
+              <el-select v-model="editProductionForm.productGrammid" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangkezhong"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible3 = false">取 消</el-button>
@@ -1906,148 +2532,220 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <el-row>
+            <div class="fenge">双层信息</div>
+             <el-row>
                 <el-col :span="12">
-                  <!-- <el-form-item label="名称：" prop="productName">
-                     <el-select class="tiantou" v-model="editProductionForm.productName" placeholder="请选择类型">
-                    <el-option
-                  v-for="item in chanpinshejigaomingcheng"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicRetainone"
-                ></el-option>
-                  </el-select>
-                    </el-form-item> -->
-                    <el-form-item label="名称：" prop="designId">
-            <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                  <el-option
-                    v-for="item in shejigao"
-                    :key="item.designId"
-                    :label="item.designModel+'-'+item.designName+'-'+item.designDate"
-                    :value="item.designId">
-                  </el-option>
-                </el-select>
+                    <el-form-item label="商品名称：" prop="productName">
+            <el-input v-model="editProductionForm.productName" class="xiang" placeholder="请输入"></el-input>
             </el-form-item>
-     <el-form-item label="产品规格与名称：" prop="productType">
-                    <el-select v-model="editProductionForm.productType" placeholder="请选择">
+      <el-form-item label="产品名称：" prop="productType">
+                    <el-select v-model="editProductionForm.productType" placeholder="请选择"  @change="mingchengchicun">
                   <el-option
-                    v-for="item in chanpinguigeyumingcheng"
+                    v-for="item in chanpinmingchengyuchicun"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
-                
                     </el-form-item>
-                   <!-- <el-form-item label="内杯：" prop="parametersName">
-                    <el-select v-model="addProductionForm.parametersName" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpinguigeyumingcheng"
-                    :key="item.basicId"
-                    :label="item.basicRetainone"
-                    :value="item.basicRetainone">
-                  </el-option>
-                </el-select>
-                    </el-form-item> -->
                     
-            <el-form-item label="纸张品牌/手：" prop="productBrandmid">
-                    
-                    <el-select v-model="editProductionForm.productBrandmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhang"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>     
-                    <el-form-item label="纸张克数/手：" prop="productGrammid">
-                    <el-select v-model="editProductionForm.productGrammid" placeholder="请选择">
-                        <el-option
-                          v-for="item in zhizhangkezhong"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                     <el-form-item label="淋膜类型/手：" prop="productCoatedmid">
-                    <el-select v-model="editProductionForm.productCoatedmid" placeholder="请选择">
-                        <el-option
-                          v-for="item in linmo"
-                          :key="item.basicId"
-                          :label="item.basicRetainone"
-                          :value="item.basicRetainone">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
-                </el-col>
-                <el-col :span="12"> 
-                  
-                  <el-form-item label="纸张品牌/外：" prop="productBrandabroad">
-                    
+                    <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
                     </el-form-item>     
-                    <el-form-item label="纸张克数/外：" prop="productGramabroad">
+                    <el-form-item label="纸张类型：" prop="productZhizleix">
+                    <el-select v-model="editProductionForm.productZhizleix" placeholder="请选择">
+                        <el-option
+                          v-for="item in xiaoleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="纸张克重：" prop="productGramabroad">
                     <el-select v-model="editProductionForm.productGramabroad" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangkezhong"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>
-                    <el-form-item label="淋膜类型/外：" prop="productCoatedabroad">
+                    </el-form-item>   
+                    <el-form-item label="淋膜类型：" prop="productCoatedabroad">
                     <el-select v-model="editProductionForm.productCoatedabroad" placeholder="请选择">
                         <el-option
                           v-for="item in linmo"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>   
+                    <el-form-item label="单个克重：" prop="productOneke">
+                    <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item>   
+                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                      <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
+                      <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                    
+                    </el-col>
+                <el-col :span="12">
+                    <el-form-item label="外箱尺寸/高：" prop="productSizehight">
+                      <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
+                    </el-form-item> 
+                   
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
                         </el-option>
                       </el-select>
                     </el-form-item>  
-                    <el-form-item label="箱唛/外：" prop="productBoxMark">
+                    <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
                           :key="item.basicId"
                           :label="item.basicRetainone"
-                          :value="item.basicRetainone">
+                          :value="item.basicId">
                         </el-option>
                       </el-select>
-                    </el-form-item>  
-                    <el-form-item label="标唛/外：" prop="productLabel">
+                    </el-form-item>
+                    <el-form-item label="标唛：" prop="productLabel">
                     <el-select v-model="editProductionForm.productLabel" placeholder="请选择">
                         <el-option
                           v-for="item in biaomai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                     <el-form-item label="内包装：" prop="productInnerbao">
+                    <el-select v-model="editProductionForm.productInnerbao" placeholder="请选择">
+                        <el-option
+                          v-for="item in niebaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
                     </el-form-item>
-
-                </el-col>
-            </el-row>
-             <el-form-item label="手柄形状/手：" prop="productHandle">
-                    <el-select v-model="editProductionForm.productHandle" placeholder="请选择">
+                     <el-form-item label="外包装：" prop="productOutbao">
+                    <el-select v-model="editProductionForm.productOutbao" placeholder="请选择">
                         <el-option
-                          v-for="item in shoubin"
+                          v-for="item in waibaozhuang"
                           :key="item.basicId"
                           :label="item.basicRetainone"
                           :value="item.basicRetainone">
                         </el-option>
                       </el-select>
+                    </el-form-item>
+                     <el-form-item label="个/箱：" prop="productOnege">
+                    <el-input v-model="editProductionForm.productInnerbao*editProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    </el-form-item>
+                    <el-form-item label="配盖：" prop="productCover">
+                    <el-select v-model="editProductionForm.productCover" placeholder="请选择">
+                        <el-option
+                          v-for="item in peigai"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                         </el-col>
+            </el-row>
+            <div class="fenge1">内杯信息</div>
+            <el-form-item label="内杯：" prop="productId">
+                    <el-select v-model="editProductionForm.productId" placeholder="请选择">
+                  <el-option
+                    v-for="item in neibei"
+                    :key="item.productgoodsId"
+                    :label="item.productName+'-'+item.productType+'-'+item.productBrandinner+'-'+item.productGraminner+'-'+item.productCoatedinner+'-'+item.productBoxMark+'-'+item.productBoxMark"
+                    :value="item.productgoodsId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+                    
+            <div class="fenge1">夹层信息</div>
+            <el-row>
+              <el-col :span="12">
+            <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
+                                
+                <el-select v-model="editProductionForm.productBrandmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in zhizhang"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>     
+                <el-form-item label="纸张类型：" prop="productZhizleixone">
+                <el-select v-model="editProductionForm.productZhizleixone" placeholder="请选择">
+                    <el-option
+                      v-for="item in xiaoleixing"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+            <el-form-item label="淋膜类型/夹：" prop="productCoatedmid">
+                <el-select v-model="editProductionForm.productCoatedmid" placeholder="请选择">
+                    <el-option
+                      v-for="item in linmo"
+                      :key="item.basicId"
+                      :label="item.basicRetainone"
+                      :value="item.basicId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>  
+                 <el-form-item label="手柄形状/手：" prop="productHandle">
+                    <el-select v-model="editProductionForm.productHandle" placeholder="请选择">
+                        <el-option
+                          v-for="item in shoubin"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
                     </el-form-item>  
+              </el-col>
+            </el-row>
+              
+              <el-form-item label="纸张克数/夹：" prop="productGrammid">
+              <el-select v-model="editProductionForm.productGrammid" placeholder="请选择">
+                  <el-option
+                    v-for="item in zhizhangkezhong"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible4 = false">取 消</el-button>
@@ -2074,39 +2772,6 @@
 export default {
   data () {
     return {
-       tableData: [{
-          id: '12987122',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '12987123',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '12987125',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '12987126',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }],
       labelPosition: 'right',
       addyonghuDialogVisible: false,
       addyonghuDialogVisible1: false,
@@ -2126,6 +2791,7 @@ export default {
       selectedList: [],
       delarr:[],
       addProductionForm:{
+        productgoodsId:'',
         productId:'',
         productType:'',
         productBrandinner:'',
@@ -2141,13 +2807,25 @@ export default {
         designId:'',
         productName:'',
         productBoxMark:'',
+        productLabel:'',
         productCorrugated:'',
-        productHandle:'',
-        productExplain:'',
         productLeixing:0,
+        productExplain:'',
+        productHandle:'',
         productName1:'',
+        productSizelength:'',
+        productSizewide:'',
+        productSizehight:'',
+        productInnerbao:'',
+        productOutbao:'',
+        productOnege:'',
+        productOneke:'',
+        productCover:'',
+        productZhizleix:'',
+        productChanpchic:'',
       },
       editProductionForm:{
+       productgoodsId:'',
         productId:'',
         productType:'',
         productBrandinner:'',
@@ -2163,17 +2841,31 @@ export default {
         designId:'',
         productName:'',
         productBoxMark:'',
+        productLabel:'',
         productCorrugated:'',
-        productHandle:'',
-        productExplain:'',
         productLeixing:0,
+        productExplain:'',
+        productHandle:'',
         productName1:'',
+        productSizelength:'',
+        productSizewide:'',
+        productSizehight:'',
+        productInnerbao:'',
+        productOutbao:'',
+        productOnege:'',
+        productOneke:'',
+        productCover:'',
+        productZhizleix:'',
+        productChanpchic:'',
       },
       chaProductionForm:{
         productType:'',
         pageCode: 1, //当前页
         pageSize: 10,//每页显示的记录数
         productLeixing:0,
+      },
+      basicDO:{
+         productType:'',
       },
       a:{
         b:''
@@ -2192,9 +2884,14 @@ export default {
       chanpinguigeyumingcheng:[],
       zhizhangkezhong:[],
       chanpinshejigaomingcheng:[],
-      addProductionRules: {
+      chanpinmingchengyuchicun:[],
+      xiaoleixing:[],
+      niebaozhuang:[],
+      waibaozhuang:[],
+      peigai:[],     
+       addProductionRules: {
           productId:[
-          { required: true, message: '请输入内容', trigger: 'blur' },
+          // { required: true, message: '请输入内容', trigger: 'blur' },
           // { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
           ],},
     }
@@ -2205,6 +2902,29 @@ export default {
 
   },
   methods:{
+   async mingchengchicun(){
+     console.log(this.addProductionForm.productType);
+     console.log("-------------");
+     
+     if (this.addProductionForm.productType!='') {
+        this.basicDO.productType=this.addProductionForm.productType;
+     }else {
+       this.basicDO.productType=this.editProductionForm.productType;
+     }
+    
+     console.log(this.basicDO.productType);
+     console.log("+++++++++++++");
+     
+     
+     
+
+    
+      const { data: res } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.addProductionForm.productChanpchic=res[0].basicRetainone1;
+      this.editProductionForm.productChanpchic=res[0].basicRetainone1;
+    
+      
+    },
     async handleClick(tab) {
         this.chaProductionForm.pageCode=1;
         this.chaProductionForm.pageSize=10;
@@ -2233,6 +2953,7 @@ this.chaProductionForm.productLeixing="0";
       this.total=res.body.total;
       },
     async getProductionList() {
+
       const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.chaProductionForm);
       let design='';
       for (let index = 0; index < res.body.rows.length; index++) {
@@ -2252,32 +2973,33 @@ this.chaProductionForm.productLeixing="0";
       const { data: res4 } = await this.$http.post("jc/Design/selectdesignname");
       const { data: res5 } = await this.$http.post("jc/Basic/selectspecificationsname");
       const { data: res6 } = await this.$http.post("jc/Basic/selectparperheight");
-      const { data: res7 } = await this.$http.post("jc/Basic/selectbox");
+
       const { data: res8 } = await this.$http.post("jc/Basic/selectlabel");
       const { data: res9 } = await this.$http.post("jc/Produconggoods/selectProducingdan",this.a);
       const { data: res10 } = await this.$http.post("jc/Basic/selectshoubing");
       const { data: res11 } = await this.$http.post("jc/Basic/selectwaleng");
       const { data: res12 } = await this.$http.post("jc/Basic/selectsheji");
-      for (let index = 0; index < res12.length; index++) {
-      if(res12[index].basicRetainone.indexOf("*")!=-1){
-       res12[index].basicRetainone=res12[index].basicRetainone.substr(0, res12[index].basicRetainone.indexOf("*"))
-    }
-      }
+      const { data: res13 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      const { data: res14 } = await this.$http.post("jc/Basic/selectxiaoleixing");
+      const { data: res15 } = await this.$http.post("jc/Basic/selectinpack");
+      const { data: res16 } = await this.$http.post("jc/Basic/selectoutpack");
+      const { data: res17 } = await this.$http.post("jc/Basic/selectoutpack");
+      const { data: res18 } = await this.$http.post("jc/Basic/selectcover");
+      this.peigai=res18;
+      this.waibaozhuang=res16;
+      this.niebaozhuang=res15;
+      this.xiaoleixing=res14;
+      this.chanpinmingchengyuchicun=res13;
       this.chanpinshejigaomingcheng=res12;
-
-       for (let index = 0; index < res5.length; index++) {
-      if(res5[index].basicRetainone.indexOf("*")!=-1){
-       res5[index].basicRetainone=res5[index].basicRetainone.substr(0, res5[index].basicRetainone.indexOf("*"))
-    }
-      }
       this.zhizhangkezhong=res6;
       this.chanpinguigeyumingcheng=res5;
       this.chanpingleixing = res;
+      
+      
       this.linmo = res1;
       this.zhizhang = res2;
       this.chanpingmingcheng = res3;
       this.shejigao=res4;
-      this.xiangmai=res7;
       this.biaomai=res8;
       this.neibei=res9.body.rows;
       this.shoubin=res10;
@@ -2288,10 +3010,11 @@ this.chaProductionForm.productLeixing="0";
       this.$refs.addProductionRef.validate(async valid => {
         if (!valid) return;    
         console.log(this.addProductionForm);
-        
+        this.addProductionForm.productOnege=this.addProductionForm.productInnerbao*this.addProductionForm.productOutbao;
         const { data: res } = await this.$http.post("jc/Produconggoods/addProducing",this.addProductionForm);
         this.getProductionList();
         this.getProductionList1();
+        this.basicDO.productType='';
         // this.handleClick();
         this.addyonghuDialogVisible = false;
         this.addyonghuDialogVisible1 = false;
@@ -2319,8 +3042,44 @@ this.chaProductionForm.productLeixing="0";
       let param = new URLSearchParams();
       param.append("productgoodsId", productgoodsId);
       const {data:res} = await this.$http.post('jc/Produconggoods/selectProducingbyid',param);
-      this.editProductionForm=res;
+      console.log(res);
+      
+        this.editProductionForm.productBrandinner=Number(res.productBrandinner);
+        this.editProductionForm.productGraminner=Number(res.productGraminner);
+        this.editProductionForm.productCoatedinner=Number(res.productCoatedinner);
+        this.editProductionForm.productBrandabroad=Number(res.productBrandabroad);
+        this.editProductionForm.productGramabroad=Number(res.productGramabroad);
+        this.editProductionForm.productCoatedabroad=Number(res.productCoatedabroad);
+        this.editProductionForm.productBrandmid=Number(res.productBrandmid);
+        this.editProductionForm.productGrammid=Number(res.productGrammid);
+        this.editProductionForm.productCoatedmid=Number(res.productCoatedmid);
+        this.editProductionForm.productBoxMark=Number(res.productBoxMark);
+        this.editProductionForm.productLabel=Number(res.productLabel);
+        this.editProductionForm.productCorrugated=Number(res.productCorrugated);
+        this.editProductionForm.productHandle=Number(res.productHandle);
+        this.editProductionForm.productCover=Number(res.productCover);
+        this.editProductionForm.productZhizleix=Number(res.productZhizleix);
+        this.editProductionForm.productZhizleixone=Number(res.productZhizleixone);
+        this.editProductionForm.productType=Number(res.productType);
+        this.editProductionForm.productgoodsId=res.productgoodsId;
+        this.editProductionForm.productId=res.productId;
+        this.editProductionForm.productChanpchic=res.productChanpchic
+        this.editProductionForm.productState=res.productState;
+        this.editProductionForm.designId=res.designId;
+        this.editProductionForm.productName=res.productName;
+        this.editProductionForm.productLeixing=res.productLeixing;
+        this.editProductionForm.productName1=res.productName1;
+        this.editProductionForm.productSizelength=res.productSizelength;
+        this.editProductionForm.productSizewide=res.productSizewide;
+        this.editProductionForm.productSizehight=res.productSizehight;
+        this.editProductionForm.productInnerbao=res.productInnerbao;
+        this.editProductionForm.productOutbao=res.productOutbao;
+        this.editProductionForm.productOnege=res.productOnege;
+        this.editProductionForm.productOneke=res.productOneke;
+
       this.editProductionForm.designCode=res.designDOs[0].designId;
+      console.log(this.editProductionForm);
+      
       if (zhi==0) {
         this.edityonghuDialogVisible=true;
       }else if(zhi==1){
@@ -2340,6 +3099,7 @@ this.chaProductionForm.productLeixing="0";
        const {data:res} = await this.$http.post('jc/Produconggoods/updateProducing',this.editProductionForm);
        this.getProductionList();
        this.getProductionList1();
+       this.basicDO.productType='';
       //  this.handleClick();
        this.edityonghuDialogVisible=false;
        this.edityonghuDialogVisible1=false;
@@ -2433,6 +3193,8 @@ this.chaProductionForm.productLeixing="0";
     },
     handleSelectionChange(val) {
       this.selectedList = val;
+      console.log(val);
+      
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -2515,5 +3277,23 @@ this.chaProductionForm.productLeixing="0";
      .demo-table-expand {
     text-align:center;
   }
-  
+    .fenge{
+    position: absolute;
+    top: 34px;
+    left: 0px;
+    height: 25px;
+    width: 98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    
+    }
+    .fenge1{
+    height: 25px;
+    width:98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    margin-bottom: 20px;
+    }
 </style>

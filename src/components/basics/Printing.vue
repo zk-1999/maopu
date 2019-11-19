@@ -20,7 +20,7 @@
                     v-for="item in chanpinguigeyumingcheng"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                     </el-form-item>
@@ -119,7 +119,7 @@
                     v-for="item in chanpinguigeyumingcheng"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                   </el-form-item>
@@ -211,7 +211,7 @@
                     v-for="item in chanpinguigeyumingcheng"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                   </el-form-item>

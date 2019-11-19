@@ -42,7 +42,8 @@ import {
     Radio,
     Badge,
     Image,
-    DatePicker
+    DatePicker,
+    Divider
 } from 'element-ui'
 Vue.use(Button)
 Vue.use(Form)
@@ -85,5 +86,6 @@ Vue.use(Badge)
 Vue.use(Image)
 Vue.use(DatePicker)
 Vue.use(InputNumber)
+Vue.use(Divider)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

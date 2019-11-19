@@ -1687,7 +1687,7 @@
         :total=total
       ></el-pagination>
             </el-tab-pane>
-            <!-- <el-tab-pane label="产品设计稿维护">
+            <el-tab-pane label="产品名称与尺寸">
               <el-form :inline="true" class="demo-form-inline" :model="chaMaintenanceForm" ref="chaMaintenanceRef">
                     <el-form-item label="名称：" prop="basicRetainone">
                       <el-input placeholder="请输入名称" v-model="chaMaintenanceForm.basicRetainone" clearable></el-input>
@@ -1734,7 +1734,7 @@
         layout="total,  prev, pager, next"
         :total=total
       ></el-pagination>
-      </el-tab-pane> -->
+      </el-tab-pane>
           </el-tabs>
       </el-card>
       <el-dialog
@@ -1771,7 +1771,7 @@
               v-for="item in limoleixing"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
@@ -1781,12 +1781,12 @@
                   v-for="item in limozongzhong"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
            
-            <el-form-item label="淋膜类型与克重：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item>
+            <!-- <el-form-item label="淋膜类型与克重：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
             <el-form-item label="所属基础数据："><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
            
             <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -1811,7 +1811,7 @@
               v-for="item in chanpinleixing"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
@@ -1821,7 +1821,7 @@
                   v-for="item in chanpinguige"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
@@ -1831,12 +1831,12 @@
                   v-for="item in chanpinmingcheng"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
            
-            <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item>
+            <!-- <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item> -->
             <el-form-item label="所属基础数据："><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
            
             <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -1861,7 +1861,7 @@
               v-for="item in mojuguige"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
@@ -1869,7 +1869,7 @@
                   <el-input placeholder="请输入名称" v-model="addMaintenance1.limozongzhong"></el-input>
              </el-form-item>
            
-            <el-form-item label="模具规格与产能：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item>
+            <!-- <el-form-item label="模具规格与产能：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
             <el-form-item label="所属基础数据："><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
            
             <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -1895,7 +1895,7 @@
                   v-for="item in chanpinguige"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
@@ -1905,11 +1905,11 @@
               v-for="item in chanpinguigeyumingcheng"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
-            <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item>
+            <!-- <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
             <el-form-item label="所属基础数据："><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
            
             <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -1929,37 +1929,28 @@
         ref="addMaintenanceRef"
         :rules="addMaintenanceRules">
             
-    <el-form-item label="产品规格：" prop="limoleixing">
+    <el-form-item label="产品名称：" prop="limoleixing">
                   <el-select class="tiantou" v-model="addMaintenance1.limoleixing" placeholder="请选择类型">
                     <el-option
-                  v-for="item in chanpinguige"
+                  v-for="item in chanpinmingcheng"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
-                 <el-form-item label="设计稿名称：" prop="limozongzhong">
+                 <el-form-item label="产品尺寸：" prop="limozongzhong">
                   <el-select class="tiantou" v-model="addMaintenance1.limozongzhong" placeholder="请选择类型">
                     <el-option
-                  v-for="item in shejigaomingcheng"
+                  v-for="item in chanpinchicun"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
-             <el-form-item label="确定日期：" prop="limozongzhong1">
-               <el-input v-model="addMaintenance1.limozongzhong1" placeholder="请输入"></el-input>
-              <!-- <el-date-picker
-                v-model="addMaintenance1.limozongzhong1"
-                type="date"
-                value-format="yyyy-MM-dd"
-                placeholder="选择日期">
-              </el-date-picker> -->
-             </el-form-item>
            
-            <el-form-item label="产品设计稿名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item>
+            <!-- <el-form-item label="产品名称与尺寸：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
             <el-form-item label="所属基础数据："><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
            
             <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -2002,7 +1993,7 @@
               v-for="item in limoleixing"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
@@ -2012,12 +2003,12 @@
                   v-for="item in limozongzhong"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
            
-            <el-form-item label="淋膜类型与克重：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item>
+            <!-- <el-form-item label="淋膜类型与克重：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
           <el-form-item label="淋膜类型与克重："><el-input placeholder="请输入名称" v-model="editMaintenance.basicRetainone"></el-input></el-form-item>
           <el-form-item label="所属基础数据"><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
           <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -2042,7 +2033,7 @@
               v-for="item in chanpinleixing"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
@@ -2052,7 +2043,7 @@
                   v-for="item in chanpinguige"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
@@ -2062,12 +2053,12 @@
                   v-for="item in chanpinmingcheng"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
            
-            <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item>
+            <!-- <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item> -->
           <el-form-item label="产品规格与名称："><el-input placeholder="请输入名称" v-model="editMaintenance.basicRetainone"></el-input></el-form-item>
           <el-form-item label="所属基础数据"><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
           <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -2092,14 +2083,14 @@
               v-for="item in mojuguige"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
     <el-form-item label="产能：" prop="limozongzhong">
                   <el-input placeholder="请输入名称" v-model="addMaintenance1.limozongzhong"></el-input>
              </el-form-item>
-             <el-form-item label="模具规格与产能：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item>
+             <!-- <el-form-item label="模具规格与产能：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
           <el-form-item label="模具规格与产能："><el-input placeholder="请输入名称" v-model="editMaintenance.basicRetainone"></el-input></el-form-item>
           <el-form-item label="所属基础数据"><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
           <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -2124,7 +2115,7 @@
                   v-for="item in chanpinguige"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
@@ -2134,11 +2125,11 @@
               v-for="item in chanpinguigeyumingcheng"
               :key="item.basicId"
               :label="item.basicRetainone"
-              :value="item.basicRetainone"
+              :value="item.basicId"
             ></el-option>
               </el-select>
              </el-form-item>
-            <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item>
+            <!-- <el-form-item label="产品规格与名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong'></el-input></el-form-item> -->
           <el-form-item label="产品规格与名称："><el-input placeholder="请输入名称" v-model="editMaintenance.basicRetainone"></el-input></el-form-item>
           <el-form-item label="所属基础数据"><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
           <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
@@ -2157,39 +2148,29 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="editMaintenance"
         ref="addMaintenanceRef"
         :rules="addMaintenanceRules">
-        <el-form-item label="产品规格：" prop="limoleixing">
+        <el-form-item label="产品名称：" prop="limoleixing">
                   <el-select class="tiantou" v-model="addMaintenance1.limoleixing" placeholder="请选择类型">
                     <el-option
-                  v-for="item in chanpinguige"
+                  v-for="item in chanpinmingcheng"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
-                 <el-form-item label="设计稿名称：" prop="limozongzhong">
+                 <el-form-item label="产品尺寸：" prop="limozongzhong">
                   <el-select class="tiantou" v-model="addMaintenance1.limozongzhong" placeholder="请选择类型">
                     <el-option
-                  v-for="item in shejigaomingcheng"
+                  v-for="item in chanpinchicun"
                   :key="item.basicId"
                   :label="item.basicRetainone"
-                  :value="item.basicRetainone"
+                  :value="item.basicId"
                 ></el-option>
                   </el-select>
              </el-form-item>
-             <el-form-item label="确定日期：" prop="limozongzhong1">
-               <el-input v-model="addMaintenance1.limozongzhong1" placeholder="请输入"></el-input>
-
-              <!-- <el-date-picker
-                v-model="addMaintenance1.limozongzhong1"
-                type="date"
-                value-format="yyyy-MM-dd"
-                placeholder="选择日期">
-              </el-date-picker> -->
-             </el-form-item>
            
-            <el-form-item label="产品设计稿名称：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item>
-            <el-form-item label="产品设计稿名称："><el-input placeholder="请输入名称" v-model="editMaintenance.basicRetainone"></el-input></el-form-item>
+            <!-- <el-form-item label="产品名称与尺寸：" prop="basicRetainone"><el-input placeholder="请输入名称" v-model='addMaintenance1.limoleixing+"-"+addMaintenance1.limozongzhong+"-"+addMaintenance1.limozongzhong1'></el-input></el-form-item> -->
+            <el-form-item label="产品名称与尺寸："><el-input placeholder="请输入名称" v-model="editMaintenance.basicRetainone"></el-input></el-form-item>
             <el-form-item label="所属基础数据："><el-input placeholder="请输入所属基础数据" v-model="ta.label" :disabled="true"></el-input></el-form-item>
           <!-- <el-form-item label="状态："><el-input placeholder="请输入状态"></el-input></el-form-item> -->
         </el-form>
@@ -2250,6 +2231,7 @@ export default {
           limoleixing:'',
           limozongzhong:'',
           limozongzhong1:'',
+          basicIdType:'',
           
         },
         activeName:'客户类型',
@@ -2265,6 +2247,7 @@ export default {
         mojuguige:[],
         chanpinguigeyumingcheng:[],
         shejigaomingcheng:[],
+        chanpinchicun:[],
     }
   },
   created () {
@@ -2287,6 +2270,8 @@ export default {
        this.mojuguige=res5;
        const { data: res6 } = await this.$http.post("jc/Basic/selectcapacity");
        const { data: res7 } = await this.$http.post("jc/Basic/selectbox");
+       const { data: res8 } = await this.$http.post("jc/Basic/selectsheji");
+       this.chanpinchicun=res8;
        this.shejigaomingcheng=res7;
         for (let index = 0; index < res6.length; index++) {
       if(res6[index].basicRetainone.indexOf("*")!=-1){
@@ -2341,9 +2326,9 @@ export default {
         console.log(this.addMaintenance1.limozongzhong1);
         
         if (this.addMaintenance1.limozongzhong1!=''&&this.addMaintenance1.limozongzhong!=''&&this.addMaintenance1.limoleixing!='') {
-           this.addMaintenance.basicRetainone=this.addMaintenance1.limoleixing+'-'+this.addMaintenance1.limozongzhong+'-'+this.addMaintenance1.limozongzhong1+"*"+id;
+           this.addMaintenance.basicRetainone=this.addMaintenance1.limoleixing+','+this.addMaintenance1.limozongzhong+','+this.addMaintenance1.limozongzhong1;
         }else if(this.addMaintenance1.limozongzhong!=''&&this.addMaintenance1.limoleixing!=''){
-         this.addMaintenance.basicRetainone=this.addMaintenance1.limoleixing+'-'+this.addMaintenance1.limozongzhong+"*"+id;
+         this.addMaintenance.basicRetainone=this.addMaintenance1.limoleixing+','+this.addMaintenance1.limozongzhong;
         }
           const { data: res } = await this.$http.post("jc/Basic/addBasic",this.addMaintenance);
         
@@ -2408,9 +2393,9 @@ export default {
       //    this.editMaintenance.basicRetainone=this.addMaintenance1.limoleixing+'-'+this.addMaintenance1.limozongzhong+"*"+id;
       //   }
         if (this.addMaintenance1.limozongzhong1!=''&&this.addMaintenance1.limozongzhong!=''&&this.addMaintenance1.limoleixing!='') {
-           this.editMaintenance.basicRetainone=this.addMaintenance1.limoleixing+'-'+this.addMaintenance1.limozongzhong+'-'+this.addMaintenance1.limozongzhong1+"*"+id;
+           this.editMaintenance.basicRetainone=this.addMaintenance1.limoleixing+','+this.addMaintenance1.limozongzhong+','+this.addMaintenance1.limozongzhong1;
         }else if(this.addMaintenance1.limozongzhong!=''&&this.addMaintenance1.limoleixing!=''){
-         this.editMaintenance.basicRetainone=this.addMaintenance1.limoleixing+'-'+this.addMaintenance1.limozongzhong+"*"+id;
+         this.editMaintenance.basicRetainone=this.addMaintenance1.limoleixing+','+this.addMaintenance1.limozongzhong;
         }
        const {data:res} = await this.$http.post('jc/Basic/updateBasic',this.editMaintenance);
        this.edityonghuDialogVisible1=false;

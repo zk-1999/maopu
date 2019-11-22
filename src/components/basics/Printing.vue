@@ -130,7 +130,7 @@
                     v-for="item in bangunchishu"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                   </el-form-item>          
@@ -147,7 +147,7 @@
                     v-for="item in zhizhangmenfu"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                   </el-form-item>          
@@ -158,39 +158,6 @@
                 <el-form-item label="总片数：" prop="parametersNumber">
                   <el-input placeholder="请输入总片数" v-model="addPrintingForm.parametersTeethnum*addPrintingForm.parametersDoornum" :disabled="true"></el-input>
                   </el-form-item>
-            <!-- <el-row>
-                <el-col :span="12">
-                <el-form-item label="产品编号：" prop="parametersId"><el-input placeholder="请输入产品编号" v-model="addPrintingForm.parametersId"></el-input></el-form-item>
-                <el-form-item label="产品型号：" prop="parametersName"><el-input placeholder="请输入产品型号" v-model="addPrintingForm.parametersName"></el-input></el-form-item>
-                <el-form-item label="产品类型：" prop="productType">
-                <el-select v-model="addPrintingForm.productType" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpingleixing"
-                    :key="item.basicId"
-                    :label="item.basicRetainone"
-                    :value="item.basicRetainone">
-                  </el-option>
-                </el-select>
-                </el-form-item>
-                <el-form-item label="单齿长/尺数：" prop="parametersSingle"><el-input placeholder="单齿长/尺数" v-model="addPrintingForm.parametersSingle"></el-input></el-form-item>
-                <el-form-item label="齿数/尺数：" prop="parametersSinglenum"><el-input placeholder="齿数/尺数" v-model="addPrintingForm.parametersSinglenum"></el-input></el-form-item>          
-                <el-form-item label="纸宽/尺数：" prop="parametersPaperwidth"><el-input placeholder="纸宽/尺数" v-model="addPrintingForm.parametersPaperwidth"></el-input></el-form-item>
-                <el-form-item label="片数/尺数：" prop="parametersTeethnum"><el-input placeholder="片数/尺数" v-model="addPrintingForm.parametersTeethnum"></el-input></el-form-item>          
-                <el-form-item label="纸张/净门幅：" prop="parametersDoorwidth"><el-input placeholder="纸张/净门幅" v-model="addPrintingForm.parametersDoorwidth"></el-input></el-form-item>
-                <el-form-item label="片数/净门幅：" prop="parametersDoornum"><el-input placeholder="片数/净门幅" v-model="addPrintingForm.parametersDoornum"></el-input></el-form-item>
-                </el-col>
-                <el-col :span="12"> 
-                <el-form-item label="可用纸长：" prop="parametersUsablepaper"><el-input placeholder="请输入可用纸长" v-model="addPrintingForm.parametersUsablepaper"></el-input></el-form-item>
-                <el-form-item label="计划纸长：" prop="parametersPlanpaper"><el-input placeholder="请输入计划纸长" v-model="addPrintingForm.parametersPlanpaper"></el-input></el-form-item>
-                <el-form-item label="放量：" prop="parametersVolume"><el-input placeholder="请输入放量" v-model="addPrintingForm.parametersVolume"></el-input></el-form-item>          
-                <el-form-item label="片数：" prop="parametersNumber"><el-input placeholder="请输入片数" v-model="addPrintingForm.parametersNumber"></el-input></el-form-item>
-                <el-form-item label="单个米数：" prop="parametersMetre"><el-input placeholder="请输入单个米数" v-model="addPrintingForm.parametersMetre"></el-input></el-form-item>
-                <el-form-item label="单个重量：" prop="parametersWeight"><el-input placeholder="请输入单个重量" v-model="addPrintingForm.parametersWeight"></el-input></el-form-item>
-                <el-form-item label="机台号：" prop="parametersMachine"><el-input placeholder="请输入机台号" v-model="addPrintingForm.parametersMachine"></el-input></el-form-item>
-                <el-form-item label="模具号：" prop="parametersMould"><el-input placeholder="请输入模具号" v-model="addPrintingForm.parametersMould"></el-input></el-form-item>          
-                <el-form-item label="产能：" prop="parametersCapacity"><el-input placeholder="请输入产能" v-model="addPrintingForm.parametersCapacity"></el-input></el-form-item>
-                </el-col>
-            </el-row> -->
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addyonghuDialogVisible = false">取 消</el-button>
@@ -222,7 +189,7 @@
                     v-for="item in bangunchishu"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                   </el-form-item>          
@@ -239,7 +206,7 @@
                     v-for="item in zhizhangmenfu"
                     :key="item.basicId"
                     :label="item.basicRetainone"
-                    :value="item.basicRetainone">
+                    :value="item.basicId">
                   </el-option>
                 </el-select>
                   </el-form-item>          
@@ -250,39 +217,6 @@
                 <el-form-item label="总片数：" prop="parametersNumber">
                   <el-input placeholder="请输入总片数" v-model="editPrintingForm.parametersTeethnum*editPrintingForm.parametersDoornum" :disabled="true"></el-input>
                   </el-form-item>
-            <!-- <el-row>
-                <el-col :span="12">
-                <el-form-item label="产品编号：" prop="parametersId"><el-input placeholder="请输入产品编号" v-model="editPrintingForm.parametersId"></el-input></el-form-item>
-                <el-form-item label="产品型号：" prop="parametersName"><el-input placeholder="请输入产品型号" v-model="editPrintingForm.parametersName"></el-input></el-form-item>
-                <el-form-item label="产品类型：" prop="productType">
-                <el-select v-model="editPrintingForm.productType" placeholder="请选择">
-                  <el-option
-                    v-for="item in chanpingleixing"
-                    :key="item.basicId"
-                    :label="item.basicRetainone"
-                    :value="item.basicRetainone">
-                  </el-option>
-                </el-select>
-                </el-form-item>
-                <el-form-item label="单齿长/尺数：" prop="parametersSingle"><el-input placeholder="单齿长/尺数" v-model="editPrintingForm.parametersSingle"></el-input></el-form-item>
-                <el-form-item label="齿数/尺数：" prop="parametersSinglenum"><el-input placeholder="齿数/尺数" v-model="editPrintingForm.parametersSinglenum"></el-input></el-form-item>          
-                <el-form-item label="纸宽/尺数：" prop="parametersPaperwidth"><el-input placeholder="纸宽/尺数" v-model="editPrintingForm.parametersPaperwidth"></el-input></el-form-item>
-                <el-form-item label="片数/尺数：" prop="parametersTeethnum"><el-input placeholder="片数/尺数" v-model="editPrintingForm.parametersTeethnum"></el-input></el-form-item>          
-                <el-form-item label="纸张/净门幅：" prop="parametersDoorwidth"><el-input placeholder="纸张/净门幅" v-model="editPrintingForm.parametersDoorwidth"></el-input></el-form-item>
-                <el-form-item label="片数/净门幅：" prop="parametersDoornum"><el-input placeholder="片数/净门幅" v-model="editPrintingForm.parametersDoornum"></el-input></el-form-item>
-                </el-col>
-                <el-col :span="12"> 
-                <el-form-item label="可用纸长：" prop="parametersUsablepaper"><el-input placeholder="请输入可用纸长" v-model="editPrintingForm.parametersUsablepaper"></el-input></el-form-item>
-                <el-form-item label="计划纸长：" prop="parametersPlanpaper"><el-input placeholder="请输入计划纸长" v-model="editPrintingForm.parametersPlanpaper"></el-input></el-form-item>
-                <el-form-item label="放量：" prop="parametersVolume"><el-input placeholder="请输入放量" v-model="editPrintingForm.parametersVolume"></el-input></el-form-item>          
-                <el-form-item label="片数：" prop="parametersNumber"><el-input placeholder="请输入片数" v-model="editPrintingForm.parametersNumber"></el-input></el-form-item>
-                <el-form-item label="单个米数：" prop="parametersMetre"><el-input placeholder="请输入单个米数" v-model="editPrintingForm.parametersMetre"></el-input></el-form-item>
-                <el-form-item label="单个重量：" prop="parametersWeight"><el-input placeholder="请输入单个重量" v-model="editPrintingForm.parametersWeight"></el-input></el-form-item>
-                <el-form-item label="机台号：" prop="parametersMachine"><el-input placeholder="请输入机台号" v-model="editPrintingForm.parametersMachine"></el-input></el-form-item>
-                <el-form-item label="模具号：" prop="parametersMould"><el-input placeholder="请输入模具号" v-model="editPrintingForm.parametersMould"></el-input></el-form-item>          
-                <el-form-item label="产能：" prop="parametersCapacity"><el-input placeholder="请输入产能" v-model="editPrintingForm.parametersCapacity"></el-input></el-form-item>
-                </el-col>
-            </el-row> -->
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="edityonghuDialogVisible = false">取 消</el-button>
@@ -473,8 +407,15 @@ export default {
     async showEditPrinting(pId){
       let param = new URLSearchParams();
       param.append("pId", pId);
-      const {data:res} = await this.$http.post('jc/Parameters/selectParameterbyid',param);
-      this.editPrintingForm=res;
+      const {data:res} = await this.$http.post('jc/Parameters/selectParameterbyid',param);g
+         this.editPrintingForm.parametersName=Number(res.parametersName);
+         this.editPrintingForm.parametersDoorwidth=Number(res.parametersDoorwidth);
+         this.editPrintingForm.parametersDoornum=res.parametersDoornum;
+         this.editPrintingForm.parametersSingle=Number(res.parametersSingle);
+         this.editPrintingForm.parametersSinglenum=res.parametersSinglenum;
+         this.editPrintingForm.parametersNumber=res.parametersNumber;
+         this.editPrintingForm.parametersTeethnum=res.parametersTeethnum;
+         this.editPrintingForm.parametersId=res.parametersId;
       this.edityonghuDialogVisible=true;
     },
     async editPrinting(){

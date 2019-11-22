@@ -8,19 +8,9 @@
     </el-breadcrumb>
     <el-card>
       <el-tabs @tab-click="handleClick" type="border-card">
-    <el-tab-pane label="纸张" >
+    <el-tab-pane label="原纸" >
       <el-form :inline="true" class="demo-form-inline" :model="chamerchandiseForm" ref="chamerchandiseRef">
-              <!-- <el-form-item label="供应商名称：" prop="supplierId">
-                <el-select v-model="chamerchandiseForm.supplierId" placeholder="请选择">
-                  <el-option
-                    v-for="item in chamerchandiseForm1"
-                    :key="item.supplierId"
-                    :label="item.supName"
-                    :value="item.supplierId">
-                  </el-option>
-                </el-select>
-              </el-form-item> -->
-              <el-form-item label="原纸小类型：" prop="supgoolssmallType">
+              <el-form-item label="原纸类型：" prop="supgoolssmallType">
                <el-select v-model="chamerchandiseForm.supgoolssmallType" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -45,15 +35,13 @@
       <el-table :data="merchandiseList" border @selection-change="handleSelectionChange" >
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
-            <!-- <el-table-column prop="supId" label="供应商编码"  align="center"></el-table-column> -->
-            <!-- <el-table-column prop="supName" label="供应商名称"  align="center"></el-table-column>
-            <el-table-column prop="supgoolsBigType" label="商品大类型"  align="center"></el-table-column> -->
-            <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column>
-            <el-table-column prop="supgoolssmallType" label="原纸小类型"  align="center"></el-table-column>
-            <el-table-column prop="supgoolCoated" label="淋膜类型"  align="center"></el-table-column>
+            <el-table-column prop="supgoolsBigType" label="商品类型"  align="center"></el-table-column> 
+            <el-table-column prop="supgoolssmallType" label="原纸类型"  align="center"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称" align="center"></el-table-column>
             <el-table-column prop="supgoolsBrand" label="纸张品牌" align="center"></el-table-column>
             <el-table-column prop="supgoolsWeight" label="纸张克重" align="center"></el-table-column>
             <el-table-column prop="supgoolsWidths" label="纸张门幅" align="center"></el-table-column>
+            <el-table-column prop="supgoolCoated" label="淋膜类型"  align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -100,7 +88,7 @@
                   </el-option>
                 </el-select>
               </el-form-item> -->
-              <el-form-item label="纸箱小类型：" prop="supgoolssmallType">
+              <el-form-item label="纸箱类型：" prop="supgoolssmallType">
                 <!-- <el-input placeholder="请输入商品小类型" v-model="chamerchandiseForm.supgoolssmallType"></el-input> -->
                 <el-select v-model="chamerchandiseForm.supgoolssmallType" placeholder="请选择">
                         <el-option
@@ -128,11 +116,14 @@
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
             <!-- <el-table-column prop="supId" label="供应商编码" align="center"></el-table-column> -->
-            <!-- <el-table-column prop="supName" label="供应商名称" align="center"></el-table-column>
-            <el-table-column prop="supgoolsBigType" label="商品大类型" align="center"></el-table-column> -->
-            <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column> 
-            <el-table-column prop="supgoolssmallType" label="纸箱小类型" align="center"></el-table-column>
+            <!-- <el-table-column prop="supName" label="供应商名称" align="center"></el-table-column>-->
+            <el-table-column prop="supgoolsBigType" label="商品类型" align="center"></el-table-column> 
+            <el-table-column prop="supgoolssmallType" label="纸箱类型" align="center"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称" align="center"></el-table-column> 
             <el-table-column prop="supgoolsWeight" label="纸箱克重" align="center"></el-table-column>
+            <el-table-column prop="supgoolsLength" label="长" align="center"></el-table-column>  
+            <el-table-column prop="supgoolsWidth" label="宽" align="center"></el-table-column>
+            <el-table-column prop="supgoolsHeight" label="高" align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -179,7 +170,7 @@
                   </el-option>
                 </el-select>
               </el-form-item> -->
-              <el-form-item label="袋子小类型：" prop="supgoolssmallType">
+              <el-form-item label="袋子类型：" prop="supgoolssmallType">
                 <el-select v-model="chamerchandiseForm.supgoolssmallType" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -205,14 +196,13 @@
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
             <!-- <el-table-column prop="supId" label="供应商编码" width="100px" align="center"></el-table-column> -->
-            <!-- <el-table-column prop="supName" label="供应商名称" width="100px" align="center"></el-table-column>
-            <el-table-column prop="supgoolsBigType" label="商品大类型" width="100px" align="center"></el-table-column> -->
-            <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column> 
-            <el-table-column prop="supgoolssmallType" label="袋子小类型" align="center"></el-table-column>
-
-            <el-table-column prop="supgoolsLength" label="尺寸/长" align="center"></el-table-column>
-            <el-table-column prop="supgoolsWidth" label="尺寸/宽" align="center"></el-table-column>
-            <el-table-column prop="supgoolsHeight" label="尺寸/厚" align="center"></el-table-column>
+            <!-- <el-table-column prop="supName" label="供应商名称" width="100px" align="center"></el-table-column>-->
+            <el-table-column prop="supgoolsBigType" label="商品类型" width="100px" align="center"></el-table-column> 
+            <el-table-column prop="supgoolssmallType" label="袋子类型" align="center"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称" align="center"></el-table-column> 
+            <el-table-column prop="supgoolsLength" label="长" align="center"></el-table-column>  
+            <el-table-column prop="supgoolsWidth" label="宽" align="center"></el-table-column>
+            <el-table-column prop="supgoolsHeight" label="厚" align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
                 <el-switch
@@ -259,7 +249,7 @@
                   </el-option>
                 </el-select>
               </!--> 
-              <el-form-item label="油墨小类型：" prop="supgoolssmallType">
+              <el-form-item label="油墨类型：" prop="supgoolssmallType">
                <el-select v-model="chamerchandiseForm.supgoolssmallType" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -285,11 +275,11 @@
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
             <!-- <el-table-column prop="supId" label="供应商编码" align="center"></el-table-column> -->
-            <!-- <el-table-column prop="supName" label="供应商名称" align="center"></el-table-column>
-            <el-table-column prop="supgoolsBigType" label="商品大类型" align="center"></el-table-column> -->
-            <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column>
-            <el-table-column prop="supgoolssmallType" label="油墨小类型" align="center"></el-table-column>
-
+            <!-- <el-table-column prop="supName" label="供应商名称" align="center"></el-table-column>-->
+            <el-table-column prop="supgoolsBigType" label="商品类型" align="center"></el-table-column> 
+            <el-table-column prop="supgoolssmallType" label="油墨类型" align="center"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称" align="center"></el-table-column>
+              <el-table-column prop="supgoolsColor" label="颜色" align="center"></el-table-column> 
             <el-table-column prop="supgoolCoated" label="淋膜类型" align="center"></el-table-column>
             <el-table-column label="状态" width="65px" align="center">
               <template slot-scope="scope">
@@ -338,7 +328,7 @@
                   </el-option>
                 </el-select>
               </el-form-item> -->
-              <el-form-item label="其他小类型：" prop="supgoolssmallType">
+              <el-form-item label="其他类型：" prop="supgoolssmallType">
                <el-select v-model="chamerchandiseForm.supgoolssmallType" placeholder="请选择">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -364,10 +354,10 @@
             <el-table-column type="selection" width="35" align="center"></el-table-column>
             <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
             <!-- <el-table-column prop="supId" label="供应商编码"  align="center"></el-table-column> -->
-            <!-- <el-table-column prop="supName" label="供应商名称" align="center"></el-table-column>
-            <el-table-column prop="supgoolsBigType" label="商品大类型" align="center"></el-table-column> -->
-            <el-table-column prop="supgoolsId" label="商品编号" align="center"></el-table-column>
-            <el-table-column prop="supgoolssmallType" label="油墨小类型" align="center"></el-table-column>
+            <!-- <el-table-column prop="supName" label="供应商名称" align="center"></el-table-column>-->
+            <el-table-column prop="supgoolsBigType" label="商品类型" align="center"></el-table-column> 
+            <el-table-column prop="supgoolssmallType" label="其他类型" align="center"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称" align="center"></el-table-column>
             <!-- <el-table-column prop="supgoolsBradth" label="宽度" align="center"></el-table-column>
             <el-table-column prop="supgoolsColor" label="颜色" align="center"></el-table-column> -->
             <el-table-column label="状态" width="65px" align="center">
@@ -443,17 +433,17 @@
               <el-input placeholder="请输入商品名称" v-model="addMerchandiseFrom.supgoolsId" class="xiang" ></el-input>
             </el-form-item>
       
-        <!-- <el-form-item label="商品大类型：" prop="supgoolsBigType">
-          <el-select class="tiantou gongse" placeholder="请选择商品大类型" @change="showshoop"  v-model="addMerchandiseFrom.supgoolsBigType" >
-            <el-option value="纸张" id="show">纸张</el-option>
+        <!-- <el-form-item label="商品类型：" prop="supgoolsBigType">
+          <el-select class="tiantou gongse" placeholder="请选择商品大类型" @change="showshoop"  v-model="addMerchandiseFrom.supgoolsBigType" :disabled="true">
+            <el-option value="原纸" id="show">原纸</el-option>
             <el-option value="纸箱" id="show">纸箱</el-option>
             <el-option value="袋子" id="show">袋子</el-option>
             <el-option value="油墨" id="show">油墨</el-option>
             <el-option value="胶带" id="show">胶带</el-option>
           </el-select>
         </el-form-item> -->
-        <div v-show="bigType == '纸张'">
-          <el-form-item label="原纸小类型：" prop="supgoolssmallType">
+        <div v-show="bigType == '原纸'">
+          <el-form-item label="原纸类型：" prop="supgoolssmallType">
             <!-- <el-input placeholder="请输入商品小类型" class="xiang" v-model="addMerchandiseFrom.supgoolssmallType"></el-input> -->
             <el-select v-model="addMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
@@ -511,7 +501,7 @@
           </el-form-item>
         </div>
         <div v-show="bigType == '纸箱'">
-          <el-form-item label="纸箱小类型：" prop="supgoolssmallType">
+          <el-form-item label="纸箱类型：" prop="supgoolssmallType">
             <el-select v-model="addMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -532,12 +522,21 @@
                   </el-option>
                 </el-select>
           </el-form-item>
+           <el-form-item label="长：" prop="supgoolsLength">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsLength"></el-input>
+          </el-form-item>
+          <el-form-item label="宽：" prop="supgoolsWidth">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsWidth"></el-input>
+          </el-form-item>
+          <el-form-item label="高：" prop="supgoolsHeight">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsHeight"></el-input>
+          </el-form-item>
         </div>
         <div v-show="bigType == '袋子'">
           <!-- <el-form-item label="商品小类型：" prop="">
             <el-input placeholder="请输入商品小类型" class="xiang"></el-input>
           </el-form-item> -->
-          <el-form-item label="袋子小类型：" prop="supgoolssmallType">
+          <el-form-item label="袋子类型：" prop="supgoolssmallType">
             <el-select v-model="addMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -547,18 +546,18 @@
                         </el-option>
                       </el-select>
           </el-form-item>
-          <el-form-item label="尺寸/长：" prop="supgoolsLength">
-            <el-input placeholder="请输入尺寸/长" class="xiang" v-model="addMerchandiseFrom.supgoolsLength"></el-input>
+          <el-form-item label="长：" prop="supgoolsLength">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsLength"></el-input>
           </el-form-item>
-          <el-form-item label="尺寸/宽：" prop="supgoolsWidth">
-            <el-input placeholder="请输入尺寸/宽" class="xiang" v-model="addMerchandiseFrom.supgoolsWidth"></el-input>
+          <el-form-item label="宽：" prop="supgoolsWidth">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsWidth"></el-input>
           </el-form-item>
-          <el-form-item label="尺寸/厚：" prop="supgoolsHeight">
-            <el-input placeholder="请输入尺寸/高" class="xiang" v-model="addMerchandiseFrom.supgoolsHeight"></el-input>
+          <el-form-item label="厚：" prop="supgoolsHeight">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsHeight"></el-input>
           </el-form-item>
         </div>
         <div v-show="bigType == '油墨'">
-          <el-form-item label="油墨小类型：" prop="supgoolssmallType">
+          <el-form-item label="油墨类型：" prop="supgoolssmallType">
             <el-select v-model="addMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -567,6 +566,11 @@
                           :value="item.basicId">
                         </el-option>
                       </el-select>
+          </el-form-item>
+          
+           <el-form-item label="颜色：" prop="supgoolsColor">
+            <el-input placeholder="请输入" class="xiang" v-model="addMerchandiseFrom.supgoolsColor"></el-input>
+            
           </el-form-item>
           <el-form-item label="淋膜类型：" prop="supgoolCoated">
             <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="addMerchandiseFrom.supgoolCoated"></!--> 
@@ -581,7 +585,7 @@
           </el-form-item>
         </div>
         <div v-show="bigType == '其他'">
-           <el-form-item label="其他小类型：" prop="supgoolssmallType">
+           <el-form-item label="其他类型：" prop="supgoolssmallType">
             <el-select v-model="addMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
@@ -591,6 +595,7 @@
                         </el-option>
                       </el-select>
           </el-form-item>
+          
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -626,24 +631,25 @@
             
           <!-- </el-col>
           <el-col :span="12"> -->
-            <el-form-item label="商品编号：" prop="supgoolsId">
-              <el-input placeholder="请输入商品编号" v-model="editMerchandiseFrom.supgoolsId" class="xiang"></el-input>
+            <el-form-item label="商品名称：" prop="supgoolsId">
+              <el-input placeholder="请输入商品名称" v-model="editMerchandiseFrom.supgoolsId" class="xiang"></el-input>
             </el-form-item>
 <!--             
           </el-col>
         </el-row> -->
-        <!-- <el-form-item label="商品大类型：" prop="supgoolsBigType">
-          <el-select class="tiantou gongse" placeholder="请选择商品大类型" @change="showshoop"  v-model="editMerchandiseFrom.supgoolsBigType">
-            <el-option value="纸张" id="show">纸张</el-option>
+        <!-- <el-form-item label="商品类型：" prop="supgoolsBigType">
+          <el-select class="tiantou gongse" placeholder="请选择商品大类型" @change="showshoop"  v-model="editMerchandiseFrom.supgoolsBigType" :disabled="true">
+            <el-option value="原纸" id="show">原纸</el-option>
             <el-option value="纸箱" id="show">纸箱</el-option>
             <el-option value="袋子" id="show">袋子</el-option>
             <el-option value="油墨" id="show">油墨</el-option>
             <el-option value="胶带" id="show">胶带</el-option>
           </el-select>
         </el-form-item> -->
-        <div v-show="bigType == '纸张'">
-          <el-form-item label="商品小类型：" prop="supgoolssmallType">
-             <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
+       <div v-show="bigType == '原纸'">
+          <el-form-item label="原纸类型：" prop="supgoolssmallType">
+            <!-- <el-input placeholder="请输入商品小类型" class="xiang" v-model="addMerchandiseFrom.supgoolssmallType"></el-input> -->
+            <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
                           :key="item.basicId"
@@ -653,7 +659,7 @@
                       </el-select>
           </el-form-item>
           <el-form-item label="纸张品牌：" prop="supgoolsBrand">
-            <!-- <el-input placeholder="请输入品牌" class="xiang" v-model="editMerchandiseFrom.supgoolsBrand"></el-input> -->
+            <!-- <el-input placeholder="请输入品牌" class="xiang" v-model="addMerchandiseFrom.supgoolsBrand"></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolsBrand" placeholder="请选择" class="gongse1">
                   <el-option
                     v-for="item in zhizhangpinpai"
@@ -664,7 +670,7 @@
                 </el-select>
           </el-form-item>
           <el-form-item label="纸张克重：" prop="supgoolsWeight">
-            <!-- <el-input placeholder="请输入克重" class="xiang" v-model="editMerchandiseFrom.supgoolsWeight"></el-input> -->
+            <!-- <el-input placeholder="请输入克重" class="xiang" v-model="addMerchandiseFrom.supgoolsWeight"></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolsWeight" placeholder="请选择" class="gongse1">
                   <el-option
                     v-for="item in kezhong"
@@ -675,8 +681,9 @@
                 </el-select>
           </el-form-item>
           <el-form-item label="纸张门幅：" prop="supgoolsWidths">
-            <!-- <el-input placeholder="请输入门幅" class="xiang" v-model="editMerchandiseFrom.supgoolsWidths"></el-input> -->
-            <el-select v-model="editMerchandiseFrom.supgoolsWidths" placeholder="请选择" class="gongse1">
+            
+            <!-- <el-input placeholder="请输入门幅" class="xiang" v-model="addMerchandiseFrom.supgoolsWidths"></el-input> -->
+             <el-select v-model="editMerchandiseFrom.supgoolsWidths" placeholder="请选择" class="gongse1">
                   <el-option
                     v-for="item in zhizhangmenfu"
                     :key="item.basicId"
@@ -686,7 +693,7 @@
                 </el-select>
           </el-form-item>
           <el-form-item label="淋膜类型：" prop="supgoolCoated">
-            <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="editMerchandiseFrom.supgoolCoated"></!--> 
+            <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="addMerchandiseFrom."></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolCoated" placeholder="请选择" class="gongse1">
                   <el-option
                     v-for="item in linmo"
@@ -698,8 +705,8 @@
           </el-form-item>
         </div>
         <div v-show="bigType == '纸箱'">
-          <el-form-item label="商品小类型：" prop="supgoolssmallType">
-             <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
+          <el-form-item label="纸箱类型：" prop="supgoolssmallType">
+            <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
                           :key="item.basicId"
@@ -709,7 +716,7 @@
                       </el-select>
           </el-form-item>
           <el-form-item label="纸箱克重：" prop="supgoolsWeight">
-            <!-- <el-input placeholder="请输入克重" class="xiang" v-model="editMerchandiseFrom.supgoolsWeight"></el-input> -->
+            <!-- <el-input placeholder="请输入克重" class="xiang" v-model="addMerchandiseFrom.supgoolsWeight"></el-input> -->
             <el-select v-model="editMerchandiseFrom.supgoolsWeight" placeholder="请选择" class="gongse1">
                   <el-option
                     v-for="item in zhixiangkezhong"
@@ -719,10 +726,22 @@
                   </el-option>
                 </el-select>
           </el-form-item>
+           <el-form-item label="长：" prop="supgoolsLength">
+            <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsLength"></el-input>
+          </el-form-item>
+          <el-form-item label="宽：" prop="supgoolsWidth">
+            <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsWidth"></el-input>
+          </el-form-item>
+          <el-form-item label="高：" prop="supgoolsHeight">
+            <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsHeight"></el-input>
+          </el-form-item>
         </div>
         <div v-show="bigType == '袋子'">
-          <el-form-item label="商品小类型：" prop="supgoolssmallType">
-             <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
+          <!-- <el-form-item label="商品小类型：" prop="">
+            <el-input placeholder="请输入商品小类型" class="xiang"></el-input>
+          </el-form-item> -->
+          <el-form-item label="袋子类型：" prop="supgoolssmallType">
+            <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
                           :key="item.basicId"
@@ -731,19 +750,32 @@
                         </el-option>
                       </el-select>
           </el-form-item>
-          <el-form-item label="尺寸/长：" prop="supgoolsLength">
-            <el-input placeholder="请输入尺寸/长" class="xiang" v-model="editMerchandiseFrom.supgoolsLength"></el-input>
+          <el-form-item label="长：" prop="supgoolsLength">
+            <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsLength"></el-input>
           </el-form-item>
-          <el-form-item label="尺寸/宽：" prop="supgoolsWidth">
-            <el-input placeholder="请输入尺寸/宽" class="xiang" v-model="editMerchandiseFrom.supgoolsWidth"></el-input>
+          <el-form-item label="宽：" prop="supgoolsWidth">
+            <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsWidth"></el-input>
           </el-form-item>
-          <el-form-item label="尺寸/高：" prop="supgoolsHeight">
-            <el-input placeholder="请输入尺寸/高" class="xiang" v-model="editMerchandiseFrom.supgoolsHeight"></el-input>
+          <el-form-item label="厚：" prop="supgoolsHeight">
+            <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsHeight"></el-input>
           </el-form-item>
         </div>
         <div v-show="bigType == '油墨'">
+          <el-form-item label="油墨类型：" prop="supgoolssmallType">
+            <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
+                        <el-option
+                          v-for="item in zhizhangleixing"
+                          :key="item.basicId"
+                          :label="item.basicRetainone"
+                          :value="item.basicId">
+                        </el-option>
+                      </el-select>
+          </el-form-item>
+          <el-form-item label="颜色：" prop="supgoolssmallType">
+             <el-input placeholder="请输入" class="xiang" v-model="editMerchandiseFrom.supgoolsColor"></el-input>
+          </el-form-item>
           <el-form-item label="淋膜类型：" prop="supgoolCoated">
-            <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="editMerchandiseFrom.supgoolCoated"></el-input> -->
+            <!-- <el-input placeholder="请输入淋膜类型" class="xiang" v-model="addMerchandiseFrom.supgoolCoated"></!--> 
             <el-select v-model="editMerchandiseFrom.supgoolCoated" placeholder="请选择" class="gongse1">
                   <el-option
                     v-for="item in linmo"
@@ -755,8 +787,8 @@
           </el-form-item>
         </div>
         <div v-show="bigType == '其他'">
-          <el-form-item label="商品小类型：" prop="supgoolssmallType">
-            <el-select v-model="addMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
+           <el-form-item label="其他类型：" prop="supgoolssmallType">
+            <el-select v-model="editMerchandiseFrom.supgoolssmallType" placeholder="请选择" class="gongse1">
                         <el-option
                           v-for="item in zhizhangleixing"
                           :key="item.basicId"
@@ -765,6 +797,7 @@
                         </el-option>
                       </el-select>
           </el-form-item>
+          
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -806,7 +839,7 @@ export default {
       chamerchandiseForm:{
         supName:'',
         supgoolssmallType:'',
-        lab:'纸张',
+        lab:'原纸',
         pageCode: 1, //当前页
         pageSize: 10,//每页显示的记录数
       },
@@ -902,7 +935,7 @@ export default {
       this.total=res.body.total;
     },
     async getMerchandiseList5(){
-      this.chamerchandiseForm.lab="纸张";
+      this.chamerchandiseForm.lab="原纸";
       const { data: res } = await this.$http.post("jc/suppliergoods/selectSuppliergoolslist",{params:this.chamerchandiseForm});
       this.merchandiseList = res.body.rows;
       this.total=res.body.total;
@@ -1185,5 +1218,15 @@ export default {
 }
 .gongse1{
   width: 400px;
+}
+.el-table__fixed-right::before, .el-table__fixed::before {
+   
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #EBEEF5;
+    z-index: 4;
 }
 </style>

@@ -4,10 +4,12 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>销售管理</el-breadcrumb-item>
-      <el-breadcrumb-item>折消单</el-breadcrumb-item>
+      <el-breadcrumb-item>销售订单-复审</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
+      <!-- <el-row :gutter="20"> -->
       <!-- ref作用？？ -->
+      <!-- ref="salesOrdermanagementForm" -->
       <el-form
         :inline="true"
         class="demo-form-inline"
@@ -15,52 +17,39 @@
         ref="salesOrdermanagementForm"
       >
         <!-- 订单号 -->
-        <el-form-item label="订单号"> 
+        <el-form-item label="订单号：">
           <el-input class="hu"></el-input>
         </el-form-item>
-        <!-- 选择仓库 -->
-        <el-form-item label="选择仓库" class="mar">
-          <el-select v-model="salesOrdermanagementForm.value1" class="hu">
-            <el-option
-              v-for="item in salesOrdermanagementForm.warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <!-- 订单状态 -->
-        <el-form-item label="订单状态" class="mar">
-          <el-select v-model="salesOrdermanagementForm.value2" class="hu">
-            <el-option
-              v-for="item in salesOrdermanagementForm.orderStateOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
+        <el-form-item label="订单状态：" class="mar">
+          <el-select v-model="salesOrdermanagementForm.state" class="hu">
+            <el-option value="0">初始化</el-option>
+            <el-option value="1">待审核</el-option>
+            <el-option value="2">初审不通过</el-option>
+            <el-option value="3">复审不通过</el-option>
           </el-select>
         </el-form-item>
         <!-- 手机号码 -->
-        <el-form-item label="手机号码" class="mar">
+        <el-form-item label="客户名称：" class="mar" prop="phoneNumber">
           <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
         </el-form-item>
         <!-- 收货姓名 -->
-        <el-form-item label="收货姓名">
+        <el-form-item label="合同号：" class="mar">
           <el-input v-model="salesOrdermanagementForm.name" class="hu"></el-input>
         </el-form-item>
         <!-- 收货省份 -->
-        <el-form-item label="收货省份" class="mar">
-          <el-select placeholder="选择省份" class="hu"></el-select>
+        <el-form-item label="交货方式：" class="mar">
+          <el-input v-model="salesOrdermanagementForm.province" class="hu"></el-input>
         </el-form-item>
         <!-- 查询按钮 -->
         <el-form-item class="mar">
-          <el-button type="primary" size="small">查询</el-button>
+          <el-button type="primary" size="small" @click="queryOrderList">查 询</el-button>
+          <el-button type="primary" size="small" @click="resetForm('salesOrdermanagementForm')">重 置</el-button>
         </el-form-item>
       </el-form>
-
+      <!-- </el-row> -->
       <!-- 4个按钮 -->
-      <el-button type="primary" size="small" @click="edit=true">编 辑</el-button>
-
+      <el-button type="primary" size="small" @click="addOrdermanagementVisible = true">新 建</el-button>
       <!-- 表格 -->
       <el-table
         ref="multipleTable"
@@ -68,256 +57,318 @@
         tooltip-effect="dark"
         style="width: 100%"
         border
+        
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="序号" width="120">
-          <template slot-scope="scope">{{ scope.row.no }}</template>
-        </el-table-column>
-
-        <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
+        <el-table-column prop="no" label="序号"></el-table-column>
         <el-table-column prop="orderNum" label="订单号"></el-table-column>
         <el-table-column prop="username" label="客户名称"></el-table-column>
-        <el-table-column prop="goodsInfo" label="商品信息"></el-table-column>
-        <el-table-column prop="overbookingTime" label="下单时间"></el-table-column>
-        <el-table-column prop="money1" label="应付总金额"></el-table-column>
-        <el-table-column prop="money2" label="应付预付金额"></el-table-column>
-        <el-table-column prop="payTime" label="付款时间"></el-table-column>
-        <el-table-column prop="address" label="收货地址" show-overflow-tooltip></el-table-column>
-        <!-- <el-table-column prop="createTime" label="创建时间"></el-table-column> -->
-        <!-- <el-table-column prop="lastModifyTime" label="最后修改时间"></el-table-column> -->
+        <el-table-column prop="goodsInfo" label="合同号"></el-table-column>
+        <el-table-column prop="overbookingTime" label="交货地点"></el-table-column>
+        <el-table-column prop="money1" label="交货方式"></el-table-column>
+        <el-table-column prop="money2" label="数量"></el-table-column>
+        <el-table-column prop="payTime" label="金额"></el-table-column>
+        <el-table-column prop="address" label="预付金额" ></el-table-column>
+        <el-table-column prop="createTime" label="交货日期"></el-table-column>
+        <el-table-column prop="lastModifyTime" label="下单日期"></el-table-column>
         <el-table-column prop="orderState" label="订单状态"></el-table-column>
-        <el-table-column prop="orderNote" label="订单备注"></el-table-column>
+        <el-table-column label="操作" width="240px" style="text-align:center">
+          <template slot-scope="scope">
+            <el-button @click="checkOrder(scope.row.orderNum)" type="primary" size="small" v-if="scope.row.orderState==='未完成'">提 审</el-button>
+            <!-- v-if="scope.row.orderState!=='未完成' -->
+            <el-button @click="editOrdermanagementVisible(scope.row.orderNum)" type="primary" size="small">编 辑</el-button>
+            <el-button @click="deleteOrder(scope.row.orderNum)" type="danger" size="small">删 除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
-      <!-- 表格操作按钮 -->
-      <!-- <div style="margin-top: 20px">
-        <el-button @click="toggleSelection([tableData[1], tableData[2]])">切换第二、第三行的选中状态</el-button>
-        <el-button @click="toggleSelection()">取消选择</el-button>
-      </div>-->
-
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[3, 5, 10, 15]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
+        :page-size="10"
+        layout="total, prev, pager, next"
         :total="total"
       ></el-pagination>
     </el-card>
+    <!-- 新增销售订单 -->
 
-    <el-dialog title="编辑折消单" :visible.sync="edit" width="60%" :before-close="handleClose">
-      <!-- 标签页 -->
-          <el-form title="订单" inline="true">
-            <!-- 带有排序功能的商品table-->
-            <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
-            <el-table :data="goodsData" style="width: 100%">
-              <!-- <el-table-column prop="date" label="日期" sortable width="180"></el-table-column>
-              <el-table-column prop="name" label="姓名" sortable width="180"></el-table-column>
-              <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>-->
-
-              <!-- <el-table-column prop="orderNum" label="订单号"></el-table-column> -->
-              <el-table-column prop="productName" label="产品名称"></el-table-column>
-              <el-table-column prop="productNum" label="产品编码"></el-table-column>
-              <el-table-column prop="productType" label="产品类型"></el-table-column>
-              <el-table-column prop="unitPrice" label="单价" sortable></el-table-column>
-              <el-table-column prop="salesQuantity" label="销售数量" sortable></el-table-column>
-              <el-table-column prop="sumMoney" label="总金额" sortable></el-table-column>
-              <el-table-column prop="note" label="备注"></el-table-column>
-            </el-table>
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[3, 5, 10, 15]"
-              :page-size="100"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-            <hr />
-
-            <el-form-item label="订单编号">
-              <el-input disabled="true" class="hu"></el-input>
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-select v-model="value" placeholder="请选择" class="hu" disabled="true">
-                <el-option>初始化</el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="货币类型">
-              <el-select v-model="value" placeholder="请选择" class="hu" disabled="true">
-                <el-option>人民币</el-option>
-                <el-option>美元</el-option>
-                <el-option>英镑</el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="创建时间">
-              <el-input disabled="true" class="hu"></el-input>
-            </el-form-item>
-            <el-form-item label="最后修改时间">
-              <el-input disabled="true" class="hu"></el-input>
-            </el-form-item>
-
-            <!-- 分割线 -->
-            <hr />
-
-            <!-- 对齐 -->
-            <el-row>
-              <el-col :span="6">
-                <el-form-item label="商品金额" class="a">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="预付款金额" class="a">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="小单费">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="6">
-                <el-form-item label="快递费">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="运  费">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="版  费">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="6">
-                <div></div>
-              </el-col>
-              <el-col :span="6">
-                <div></div>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="合 计">
-                  <el-input class="hu"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <!-- 付款状态 -->
-            <hr />
-
-            <el-form-item label="付款状态">
-              <el-input class="hu" disabled="true"></el-input>
-            </el-form-item>
-
-            <el-form-item label="付款时间">
-              <el-input class="hu" disabled="true"></el-input>
-            </el-form-item>
-            <hr />
-
-            <el-form-item label="客户名称">
-              <el-input class="hu"></el-input>
-            </el-form-item>
-
-            <hr />
-
-            <el-form-item label="订单说明">
-              <el-input style="width:300px"></el-input>
-            </el-form-item>
-            <!-- 生产订单信息 -->
-            <!-- 生产单数量不确定，应该循环遍历 -->
-            <hr />
-
-            <el-form-item label="生产订单信息">
-              <!-- <el-input style="width:300px"></el-input> -->
-            </el-form-item>
-
-            <!-- 收款信息 -->
-            <hr />
-
-            <el-table :data="t" style="width: 100%">
-              <el-table-column prop label="收款类型"></el-table-column>
-              <el-table-column label="金额"></el-table-column>
-              <el-table-column label="收款单号"></el-table-column>
-              <el-table-column label="操作时间"></el-table-column>
-              <el-table-column label="备注"></el-table-column>
-            </el-table>
-            <el-form-item label="合计" style="margin-left:600px; margin-top:20px;">
-              <el-input disabled class="hu"></el-input>
-            </el-form-item>
-            <!-- 收货信息 -->
-            <hr />
-
-            <el-form-item label="收货人">
-              <el-input class="hu"></el-input>
-            </el-form-item>
-            <el-form-item label="手机号码">
-              <el-input class="hu"></el-input>
-            </el-form-item>
-            <el-form-item label="电话号码">
-              <el-input class="hu"></el-input>
-            </el-form-item>
-            <el-form-item label="邮编">
-              <el-input class="hu"></el-input>
-            </el-form-item>
-
-            <el-form-item label="省市区">
-              <el-select v-model="value" placeholder="请选择" class="hu"></el-select>
-              <el-select v-model="value" placeholder="请选择" class="hu"></el-select>
-              <el-select v-model="value" placeholder="请选择" class="hu"></el-select>
-            </el-form-item>
-
-            <el-form-item label="详细地址">
-              <el-input style="width:250px"></el-input>
-            </el-form-item>
-
-            <el-form-item label="物流公司">
-              <el-select v-model="value" placeholder="请选择" class="hu"></el-select>
-            </el-form-item>
-
-            <el-form-item label="物流单号（主）">
-              <el-select v-model="value" placeholder="请选择" class="hu"></el-select>
-            </el-form-item>
-
-            <el-form-item label="LC码">
-              <el-input class="hu"></el-input>
-            </el-form-item>
-
-            <el-form-item label="发货时间">
-              <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-            </el-form-item>
-
-            <!-- 发货信息 -->
-            <hr />
-
-            <el-table :data="t" style="width: 100%">
-              <el-table-column prop label="产品编码"></el-table-column>
-              <el-table-column prop label="产品名称"></el-table-column>
-              <el-table-column prop label="产品类型"></el-table-column>
-              <el-table-column prop label="发货数量"></el-table-column>
-              <!-- <el-table-column prop label="单价"></el-table-column> -->
-              <el-table-column prop label="总数量"></el-table-column>
-              <el-table-column prop label="已发货数量"></el-table-column>
-              <el-table-column prop label="剩余数量"></el-table-column>
-              <el-table-column prop label="发货时间"></el-table-column>
-              <el-table-column prop label="关联出库单号"></el-table-column>
-            </el-table>
-            <hr />
-
-            <el-row>
-              <div style="margin-left:600px">
-                <el-button type="primary" size="small">保 存</el-button>
-                <el-button type="primary" size="small">提 交</el-button>
-                <el-button type="primary" size="small">取 消</el-button>
-              </div>
-            </el-row>
-          </el-form>
+    <el-dialog :title=" '新增销售订单' " :visible.sync="addOrdermanagementVisible" width="60%" :before-close="handleClose">
+        <div class="fenge">基础信息</div>
+        <el-form ref="form" label-width="110px" :inline="true">
+          <el-form-item label="客户名称：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="交货地点：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="合同号：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="交货方式：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="交货日期：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="货币类型：">
+            <el-input ></el-input>
+          </el-form-item>
+          <div class="fenge1">商品信息</div>
+        <el-form-item label="生产商品：">
+          <el-input class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="采购商品：">
+          <el-input class="w200"></el-input>
+        </el-form-item >
+        <el-button type="primary" >添加商品</el-button>
+      <el-table
+    :data="ProductionList"
+    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
+    <!-- default-expand-all -->
+    <el-table-column type="expand"  label="展开"  width="50">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品类别" prop="productType"></el-table-column>
+    <el-table-column label="尺寸" prop="productBrandabroad"></el-table-column>
+    <el-table-column label="个/包" prop="productZhizleix"></el-table-column>
+    <el-table-column label="包/箱" prop="productGramabroad"></el-table-column>
+    <el-table-column label="个/箱" prop="productCoatedabroad"></el-table-column>
+    <el-table-column label="数量" prop="productOneke"></el-table-column>
+    <el-table-column label="单价" prop="productChanpchic"></el-table-column>
+    <el-table-column label="总计" prop="designId"></el-table-column>
+    <el-table-column label="外箱尺寸" prop="designId"></el-table-column>
+    <el-table-column label="立方" prop="designId"></el-table-column>
+    <el-table-column label="净/毛" prop="designId"></el-table-column>
+   
+  </el-table>
+  <div class="fenge1">合计信息</div>
+    <el-form-item label="快递费：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="运费：">
+      <el-input ></el-input>
+    </el-form-item>
+     <el-form-item label="版费：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="小单费：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="总数量：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="总金额：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="预收款金额：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="备注：">
+      <el-input class="w400"></el-input>
+    </el-form-item>
+    <el-form-item label="预收款单号：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-button type="primary" @click="addOrdermanagementVisible1 = true">新增预收款单</el-button>
+    <div class="fenge1">初审信息</div>
+    <el-form-item label="审核人：">
+      <el-input ></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果：">
+      <el-radio  label="1">通过</el-radio>
+      <el-radio  label="2">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="审核描述：">
+      <el-input class="w400"></el-input>
+    </el-form-item>
+    <div class="fenge1">复审信息</div>
+    <el-form-item label="审核人：">
+      <el-input ></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果：">
+      <el-radio  label="1">通过</el-radio>
+      <el-radio  label="2">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="审核描述：">
+      <el-input class="w400"></el-input>
+    </el-form-item>
+  </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addOrdermanagementVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addOrder">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title=" '新增预收款单' " :visible.sync="addOrdermanagementVisible1" width="55%" :before-close="handleClose">
+      <div class="fenge">预收款信息</div>
+        <el-form ref="form" label-width="110px" :inline="true">
+          <el-form-item label="收款制单人：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="客户名称：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="销售单号：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="销售数量：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="销售金额：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="预收款金额：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="资金账户：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="收支类型：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="付款状态：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="备注：">
+            <el-input class="w400"></el-input>
+          </el-form-item>
+          <div class="fenge1">收款凭证</div>
+          <el-form-item>
+            <el-upload
+              action="https://jsonplaceholder.typicode.com/posts/"
+              list-type="picture-card"
+              :on-preview="handlePictureCardPreview"
+              :on-remove="handleRemove">
+              <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+              <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+          </el-form-item>
+        </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addOrdermanagementVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="addOrder">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 编辑销售订单 -->
+    <el-dialog
+      :title=" '编辑销售订单' "
+      :visible.sync="editOrdermanagementVisible"
+      width="60%"
+      :before-close="handleClose"
+    >
+     <div class="fenge">基础信息</div>
+        <el-form ref="form" label-width="110px" :inline="true">
+          <el-form-item label="客户名称：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="交货地点：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="合同号：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="交货方式：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="交货日期：">
+            <el-input ></el-input>
+          </el-form-item>
+          <el-form-item label="货币类型：">
+            <el-input ></el-input>
+          </el-form-item>
+        <div class="fenge1">商品信息</div>
+        <el-form-item label="生产商品：">
+          <el-input class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="采购商品：">
+          <el-input class="w200"></el-input>
+        </el-form-item >
+        <el-button type="primary" >添加商品</el-button>
+      <el-table
+    :data="ProductionList"
+    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
+    <!-- default-expand-all -->
+    <el-table-column type="expand"  label="展开"  width="50">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="">
+            箱唛<span>{{ props.row.productBoxMark }}</span>,
+            标唛<span>{{ props.row.productLabel }}</span>,
+            <span>{{ props.row.productInnerbao }}</span>/条,
+            <span>{{ props.row.productOutbao }}</span>/包,
+            <span>{{ props.row.productOnege }}</span>/箱,
+            <span>{{ props.row.productSizelength }}</span>,
+            <span>{{ props.row.productSizewide }}</span>,
+            <span>{{ props.row.productSizehight }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="productName"></el-table-column>
+    <el-table-column label="产品类别" prop="productType"></el-table-column>
+    <el-table-column label="尺寸" prop="productBrandabroad"></el-table-column>
+    <el-table-column label="个/包" prop="productZhizleix"></el-table-column>
+    <el-table-column label="包/箱" prop="productGramabroad"></el-table-column>
+    <el-table-column label="个/箱" prop="productCoatedabroad"></el-table-column>
+    <el-table-column label="数量" prop="productOneke"></el-table-column>
+    <el-table-column label="单价" prop="productChanpchic"></el-table-column>
+    <el-table-column label="总计" prop="designId"></el-table-column>
+    <el-table-column label="外箱尺寸" prop="designId"></el-table-column>
+    <el-table-column label="立方" prop="designId"></el-table-column>
+    <el-table-column label="净/毛" prop="designId"></el-table-column>
+   
+  </el-table>
+  <div class="fenge1">合计信息</div>
+    <el-form-item label="快递费：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="运费：">
+      <el-input ></el-input>
+    </el-form-item>
+     <el-form-item label="版费：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="小单费：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="总数量：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="总金额：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="预收款金额：">
+      <el-input ></el-input>
+    </el-form-item>
+    <el-form-item label="备注：">
+      <el-input class="w400"></el-input>
+    </el-form-item>
+  </el-form>
+        <span slot="footer" class="dialog-footer">
+        <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editOrder">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -325,15 +376,16 @@
 export default {
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
       labelPosition: "right",
-      addbumenDialogVisible: false,
-      editbumenDialogVisible: false,
+      addOrdermanagementVisible: false,
+      addOrdermanagementVisible1:false,
+      editOrdermanagementVisible: false,
       delVisible: false,
       currentPage: 0,
       total: 0,
-      delarr: "",
       selectedList: [],
-      departmentList: [],
       chaDepartmentForm: {
         name: "",
         pageCode: 1, //当前页
@@ -353,101 +405,35 @@ export default {
           { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
-
       //   自己做的部分
-
       salesOrdermanagementForm: {
-        select: "1",
+        // 要发送的真实字段
+        orderNum: "", //订单号
+        select: "1", //订单号类型选择
+        warehouse: "", //仓库
         pageCode: 1, //当前页
-        pageSize: 3, //每页显示的记录数
-
-        orderNoOptions: [
-          {
-            value: 0,
-            label: "订单号"
-          },
-          {
-            value: 1,
-            label: "黄金糕"
-          }
-        ],
-        value0: 0,
-
-        orderNo: "",
-        warehouseOptions: [
-          {
-            value: 0,
-            label: "默认仓库"
-          },
-          {
-            value: 1,
-            label: "黄金糕"
-          }
-        ],
-        value1: 0,
-
-        orderStateOptions: [
-          {
-            value: 0,
-            label: "全部"
-          },
-          {
-            value: 1,
-            label: "黄金糕"
-          }
-        ],
-        value2: 0,
-        phonenumber: "",
-        name: ""
+        pageSize: 10, //每页显示的记录数
+        state: "",
+        phoneNumber: "",
+        name: "",
+        province: ""
       },
-      // 页面表单数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-          no: 1,
-          orderNum: 99999,
-          username: "小明",
-          goodsInfo: "纸杯",
-          overbookingTime: "2016-05-02",
-          money1: 3000,
-          money2: 300,
-          payTime: "2016-05-02",
-          address: "上海市普陀区金沙江路 1518 弄",
-          createTime: "2016-05-02",
-          lastModifyTime: "2016-05-02",
-          orderState: "未完成",
-          orderNote: "0000"
-        }
-      ],
-      activeName: "first",
-    //   编辑
-      edit:false,
     };
   },
   created() {
+    //自己写的方法
+    this.getWarehouseOptions();
+
     this.getDepartmentList();
   },
   methods: {
-    async getDepartmentList() {
-      const { data: res } = await this.$http.post("sys/dept/list", {
-        params: this.chaDepartmentForm
-      });
-      this.total = res.body.total;
-      this.departmentList = res.body.rows;
-    },
-    handleSizeChange(val) {
-      this.chaDepartmentForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
-      this.getDepartmentList();
-    },
-    handleCurrentChange(val) {
-      this.chaDepartmentForm.pageCode = val;
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      this.getDepartmentList();
-    },
+    handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
     addDepartment() {
       this.$refs.addDepartmentRef.validate(async valid => {
         if (!valid) return;
@@ -542,9 +528,52 @@ export default {
       console.log(val);
       this.selectedList = val;
     },
-    // 标签页函数
-    handleClick(tab, event) {
-      console.log(tab, event);
+    // 自己写的方法
+    // 获取仓库列表
+    async getWarehouseOptions() {
+      const { data: res } = await this.$http.get("/getWarehouseOptions");
+      this.warehouseOptions = res.body.rows; //如何取
+    },
+    // 查询订单列表
+    async queryOrderList() {
+      // const { data: res } = await
+      this.$http
+        .get("/queryOrderList", {
+          params: {
+            salesOrdermanagementForm: this.salesOrdermanagementForm
+          }
+        })
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+        .then(function() {
+          // always executed
+        });
+      this.tableData = res.body.rows; //如何取
+    },
+
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      // this.$refs[formName].resetFields();
+    },
+
+    //分页相关函数
+    handleSizeChange(val) {
+      this.salesOrdermanagementForm.pageSize = val;
+      console.log(`每页 ${val} 条`);
+      this.queryOrderList();
+    },
+    handleCurrentChange(val) {
+      this.salesOrdermanagementForm.pageCode = val;
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      this.queryOrderList();
+    },
+    handleEdit(index, row) {
+      console.log(row); // , row
     }
   }
 };
@@ -557,30 +586,29 @@ export default {
   align-items: center;
   display: flex;
 }
-.el-table {
-  margin-top: 15px;
-}
-.chongzhi {
-  margin-top: 0px;
-}
-.hu {
-  width: 133px;
-}
-.hu2 {
-  width: 90px;
-}
-.mar {
-  margin-left: 15px;
-}
-// 控制添加按钮左右
-.btn {
-  margin-top: 20px;
-  margin-left: 920px;
-}
-hr {
-  margin: 15px 0px;
-}
-.a {
-  text-align: right;
-}
-</style>
+ .w400{
+   width: 400px;
+ }
+ .el-table{
+   margin-bottom: 15px;
+ }
+.fenge{
+    position: absolute;
+    top: 34px;
+    left: 0px;
+    height: 25px;
+    width: 98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    
+    }
+     .fenge1{
+    height: 25px;
+    width:98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    margin-bottom: 20px;
+    }
+</style>  

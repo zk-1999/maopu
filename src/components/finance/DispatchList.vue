@@ -12,16 +12,16 @@
       <!-- ref="salesOrdermanagementForm" -->
       <el-form :inline="true" class="demo-form-inline" :model="salesOrdermanagementForm">
         <el-form-item label="报销单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+          <el-input v-model="salesOrdermanagementForm.phoneNumber" ></el-input>
         </el-form-item>
-        <el-form-item label="报销制单人" class="mar">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        <el-form-item label="报销制单人" >
+          <el-input v-model="salesOrdermanagementForm.phoneNumber"></el-input>
         </el-form-item>
-        <el-form-item label="制单时间" class="mar">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        <el-form-item label="制单时间" >
+          <el-input v-model="salesOrdermanagementForm.phoneNumber" ></el-input>
         </el-form-item>
-        <el-form-item label="审核状态" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
+        <el-form-item label="审核状态" >
+          <el-select v-model="salesOrdermanagementForm.warehouse" >
             <el-option
               v-for="item in warehouseOptions"
               :key="item.value"
@@ -30,78 +30,71 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注" class="mar">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
 
         <!-- 查询按钮 -->
         <el-form-item>
-          <el-button type="primary" size="small" @click="q" class="mar">查 询</el-button>
+          <el-button  @click="q" >查 询</el-button>
+          <el-button type="primary" >重置</el-button>
         </el-form-item>
       </el-form>
       <!-- </el-row> -->
       <!-- 4个按钮 -->
-      <el-button type="primary" size="small" @click="stateOfAdd = true">新 增</el-button>
-      <el-button type="primary" size="small" @click="stateOfEdit = true">编 辑</el-button>
-      <el-button type="danger" size="small">删 除</el-button>
-      <el-button type="info" size="small">提 审</el-button>
-      <!-- 表格 -->
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        border
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="序号" width="120">
-          <template slot-scope="scope">{{ scope.row.no }}</template>
-        </el-table-column>
-
-        <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-        <el-table-column prop label="报销单号"></el-table-column>
-        <el-table-column prop label="报销制单人"></el-table-column>
-        <el-table-column prop label="制单时间"></el-table-column>
-        <el-table-column prop label="审核状态"></el-table-column>
-        <el-table-column prop label="备注"></el-table-column>
-      </el-table>
-
+      <el-button type="success"  @click="addbumenDialogVisible = true">新 增</el-button>
+      <el-button type="warning" >提 审</el-button>
+      <el-table border stripe :data="clientList" @selection-change="handleSelectionChange" align="center">
+            <el-table-column type="selection" width="35"></el-table-column>
+            <el-table-column type="index"  label="序号" width="55" align="center"></el-table-column>
+            <el-table-column prop="cusId" label="报销单号"></el-table-column>
+            <el-table-column prop="cusName" label="报销制单人"></el-table-column>
+            <el-table-column prop="cusType" label="制单时间"></el-table-column>
+            <el-table-column prop="cusContacts" label="报销状态"></el-table-column>
+            <el-table-column prop="cusPhone" label="审核状态"></el-table-column>
+            <el-table-column prop="cusFounder" label="备注"></el-table-column>
+            <el-table-column label="操作" width="190px">
+             <template slot-scope="scope">
+                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditClient(scope.row.customerId)">修改</el-button>
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  @click="deletebumen(scope.row.customerId)"
+                  size="mini"
+                >删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[3, 5, 10, 15]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
+        :page-size="10"
+        layout="total, prev, pager, next"
+        :total=total
       ></el-pagination>
     </el-card>
 
     <el-dialog
       :title=" '新增报销单' "
-      :visible.sync="stateOfAdd"
-      width="60%"
+      :visible.sync="addbumenDialogVisible"
+      width="50%"
       :before-close="handleClose"
     >
+    <div class="fenge">报销人员信息</div>
       <el-form inline="true">
-        <hr />
-        <div>报销人员信息</div>
-        <el-form-item label="报销单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        <el-form-item label="报销单号：">
+          <el-input v-model="salesOrdermanagementForm.phoneNumber" ></el-input>
         </el-form-item>
 
-        <el-form-item label="报销制单人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        <el-form-item label="报销制单人：">
+          <el-input v-model="salesOrdermanagementForm.phoneNumber" ></el-input>
         </el-form-item>
 
         <!-- 制单时间 -->
-        <el-form-item label="制单时间" class="mar">
+        <el-form-item label="制单时间：" >
           <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
+        <el-form-item label="报销类型：" >
+          <el-select v-model="salesOrdermanagementForm.warehouse" >
             <el-option
               v-for="item in warehouseOptions"
               :key="item.value"
@@ -110,20 +103,15 @@
             ></el-option>
           </el-select>
         </el-form-item>
-
-        <br />
-
-        <el-form-item label="备注" class="mar">
+        <el-form-item label="备注信息：">
           <el-input
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
+            :autosize="{ minRows: 1.3, maxRows:3}"
             placeholder="请输入内容"
             v-model="textarea2"
           ></el-input>
         </el-form-item>
-
-        <hr />
-        <div>报销凭证上传/查看</div>
+<div class="fenge1">报销凭证上传/查看</div>
         <!-- 两个按钮 -->
         <el-form-item>
           <el-upload
@@ -140,9 +128,7 @@
             <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
         </el-form-item>
-
-        <hr />
-        <div>付款凭证</div>
+<div class="fenge1">付款凭证</div>
         <!-- 两个按钮 -->
         <el-form-item>
           <el-upload
@@ -158,15 +144,12 @@
             </div>
             <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
-        </el-form-item>
-
-        <br />
-        <!-- 两个按钮 -->
-        <el-form-item style="margin-left:750px;">
-          <el-button type="primary" size="small">确 定</el-button>
-          <el-button type="primary" size="small">取 消</el-button>
         </el-form-item>
       </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="addbumenDialogVisible = false">取 消</el-button>
+          <el-button type="primary" >确 定</el-button>
+        </span>
     </el-dialog>
   </div>
 </template>
@@ -228,84 +211,17 @@ export default {
           label: "黄金糕"
         }
       ],
-      //订单状态列表（不完全）
-      orderStateOptions: [
-        {
-          value: 0,
-          label: "初始化"
-        },
-        {
-          value: 1,
-          label: "已付款"
-        },
-        {
-          value: 1,
-          label: "已完成"
-        }
-      ],
       //分页相关数据
       //currentPage:0,
       total: 0,
       // 页面表单数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-          no: 1,
-          orderNum: 99999,
-          username: "小明",
-          goodsInfo: "纸杯",
-          overbookingTime: "2016-05-02",
-          money1: 3000,
-          money2: 300,
-          payTime: "2016-05-02",
-          address: "上海市普陀区金沙江路 1518 弄",
-          createTime: "2016-05-02",
-          lastModifyTime: "2016-05-02",
-          orderState: "未完成",
-          orderNote: "0000"
-        }
-      ],
       addOrder: false,
       editOrder: false,
       addGoods: false,
       addOrderForm: {
         activeName: "first"
       },
-      goodsData: [
-        {
-          productName: "娃哈哈",
-          productNum: "12121212",
-          productType: "饮料",
-          unitPrice: 3,
-          salesQuantity: 7,
-          sumMoney: 21,
-          note: "哈哈哈哈哈",
-          opetate: ""
-        },
-        {
-          productName: "王老吉",
-          productNum: "12121212",
-          productType: "饮料",
-          unitPrice: 3,
-          salesQuantity: 8,
-          sumMoney: 21,
-          note: "大吉大利",
-          operate: ""
-        }
-      ],
       title: "",
-      receiptType: [
-        {
-          label: "采购退货收款",
-          value: "0"
-        },
-        {
-          label: "销售订单收款",
-          value: "1"
-        }
-      ],
       // 新增状态
       stateOfAdd: false,
       // 编辑状态
@@ -485,30 +401,24 @@ export default {
   align-items: center;
   display: flex;
 }
-.el-table {
-  margin-top: 15px;
-}
-.chongzhi {
-  margin-top: 0px;
-}
-.hu {
-  width: 133px;
-}
-.hu2 {
-  width: 90px;
-}
-.mar {
-  margin-left: 15px;
-}
-// 控制添加按钮左右
-.btn {
-  margin-top: 20px;
-  margin-left: 920px;
-}
-hr {
-  margin: 15px 0px;
-}
-.a {
-  text-align: right;
-}
+
+  .fenge{
+    position: absolute;
+    top: 34px;
+    left: 0px;
+    height: 25px;
+    width: 98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    
+    }
+    .fenge1{
+    height: 25px;
+    width:98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    margin-bottom: 20px;
+    }
 </style>  

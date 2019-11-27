@@ -7,77 +7,97 @@
       <el-breadcrumb-item>销售订单管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <!-- <el-row :gutter="20"> -->
-      <!-- ref作用？？ -->
-      <!-- ref="salesOrdermanagementForm" -->
       <el-form
         :inline="true"
         class="demo-form-inline"
-        :model="salesOrdermanagementForm"
-        ref="salesOrdermanagementForm"
+        :model="chaOrdermanagementForm"
+        ref="chaOrdermanagementRef"
       >
         <!-- 订单号 -->
-        <el-form-item label="订单号：">
-          <el-input class="hu"></el-input>
+        <el-form-item label="订单号：" prop="sorderCode">
+          <el-input v-model="chaOrdermanagementForm.sorderCode"></el-input>
         </el-form-item>
         <!-- 订单状态 -->
-        <el-form-item label="订单状态：" class="mar">
-          <el-select v-model="salesOrdermanagementForm.state" class="hu">
-            <el-option value="0">初始化</el-option>
-            <el-option value="1">待审核</el-option>
-            <el-option value="2">初审不通过</el-option>
-            <el-option value="3">复审不通过</el-option>
+        <el-form-item label="订单状态：" prop="sorderStatus">
+           <el-select v-model="chaOrdermanagementForm.sorderStatus" placeholder="请选择" class="w100">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <!-- 手机号码 -->
-        <el-form-item label="客户名称：" class="mar" prop="phoneNumber">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        <el-form-item label="客户名称：" prop="customerId">
+          <el-select v-model="chaOrdermanagementForm.customerId" placeholder="请选择" class="w100">
+            <el-option
+              v-for="item in kehu"
+              :key="item.customerId"
+              :label="item.cusName"
+              :value="item.customerId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <!-- 收货姓名 -->
-        <el-form-item label="合同号：" class="mar">
-          <el-input v-model="salesOrdermanagementForm.name" class="hu"></el-input>
+        <el-form-item label="合同号：" prop="sorderWarehouse">
+          <el-input v-model="chaOrdermanagementForm.sorderWarehouse"></el-input>
         </el-form-item>
         <!-- 收货省份 -->
-        <el-form-item label="交货方式：" class="mar">
-          <el-input v-model="salesOrdermanagementForm.province" class="hu"></el-input>
+        <el-form-item label="交货方式：" prop="sorderTotalsum">
+          <el-input v-model="chaOrdermanagementForm.sorderTotalsum"></el-input>
         </el-form-item>
         <!-- 查询按钮 -->
-        <el-form-item class="mar">
-          <el-button type="primary" size="small" @click="queryOrderList">查 询</el-button>
-          <el-button type="primary" size="small" @click="resetForm('salesOrdermanagementForm')">重 置</el-button>
+        <el-form-item >
+          <el-button @click="OrdermanagementList">查 询</el-button>
+          <el-button type="primary" @click="chaordermanagementForm">重 置</el-button>
         </el-form-item>
       </el-form>
       <!-- </el-row> -->
       <!-- 4个按钮 -->
-      <el-button type="primary" size="small" @click="addOrdermanagementVisible = true">新 建</el-button>
+      <el-button type="success" @click="addOrdermanagementVisible = true">新 建</el-button>
+      <el-button type="warning" @click="selectedqi(1)" :disabled="selectedList.length == 0">提 审</el-button>
+      <el-button type="danger" @click="selectedqi(9)" :disabled="selectedList.length == 0">结 束</el-button>
       <!-- 表格 -->
       <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
+        :data="ordermanagementList"
+        striped
         border
-        
+        style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column prop="no" label="序号"></el-table-column>
-        <el-table-column prop="orderNum" label="订单号"></el-table-column>
-        <el-table-column prop="username" label="客户名称"></el-table-column>
-        <el-table-column prop="goodsInfo" label="合同号"></el-table-column>
-        <el-table-column prop="overbookingTime" label="交货地点"></el-table-column>
-        <el-table-column prop="money1" label="交货方式"></el-table-column>
-        <el-table-column prop="money2" label="数量"></el-table-column>
-        <el-table-column prop="payTime" label="金额"></el-table-column>
-        <el-table-column prop="address" label="预付金额" ></el-table-column>
-        <el-table-column prop="createTime" label="交货日期"></el-table-column>
-        <el-table-column prop="lastModifyTime" label="下单日期"></el-table-column>
-        <el-table-column prop="orderState" label="订单状态"></el-table-column>
-        <el-table-column label="操作" width="240px" style="text-align:center">
+      <el-table-column type="selection" width="35"></el-table-column>
+        <el-table-column type="index" label="序号" width="55"></el-table-column>
+        <el-table-column prop="sorderCode" label="订单号" width="140px"></el-table-column>
+        <el-table-column prop="customerDOs.cusName" label="客户名称"></el-table-column>
+        <el-table-column prop="sorderWarehouse" label="合同号"></el-table-column>
+        <el-table-column prop="sorderAddress" label="交货地点"></el-table-column>
+        <el-table-column prop="sorderTotalsum" label="交货方式"></el-table-column>
+        <el-table-column prop="sorderAllnumber" label="总数量"></el-table-column>
+        <el-table-column prop="sorderTotal" label="总金额"></el-table-column>
+        <el-table-column prop="sorderPayamount" label="预付金额" ></el-table-column>
+        <el-table-column prop="sorderDeliverytime" label="交货日期"></el-table-column>
+        <el-table-column prop="sorderCreatetime" label="下单日期"></el-table-column>
+        <el-table-column prop="sorderStatus" label="订单状态" align="center">
           <template slot-scope="scope">
-            <el-button @click="checkOrder(scope.row.orderNum)" type="primary" size="small" v-if="scope.row.orderState==='未完成'">提 审</el-button>
-            <!-- v-if="scope.row.orderState!=='未完成' -->
-            <el-button @click="editOrdermanagementVisible(scope.row.orderNum)" type="primary" size="small">编 辑</el-button>
-            <el-button @click="deleteOrder(scope.row.orderNum)" type="danger" size="small">删 除</el-button>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='0'">初始化</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='1'">待初审</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='2'">初审未通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='3'">待复审</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='4'">复审未通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">生产中</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='6'">待发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='7'">部分发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='8'">全部发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='9'">已完成</el-tag>
+          </template >
+        </el-table-column>
+        <el-table-column label="操作" width="220px" style="text-align:center">
+          <template slot-scope="scope">
+              <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true)" type="success" size="small">查 看</el-button>
+             <el-button @click="showEditOrdermanagement(scope.row.sorderCode)" type="primary" size="small" :disabled="scope.row.sorderStatus==1 || scope.row.sorderStatus==3 ||scope.row.sorderStatus==5 ||scope.row.sorderStatus==6 ||scope.row.sorderStatus==7 ||scope.row.sorderStatus==8 ||scope.row.sorderStatus==9"  >编 辑</el-button>
+            <el-button @click="deletebumen(scope.row.sorderCode)" type="danger" size="small" :disabled="scope.row.sorderStatus==1 || scope.row.sorderStatus==3 ||scope.row.sorderStatus==5 ||scope.row.sorderStatus==6 ||scope.row.sorderStatus==7 ||scope.row.sorderStatus==8 ||scope.row.sorderStatus==9"  >删 除</el-button>
+
           </template>
         </el-table-column>
       </el-table>
@@ -92,206 +112,330 @@
     </el-card>
     <!-- 新增销售订单 -->
 
-    <el-dialog :title=" '新增销售订单' " :visible.sync="addOrdermanagementVisible" width="60%" :before-close="handleClose">
+    <el-dialog :title=" '新增销售订单' " :visible.sync="addOrdermanagementVisible" width="70%" :before-close="handleClose">
         <div class="fenge">基础信息</div>
-        <el-form ref="form" label-width="110px" :inline="true">
-          <el-form-item label="客户名称：">
-            <el-input ></el-input>
+        <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="addOrdermanagementForm" :rules="addOrdermanagementRules">
+          <el-form-item label="客户名称：" prop="customerId">
+          <el-select v-model="addOrdermanagementForm.customerId" class="sel" placeholder="请选择" >
+            <el-option
+              v-for="item in kehu"
+              :key="item.customerId"
+              :label="item.cusName"
+              :value="item.customerId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+          <el-form-item label="交货地点：" prop="">
+            <el-input v-model="addOrdermanagementForm.sorderAddress"></el-input>
           </el-form-item>
-          <el-form-item label="交货地点：">
-            <el-input ></el-input>
+          <el-form-item label="合同号：" prop="sorderWarehouse">
+            <el-input v-model="addOrdermanagementForm.sorderWarehouse"></el-input>
           </el-form-item>
-          <el-form-item label="合同号：">
-            <el-input ></el-input>
+          <el-form-item label="交货方式：" prop="sorderTotalsum">
+            <el-input v-model="addOrdermanagementForm.sorderTotalsum"></el-input>
           </el-form-item>
-          <el-form-item label="交货方式：">
-            <el-input ></el-input>
+          <el-form-item label="交货日期：" prop="sorderDeliverytime">
+            <el-input v-model="addOrdermanagementForm.sorderDeliverytime"></el-input>
           </el-form-item>
-          <el-form-item label="交货日期：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="货币类型：">
-            <el-input ></el-input>
+          <el-form-item label="货币类型：" prop="sorderCurrecytype">
+            <el-input v-model="addOrdermanagementForm.sorderCurrecytype"></el-input>
           </el-form-item>
           <div class="fenge1">商品信息</div>
-        <el-form-item label="生产商品：">
-          <el-input class="w200"></el-input>
-        </el-form-item>
-        <el-form-item label="采购商品：">
-          <el-input class="w200"></el-input>
-        </el-form-item >
-        <el-button type="primary" >添加商品</el-button>
+        <el-button type="primary" @click="shengchanshangping">添加生产商品</el-button>
+        <el-button type="primary" @click="selected">删除商品</el-button>
+        <!-- <el-button type="primary" @click="chaigoushangpin">添加采购商品</el-button> -->
       <el-table
-    :data="ProductionList"
-    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
+    style="width: 100%" border class="tb" default-expand-all @selection-change="handleSelectionChange"
+    :data="addOrdermanagementForm.commodityListDOs" >
     <!-- default-expand-all -->
-    <el-table-column type="expand"  label="展开"  width="50">
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="50" >
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="">
-            箱唛<span>{{ props.row.productBoxMark }}</span>,
-            标唛<span>{{ props.row.productLabel }}</span>,
-            <span>{{ props.row.productInnerbao }}</span>/条,
-            <span>{{ props.row.productOutbao }}</span>/包,
-            <span>{{ props.row.productOnege }}</span>/箱,
-            <span>{{ props.row.productSizelength }}</span>,
-            <span>{{ props.row.productSizewide }}</span>,
-            <span>{{ props.row.productSizehight }}</span>
+          <el-form-item label="" >
+            {{ props.row.productSplicing }}
+          </el-form-item>
+          <br>
+          <el-form-item label="特备注意：">
+          <el-input v-model="props.row.commodityRemark"></el-input>
           </el-form-item>
         </el-form>
       </template>
     </el-table-column>
-    <el-table-column label="商品名称" prop="productName"></el-table-column>
-    <el-table-column label="产品类别" prop="productType"></el-table-column>
-    <el-table-column label="尺寸" prop="productBrandabroad"></el-table-column>
-    <el-table-column label="个/包" prop="productZhizleix"></el-table-column>
-    <el-table-column label="包/箱" prop="productGramabroad"></el-table-column>
-    <el-table-column label="个/箱" prop="productCoatedabroad"></el-table-column>
-    <el-table-column label="数量" prop="productOneke"></el-table-column>
-    <el-table-column label="单价" prop="productChanpchic"></el-table-column>
-    <el-table-column label="总计" prop="designId"></el-table-column>
-    <el-table-column label="外箱尺寸" prop="designId"></el-table-column>
-    <el-table-column label="立方" prop="designId"></el-table-column>
-    <el-table-column label="净/毛" prop="designId"></el-table-column>
-    <el-table-column label="操作" width="90px" align="center">
-      <template slot-scope="scope">
-        <el-button type="danger" icon="el-icon-delete" @click="deletebumen(scope.row.productgoodsId)">删除</el-button>
+    <el-table-column label="商品名称" prop="productName" width="150px"></el-table-column>
+    <el-table-column label="产品类别" prop="productType" width="150px"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="个/包" prop="productInnerbao"></el-table-column>
+    <el-table-column label="包/箱" prop="productOutbao"></el-table-column>
+    <el-table-column label="个/箱" prop="productOnege" ></el-table-column>
+   
+    <el-table-column label="外箱尺寸" width="150px">
+      <template scope="scope">
+        {{scope.row.productSizelength}}*{{scope.row.productSizelength}}*{{scope.row.productSizelength}}
       </template>
+    </el-table-column>
+    <el-table-column label="立方" prop="lifang"></el-table-column>
+    <el-table-column label="净/毛" prop="productOneke"></el-table-column>
+     <el-table-column label="数量">
+      <template scope="scope">
+        <el-input v-model="scope.row.commodityNumber" @blur="jisuan"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="单价">
+      <template scope="scope">
+        <el-input v-model="scope.row.commodityPrice" @blur="jisuan"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="总计" >
+      <template scope="scope">
+        {{scope.row.commodityNumber*scope.row.commodityPrice}}</template>
     </el-table-column>
   </el-table>
   <div class="fenge1">合计信息</div>
-    <el-form-item label="快递费：">
-      <el-input ></el-input>
+    <el-form-item label="快递费：" prop="sorderExpressfee">
+      <el-input v-model="addOrdermanagementForm.sorderExpressfee" @blur="jisuan"></el-input>
     </el-form-item>
-    <el-form-item label="运费：">
-      <el-input ></el-input>
+    <el-form-item label="运费：" prop="sorderFreigh">
+      <el-input v-model="addOrdermanagementForm.sorderFreigh" @blur="jisuan"></el-input>
     </el-form-item>
-     <el-form-item label="版费：">
-      <el-input ></el-input>
+     <el-form-item label="版费：" prop="sorderEditionfee">
+      <el-input v-model="addOrdermanagementForm.sorderEditionfee" @blur="jisuan"></el-input>
     </el-form-item>
-    <el-form-item label="小单费：">
-      <el-input ></el-input>
+    <el-form-item label="小单费：" prop="sorderSinglefee">
+      <el-input v-model="addOrdermanagementForm.sorderSinglefee" @blur="jisuan"></el-input>
     </el-form-item>
-    <el-form-item label="总数量：">
-      <el-input ></el-input>
+    <el-form-item label="总数量：" prop="sorderAllnumber">
+      <el-input v-model="addOrdermanagementForm.sorderAllnumber"></el-input>
     </el-form-item>
-    <el-form-item label="总金额：">
-      <el-input ></el-input>
+    <el-form-item label="总金额：" prop="sorderTotal">
+      <el-input v-model="addOrdermanagementForm.sorderTotal"></el-input>
     </el-form-item>
-    <el-form-item label="预收款金额：">
-      <el-input ></el-input>
+    <el-form-item label="预收款金额：" prop="sorderPayamount">
+      <el-input v-model="addOrdermanagementForm.sorderPayamount"></el-input>
     </el-form-item>
-    <el-form-item label="备注：">
-      <el-input class="w400"></el-input>
+    <el-form-item label="备注：" prop="sorderRemark0">
+      <el-input class="w400" v-model="addOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
   </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addOrder">确 定</el-button>
+        <el-button type="primary" @click="addOrdermanagement">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- 编辑销售订单 -->
-    <el-dialog
-      :title=" '编辑销售订单' "
-      :visible.sync="editOrdermanagementVisible"
-      width="60%"
-      :before-close="handleClose"
-    >
-     <div class="fenge">基础信息</div>
-        <el-form ref="form" label-width="110px" :inline="true">
-          <el-form-item label="客户名称：">
-            <el-input ></el-input>
+    <el-dialog :title=" '新增生产商品' " :visible.sync="addOrdermanagementVisible1" width="55%" :before-close="handleClose">
+        <el-form ref="form" label-width="110px" :inline="true" :model="shengchanFrom" :rules="addOrdermanagementRules">
+          <el-form-item label="生产商品类型：">
+            <el-select v-model="shengchanFrom.productLeixing" placeholder="请选择">
+              <el-option
+                v-for="item in shengchan"
+                :key="item.id"
+                :label="item.value"
+                :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="交货地点：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="合同号：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="交货方式：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="交货日期：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="货币类型：">
-            <el-input ></el-input>
-          </el-form-item>
-        <div class="fenge1">商品信息</div>
-        <el-form-item label="生产商品：">
-          <el-input class="w200"></el-input>
-        </el-form-item>
-        <el-form-item label="采购商品：">
-          <el-input class="w200"></el-input>
-        </el-form-item >
-        <el-button type="primary" >添加商品</el-button>
+        <el-button type="primary" @click="shengchanshangping">查询</el-button>
       <el-table
-    :data="ProductionList"
-    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
+    :data="shengchanlist"
+    style="width: 100%" border  @selection-change="handleSelectionChange">
     <!-- default-expand-all -->
+     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="expand"  label="展开"  width="50">
       <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
+        <el-form label-position="left" inline class="demo-table-expand" >
           <el-form-item label="">
-            箱唛<span>{{ props.row.productBoxMark }}</span>,
-            标唛<span>{{ props.row.productLabel }}</span>,
-            <span>{{ props.row.productInnerbao }}</span>/条,
-            <span>{{ props.row.productOutbao }}</span>/包,
-            <span>{{ props.row.productOnege }}</span>/箱,
-            <span>{{ props.row.productSizelength }}</span>,
-            <span>{{ props.row.productSizewide }}</span>,
-            <span>{{ props.row.productSizehight }}</span>
+            {{ props.row.productSplicing}}
           </el-form-item>
         </el-form>
       </template>
     </el-table-column>
     <el-table-column label="商品名称" prop="productName"></el-table-column>
-    <el-table-column label="产品类别" prop="productType"></el-table-column>
-    <el-table-column label="尺寸" prop="productBrandabroad"></el-table-column>
-    <el-table-column label="个/包" prop="productZhizleix"></el-table-column>
-    <el-table-column label="包/箱" prop="productGramabroad"></el-table-column>
-    <el-table-column label="个/箱" prop="productCoatedabroad"></el-table-column>
-    <el-table-column label="数量" prop="productOneke"></el-table-column>
-    <el-table-column label="单价" prop="productChanpchic"></el-table-column>
-    <el-table-column label="总计" prop="designId"></el-table-column>
-    <el-table-column label="外箱尺寸" prop="designId"></el-table-column>
-    <el-table-column label="立方" prop="designId"></el-table-column>
-    <el-table-column label="净/毛" prop="designId"></el-table-column>
-    <el-table-column label="操作" width="90px" align="center">
+    <el-table-column label="产品名称" prop="productType"></el-table-column>
+    <el-table-column label="尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="个/包" prop="productInnerbao"></el-table-column>
+    <el-table-column label="包/箱" prop="productOutbao"></el-table-column>
+    <el-table-column label="个/箱" prop="productOnege"></el-table-column>
+    <el-table-column label="外箱尺寸" prop="productSizelength" width="150px">
       <template slot-scope="scope">
-        <el-button type="danger" icon="el-icon-delete" @click="deletebumen(scope.row.productgoodsId)">删除</el-button>
+        {{scope.row.productSizelength}}*{{scope.row.productSizewide}}*{{scope.row.productSizehight}}
       </template>
+    </el-table-column>
+    <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+  </el-table>
+    
+  </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addOrdermanagementVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="shengchancaigou">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- <el-dialog :title=" '新增采购商品' " :visible.sync="addOrdermanagementVisible2" width="55%" :before-close="handleClose">
+        <el-form ref="form" label-width="110px" :inline="true" :model="caigouFrom" :rules="addOrdermanagementRules">
+          <el-form-item label="采购商品类型：">
+            <el-select v-model="caigouFrom.lab" placeholder="请选择">
+              <el-option
+                v-for="item in caigou"
+                :key="item.id"
+                :label="item.value"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        <el-button type="primary" @click="chaigoushangpin">查询</el-button>
+      <el-table
+    :data="chaigoulist"
+    style="width: 100%" border  @selection-change="handleSelectionChange">
+
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="50">
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand" >
+          <el-form-item label="">
+            {{ props.row.productSplicing}}
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="supgoolsId"></el-table-column>
+    <el-table-column label="商品类型" prop="supgoolssmallType"></el-table-column>
+    <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
+  </el-table>
+    
+  </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addOrdermanagementVisible2 = false">取 消</el-button>
+        <el-button type="primary"  @click="shengchancaigou">确 定</el-button>
+      </span>
+    </el-dialog> -->
+    <!-- 编辑销售订单 -->
+    <el-dialog
+      :title=" '编辑销售订单' "
+      :visible.sync="editOrdermanagementVisible"
+      width="70%"
+      :before-close="handleClose"
+    >
+     <div class="fenge">基础信息</div>
+        <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
+          <el-form-item label="客户名称：" prop="customerId">
+          <el-select v-model="editOrdermanagementForm.customerId" class="sel" placeholder="请选择" :disabled="xianshi">
+            <el-option
+              v-for="item in kehu"
+              :key="item.customerId"
+              :label="item.cusName"
+              :value="item.customerId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+          <el-form-item label="交货地点：" prop="">
+            <el-input v-model="editOrdermanagementForm.sorderAddress" :disabled="xianshi"></el-input>
+          </el-form-item>
+          <el-form-item label="合同号：" prop="sorderWarehouse">
+            <el-input v-model="editOrdermanagementForm.sorderWarehouse" :disabled="xianshi"></el-input>
+          </el-form-item>
+          <el-form-item label="交货方式：" prop="sorderTotalsum">
+            <el-input v-model="editOrdermanagementForm.sorderTotalsum" :disabled="xianshi"></el-input>
+          </el-form-item>
+          <el-form-item label="交货日期：" prop="sorderDeliverytime">
+            <el-input v-model="editOrdermanagementForm.sorderDeliverytime" :disabled="xianshi"></el-input>
+          </el-form-item>
+          <el-form-item label="货币类型：" prop="sorderCurrecytype">
+            <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input>
+          </el-form-item>
+          <div class="fenge1">商品信息</div>
+
+        <el-button v-if="!xianshi" type="primary" @click="shengchanshangping" :disabled="xianshi">添加生产商品</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="selected" :disabled="xianshi">删除商品</el-button>
+        <!-- <el-button type="primary" @click="chaigoushangpin">添加采购商品</el-button> -->
+      <el-table
+    style="width: 100%" border class="tb" default-expand-all @selection-change="handleSelectionChange"
+    :data="editOrdermanagementForm.commodityListDOs" >
+    <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="expand"  label="展开"  width="50" >
+      <template slot-scope="props">
+        <el-form label-position="left" inline class="demo-table-expand">
+          <el-form-item label="" >
+            {{ props.row.producinggoodsDOs.productSplicing }}
+          </el-form-item>
+          <br>
+          <el-form-item label="特备注意：">
+          <el-input v-model="props.row.commodityRemark" :disabled="xianshi"></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+    </el-table-column>
+    <el-table-column label="商品名称" prop="producinggoodsDOs.productName" width="150px"></el-table-column>
+    <el-table-column label="产品类别" prop="producinggoodsDOs.productType" width="150px"></el-table-column>
+    <el-table-column label="产品尺寸" prop="producinggoodsDOs.productChanpchic"></el-table-column>
+    <el-table-column label="个/包" prop="producinggoodsDOs.productInnerbao"></el-table-column>
+    <el-table-column label="包/箱" prop="producinggoodsDOs.productOutbao"></el-table-column>
+    <el-table-column label="个/箱" prop="producinggoodsDOs.productOnege" ></el-table-column>
+   
+    <el-table-column label="外箱尺寸" width="150px">
+      <template scope="scope">
+        {{scope.row.producinggoodsDOs.productSizelength}}*{{scope.row.producinggoodsDOs.productSizelength}}*{{scope.row.producinggoodsDOs.productSizelength}}
+      </template>
+    </el-table-column>
+    <el-table-column label="立方" prop="producinggoodsDOs.lifang"></el-table-column>
+    <el-table-column label="净/毛" prop="producinggoodsDOs.productOneke"></el-table-column>
+     <el-table-column label="数量">
+      <template scope="scope">
+        <el-input v-model="scope.row.commodityNumber" @blur="jisuan" :disabled="xianshi"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="单价">
+      <template scope="scope">
+        <el-input v-model="scope.row.commodityPrice" @blur="jisuan" :disabled="xianshi"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="总计" >
+      <template scope="scope">
+        {{scope.row.commodityNumber*scope.row.commodityPrice}}</template>
     </el-table-column>
   </el-table>
   <div class="fenge1">合计信息</div>
-    <el-form-item label="快递费：">
-      <el-input ></el-input>
+    <el-form-item label="快递费：" prop="sorderExpressfee">
+      <el-input v-model="editOrdermanagementForm.sorderExpressfee" @blur="jisuan" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-form-item label="运费：">
-      <el-input ></el-input>
+    <el-form-item label="运费：" prop="sorderFreigh">
+      <el-input v-model="editOrdermanagementForm.sorderFreigh" @blur="jisuan" :disabled="xianshi"></el-input>
     </el-form-item>
-     <el-form-item label="版费：">
-      <el-input ></el-input>
+     <el-form-item label="版费：" prop="sorderEditionfee">
+      <el-input v-model="editOrdermanagementForm.sorderEditionfee" @blur="jisuan" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-form-item label="小单费：">
-      <el-input ></el-input>
+    <el-form-item label="小单费：" prop="sorderSinglefee">
+      <el-input v-model="editOrdermanagementForm.sorderSinglefee" @blur="jisuan" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-form-item label="总数量：">
-      <el-input ></el-input>
+    <el-form-item label="总数量：" prop="sorderAllnumber">
+      <el-input v-model="editOrdermanagementForm.sorderAllnumber" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-form-item label="总金额：">
-      <el-input ></el-input>
+    <el-form-item label="总金额：" prop="sorderTotal">
+      <el-input v-model="editOrdermanagementForm.sorderTotal" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-form-item label="预收款金额：">
-      <el-input ></el-input>
+    <el-form-item label="预收款金额：" prop="sorderPayamount">
+      <el-input v-model="editOrdermanagementForm.sorderPayamount" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-form-item label="备注：">
-      <el-input class="w400"></el-input>
+    <el-form-item label="备注：" prop="sorderRemark0">
+      <el-input class="w400" :disabled="xianshi" v-model="editOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrder">确 定</el-button>
+        <el-button type="primary" @click="editOrdermanagement">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
+      <div class="del-dialog-cnt">此操作将批量启用, 是否继续？</div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="delVisibleqi = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="delVisible" width="300px">
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="delVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRow" >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -300,113 +444,312 @@
 export default {
   data() {
     return {
-      // v:false,
       labelPosition: "right",
+      delVisibleqi:false,
       addOrdermanagementVisible: false,
+      addOrdermanagementVisible1: false,
+      addOrdermanagementVisible2: false,
       editOrdermanagementVisible: false,
       delVisible: false,
       currentPage: 0,
       total: 0,
       selectedList: [],
-      chaDepartmentForm: {
-        name: "",
+      xianshi:false,
+      ordermanagementList:[],
+      chaOrdermanagementForm: {
+        sorderCode:'',
+        customerId:'',
+        sorderStatus:'',
+        sorderTotalsum:'',
+        sorderWarehouse:'',
+        line:0,
         pageCode: 1, //当前页
-        pageSize: 3 //每页显示的记录数
+        pageSize: 10 //每页显示的记录数
       },
-      addDepartmentForm: {
-        name: "",
-        orderNum: ""
+      shengchanFrom:{
+        productLeixing:'',
       },
-      editDepartmentForm: {
-        name: "",
-        orderNum: ""
+      caigouFrom:{
+        lab:'原纸',
       },
-      addDepartmentRules: {
-        name: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
+      shengchan:[{
+        id:0,
+        value:'单层'
+      },{
+        id:1,
+        value:'双层'
+      },{
+        id:2,
+        value:'瓦楞'
+      },{
+        id:3,
+        value:'杯套'
+      },{
+        id:4,
+        value:'手柄'
+      }],
+      caigou:[{
+        id:0,
+        value:'原纸'
+      },{
+        id:1,
+        value:'纸箱'
+      },{
+        id:2,
+        value:'袋子'
+      },{
+        id:3,
+        value:'油墨'
+      },{
+        id:4,
+        value:'其他'
+      }],
+      options: [{
+          value: '0',
+          label: '初始化'
+        }, {
+          value: '1',
+          label: '待初审'
+        }, {
+          value: '2',
+          label: '初审未通过'
+        }, {
+          value: '3',
+          label: '待复审'
+        }, {
+          value: '4',
+          label: '复审未通过'
+        }, {
+          value: '5',
+          label: '生产中'
+        }, {
+          value: '6',
+          label: '待发货'
+        }, {
+          value: '7',
+          label: '部分发货'
+        }, {
+          value: '8',
+          label: '全部发货'
+        }, {
+          value: '9',
+          label: '已完成'
+        }],
+        value:'',
+      addOrdermanagementForm: {
+        customerId: '',
+        sorderAddress: '',
+        sorderWarehouse:'',
+        sorderTotalsum:'',
+        sorderDeliverytime:'',
+        sorderCurrecytype:'', 
+        productName:'',
+        supgoolsId:'',
+        sorderExpressfee:'',
+        sorderFreigh:'',
+        sorderEditionfee:'',
+        sorderSinglefee:'',
+        sorderAllnumber:'',
+        sorderTotal:'',
+        sorderPayamount:'',
+        sorderRemark0:'',
+        commodityListDOs:[],
+      },
+      editOrdermanagementForm: {
+        customerId: '',
+        sorderAddress: '',
+        sorderWarehouse:'',
+        sorderTotalsum:'',
+        sorderDeliverytime:'',
+        sorderCurrecytype:'', 
+        productName:'',
+        supgoolsId:'',
+        sorderExpressfee:'',
+        sorderFreigh:'',
+        sorderEditionfee:'',
+        sorderSinglefee:'',
+        sorderAllnumber:'',
+        sorderTotal:'',
+        sorderPayamount:'',
+        sorderRemark0:'',
+        commodityListDOs:[],
+      },
+      addOrdermanagementRules: {
+        sorderAddress: [
+          { min: 1, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
-      //   自己做的部分
-      salesOrdermanagementForm: {
-        // 要发送的真实字段
-        orderNum: "", //订单号
-        select: "1", //订单号类型选择
-        warehouse: "", //仓库
-        pageCode: 1, //当前页
-        pageSize: 10, //每页显示的记录数
-        state: "",
-        phoneNumber: "",
-        name: "",
-        province: ""
-      },
+      kehu:[],
+      shengchanlist:[],
+      // chaigoulist:[],
     };
   },
   created() {
-    //自己写的方法
-    this.getWarehouseOptions();
-
-    this.getDepartmentList();
+    this.OrdermanagementList();
+    this.list();
   },
   methods: {
-    addDepartment() {
-      this.$refs.addDepartmentRef.validate(async valid => {
+     // 查询订单列表
+   async OrdermanagementList() {
+     if (this.chaOrdermanagementForm.sorderCode!=''||this.chaOrdermanagementForm.sorderTotalsum!=''||this.chaOrdermanagementForm.sorderStatus!=''||this.chaOrdermanagementForm.sorderWarehouse!='') {
+       this.chaOrdermanagementForm.pageCode=1;
+       this.chaOrdermanagementForm.pageSize=10;
+     }
+      const { data: res } = await this.$http.post("xs/saleorder/selectOrderComm",this.chaOrdermanagementForm);
+      this.total=res.body.total;
+      this.ordermanagementList = res.body.rows;
+    },
+    async list(){
+      const { data: res } = await this.$http.post("jc/customer/selectcustom1");
+      console.log(res);
+      this.kehu = res;
+    },
+   async shengchanshangping(){
+      const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.shengchanFrom);
+      console.log(res);
+      this.shengchanlist = res.body.rows;
+      this.addOrdermanagementVisible1=true;
+    },
+    // async chaigoushangpin(){
+    //   const { data: res } = await this.$http.post("jc/suppliergoods/selectSuppliergoolslist",{params:this.caigouFrom});
+    //   console.log(res);
+    //   this.chaigoulist = res.body.rows;
+    //   this.addOrdermanagementVisible2=true;
+    // },
+    addOrdermanagement() {
+      console.log(this.addOrdermanagementForm);
+      
+      this.$refs.addOrdermanagementRef.validate(async valid => {
         if (!valid) return;
         const { data: res } = await this.$http.post(
-          "sys/dept/save",
-          this.addDepartmentForm
+          "xs/saleorder/insertSalesOrder",
+          this.addOrdermanagementForm
         );
-        this.$message.success("用户创建成功！");
-        this.getDepartmentList();
-        this.addbumenDialogVisible = false;
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
+        this.OrdermanagementList();
+        this.addOrdermanagementVisible = false;
       });
     },
-    chaDepartmentResetForm(formName) {
-      this.$refs.chaDepartmentRef.resetFields();
-      this.getDepartmentList();
+    jisuan() {
+      this.addOrdermanagementForm.sorderAllnumber=0;
+      this.addOrdermanagementForm.sorderTotal=0;
+      if(this.addOrdermanagementVisible==true){
+        for (
+        let index = 0; index < this.addOrdermanagementForm.commodityListDOs.length; index++) {
+        if (isNaN(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber) || isNaN(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice)) {
+          continue;
+        }
+        this.addOrdermanagementForm.sorderAllnumber += parseInt(
+          this.addOrdermanagementForm.commodityListDOs[index].commodityNumber
+        );
+
+        this.addOrdermanagementForm.sorderTotal +=
+          parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *
+          parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          console.log(this.addOrdermanagementForm.sorderTotal);
+          var tatal=this.addOrdermanagementForm.sorderTotal
+      }
+       this.addOrdermanagementForm.sorderTotal=parseInt(this.addOrdermanagementForm.sorderTotal)+parseInt(this.addOrdermanagementForm.sorderExpressfee)+parseInt(this.addOrdermanagementForm.sorderFreigh)+parseInt(this.addOrdermanagementForm.sorderEditionfee)+parseInt(this.addOrdermanagementForm.sorderSinglefee);
+
+      }else if(this.editOrdermanagementVisible==true){
+        this.editOrdermanagementForm.sorderTotal=0;
+        this.editOrdermanagementForm.sorderAllnumber=0;
+        for (
+        let index = 0; index < this.editOrdermanagementForm.commodityListDOs.length; index++) {
+        if (isNaN(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber) || isNaN(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice)) {
+          continue;
+        }
+        this.editOrdermanagementForm.sorderAllnumber += parseInt(
+          this.editOrdermanagementForm.commodityListDOs[index].commodityNumber
+        );
+
+        this.editOrdermanagementForm.sorderTotal +=
+          parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *
+          parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          console.log(this.editOrdermanagementForm.sorderTotal);
+          var tatal=this.editOrdermanagementForm.sorderTotal
+      }
+       this.editOrdermanagementForm.sorderTotal=parseInt(this.editOrdermanagementForm.sorderTotal)+parseInt(this.editOrdermanagementForm.sorderExpressfee)+parseInt(this.editOrdermanagementForm.sorderFreigh)+parseInt(this.editOrdermanagementForm.sorderEditionfee)+parseInt(this.editOrdermanagementForm.sorderSinglefee);
+
+      }
+      
     },
-    async userStateChanged(userInfo) {
-      const { data: res } = await this.$http.post("sys/dept/update", userInfo);
-      this.getDepartmentList();
+    chaordermanagementForm(formName) {
+      this.$refs.chaOrdermanagementRef.resetFields();
+      this.OrdermanagementList();
     },
-    async showEditDepartment(id) {
+    async showEditOrdermanagement(sorderCode,xian) {
+      this.xianshi=xian;
       let param = new URLSearchParams();
-      param.append("id", id);
-      const { data: res } = await this.$http.post("sys/dept/getDept", param);
-      this.editDepartmentForm = res.body.dept;
+      param.append("sorderCode", sorderCode);
+      const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
+      this.editOrdermanagementForm = res;
       console.log(res);
 
-      this.editbumenDialogVisible = true;
+      this.editOrdermanagementVisible = true;
     },
-    async editDepartment() {
+    async editOrdermanagement() {
       const { data: res } = await this.$http.post(
-        "sys/dept/update",
-        this.editDepartmentForm
+        "xs/saleorder/updateSaleOrder",
+        this.editOrdermanagementForm
       );
-      this.getDepartmentList();
-      this.editbumenDialogVisible = false;
+     this.OrdermanagementList();
+      this.editOrdermanagementVisible = false;
     },
-
-    selected() {
-      this.delarr = [];
+    selected(){
       this.delVisible = true;
+      this.delarr=[];
       for (let i = 0; i < this.selectedList.length; i++) {
-        // this.delarr.push(this.selectedList[i].deptId)
-
-        this.delarr += this.selectedList[i].deptId + ",";
+        this.delarr.push(this.selectedList[i].productgoodsId)
       }
       console.log(this.delarr);
     },
-    async deleteRow() {
-      let param = new URLSearchParams();
-      param.append("deptIds", this.delarr);
-      const { data: res } = await this.$http.post(
-        "sys/dept/batchRemove",
-        param
-      );
-      this.delVisible = false;
-      this.getDepartmentList();
+     async deleteRow(){
+         console.log(this.delarr);
+         console.log(this.shengchanpin);
+         for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.shengchanpin.length; i++) {
+              if(this.delarr[index]==this.shengchanpin[i].productgoodsId)
+              this.shengchanpin.splice(i);
+           }
+         }
+         this.delVisible = false;
+         
+      },
+ selectedqi(status){
+      this.delarr=[];
+      this.delVisibleqi = true;
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push({sorderCode:this.selectedList[i].sorderCode,sorderStatus:status})
+      }
+      console.log(this.delarr);
     },
+      async deleteRowqi(){
+         const {data:res} = await this.$http.post('xs/saleorder/tishen',this.delarr);
+         this.delVisibleqi = false;
+         this.OrdermanagementList();
+         if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
+      },
 
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -416,7 +759,7 @@ export default {
         .catch(_ => {});
     },
 
-    deletebumen(deptId) {
+    deletebumen(sorderCode) {
       this.$confirm("此操作将永久删除该职务, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -424,53 +767,41 @@ export default {
       })
         .then(async () => {
           let param = new URLSearchParams();
-          param.append("deptId", deptId);
-          const { data: res } = await this.$http.post("sys/dept/remove", param);
-          this.getDepartmentList();
+          param.append("sorderCode", sorderCode);
+          const { data: res } = await this.$http.post("xs/saleorder/deletesaleOrder", param);
+          this.OrdermanagementList();
           this.$message({
             type: "success",
-            message: "删除成功!"
+            message: res.body.msg
           });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: res.body.msg
           });
         });
     },
+    shengchancaigou(){
+       for (let index = 0; index < this.selectedList.length; index++) {
+         if(this.addOrdermanagementVisible==true){
+           this.addOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+         }else if(this.editOrdermanagementVisible==true){
+           this.editOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+         }
+       }
+       this.addOrdermanagementVisible1=false;
+       this.addOrdermanagementVisible2=false;
+        this.editOrdermanagementVisible1=false;
+       this.editOrdermanagementVisible2=false;
+    },
+    
     handleSelectionChange(val) {
       console.log(val);
       this.selectedList = val;
     },
 
-    // 自己写的方法
-    // 获取仓库列表
-    async getWarehouseOptions() {
-      const { data: res } = await this.$http.get("/getWarehouseOptions");
-      this.warehouseOptions = res.body.rows; //如何取
-    },
-    // 查询订单列表
-    async queryOrderList() {
-      // const { data: res } = await
-      this.$http
-        .get("/queryOrderList", {
-          params: {
-            salesOrdermanagementForm: this.salesOrdermanagementForm
-          }
-        })
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(error) {
-          console.log(error);
-        })
-        .then(function() {
-          // always executed
-        });
-      this.tableData = res.body.rows; //如何取
-    },
-
+   
     resetForm(formName) {
       this.$refs[formName].resetFields();
       // this.$refs[formName].resetFields();
@@ -478,15 +809,14 @@ export default {
 
     //分页相关函数
     handleSizeChange(val) {
-      this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
-      this.queryOrderList();
+      this.chaOrdermanagementForm.pageSize = val;
+      this.OrdermanagementList();
+
     },
     handleCurrentChange(val) {
-      this.salesOrdermanagementForm.pageCode = val;
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      this.queryOrderList();
+      this.chaOrdermanagementForm.pageCode = val;
+      this.currentPage=val;
+      this.OrdermanagementList();
     },
     handleEdit(index, row) {
       console.log(row); // , row
@@ -504,6 +834,9 @@ export default {
 }
  .w400{
    width: 400px;
+ }
+ .w100{
+   width: 180px;
  }
  .el-table{
    margin-bottom: 15px;
@@ -527,4 +860,13 @@ export default {
     background-color: #DCDFE6;
     margin-bottom: 20px;
     }
+   .demo-table-expand {
+    text-align:center;
+    .el-form-item {
+    margin-bottom: 0px;
+}
+  }
+  .sel{
+    width: 203px;
+  }
 </style>  

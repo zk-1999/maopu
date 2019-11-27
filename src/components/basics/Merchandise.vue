@@ -397,7 +397,7 @@
   </el-tabs>
     </el-card>
     <el-dialog
-      title="采购供应商商品"
+      title="采购商品"
       :visible.sync="addyonghuDialogVisible"
       width="35%"
       :before-close="handleClose"

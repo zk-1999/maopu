@@ -35,7 +35,7 @@
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
   <el-table
     :data="ProductionList"
-    style="width: 100%" border   @selection-change="handleSelectionChange">
+    style="width: 100%" border  default-expand-all @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
@@ -63,7 +63,7 @@
     <el-table-column label="淋膜类型" prop="productCoatedinner"></el-table-column>
     <el-table-column label="单个克重" prop="productOneke"></el-table-column>
     <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
-    <el-table-column label="设计稿" prop="designId">
+    <el-table-column label="设计稿" prop="designId"  width="200px">
        <template slot-scope="scope">
                 {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
               </template>
@@ -130,7 +130,7 @@
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
        <el-table
     :data="ProductionList"
-    style="width: 100%" border   @selection-change="handleSelectionChange">
+    style="width: 100%" border default-expand-all  @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
@@ -151,7 +151,7 @@
     <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
     <el-table-column label="单个克重" prop="productOneke"></el-table-column>
     <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
-    <el-table-column label="设计稿" prop="designId">
+    <el-table-column label="设计稿" prop="designId" width="200px">
       <template slot-scope="scope">
                 {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
               </template>
@@ -216,7 +216,7 @@
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
        <el-table
     :data="ProductionList"
-    style="width: 100%" border  @selection-change="handleSelectionChange" >
+    style="width: 100%" border default-expand-all @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
@@ -237,7 +237,7 @@
     <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
     <el-table-column label="单个克重" prop="productOneke"></el-table-column>
     <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
-    <el-table-column label="设计稿" prop="designId">
+    <el-table-column label="设计稿" prop="designId"  width="200px">
        <template slot-scope="scope">
                 {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
               </template>
@@ -303,7 +303,7 @@
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
        <el-table
     :data="ProductionList"
-    style="width: 100%" border   @selection-change="handleSelectionChange">
+    style="width: 100%" border default-expand-all  @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
@@ -324,7 +324,7 @@
     <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
     <el-table-column label="单个克重" prop="productOneke"></el-table-column>
     <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
-    <el-table-column label="设计稿" prop="designId">
+    <el-table-column label="设计稿" prop="designId"  width="200px">
        <template slot-scope="scope">
                 {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
               </template>
@@ -390,7 +390,7 @@
           <el-button type="danger" @click="selected" :disabled="selectedList.length == 0">批量删除</el-button>
       <el-table
     :data="ProductionList"
-    style="width: 100%" border   @selection-change="handleSelectionChange">
+    style="width: 100%" border  default-expand-all @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
     <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="index" width="55" fixed align="center" label="序号"></el-table-column>
@@ -411,7 +411,7 @@
     <el-table-column label="淋膜类型" prop="productCoatedabroad"></el-table-column>
     <el-table-column label="单个克重" prop="productOneke"></el-table-column>
     <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
-    <el-table-column label="设计稿" prop="designId">
+    <el-table-column label="设计稿" prop="designId"  width="200px">
       <template slot-scope="scope">
                 {{scope.row.designDOs[0].designModel+"-"+scope.row.designDOs[0].designName+"-"+scope.row.designDOs[0].designDate}}
               </template>
@@ -454,7 +454,7 @@
 </el-tabs>
       </el-card>
       <el-dialog
-        title="新增生产商品"
+        title="新增单层"
         :visible.sync="addyonghuDialogVisible"
         width="50%"
         :before-close="handleClose"
@@ -478,7 +478,20 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandinner">
                     <el-select v-model="addProductionForm.productBrandinner" placeholder="请选择" >
                         <el-option
@@ -522,32 +535,20 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                    
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -611,7 +612,7 @@
         </span>
       </el-dialog>
       <el-dialog
-        title="新增生产商品"
+        title="新增双层"
         :visible.sync="addyonghuDialogVisible1"
         width="50%"
         :before-close="handleClose"
@@ -619,7 +620,7 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-        <div class="fenge">双层信息</div>
+        <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -635,7 +636,20 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -679,33 +693,21 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                    
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -779,7 +781,7 @@
         </span>
       </el-dialog>
       <el-dialog
-        title="新增生产商品"
+        title="新增瓦楞"
         :visible.sync="addyonghuDialogVisible2"
         width="50%"
         :before-close="handleClose"
@@ -787,7 +789,7 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-        <div class="fenge">双层信息</div>
+        <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -803,7 +805,21 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                     <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -847,34 +863,21 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                   
+                    
+                    </el-col>
+                <el-col :span="12">
+                   <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                    
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -1008,7 +1011,7 @@
         </span>
       </el-dialog>
       <el-dialog
-        title="新增生产商品"
+        title="新增杯套"
         :visible.sync="addyonghuDialogVisible3"
         width="50%"
         :before-close="handleClose"
@@ -1016,7 +1019,7 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-           <div class="fenge">双层信息</div>
+           <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -1032,7 +1035,20 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -1076,32 +1092,20 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                   <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -1224,7 +1228,7 @@
         </span>
       </el-dialog>
       <el-dialog
-        title="新增生产商品"
+        title="新增手柄"
         :visible.sync="addyonghuDialogVisible4"
         width="50%"
         :before-close="handleClose"
@@ -1232,7 +1236,7 @@
         <el-form :label-position="labelPosition" label-width="130px" :model="addProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-           <div class="fenge">双层信息</div>
+           <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -1248,7 +1252,20 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="addProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -1292,32 +1309,20 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="addProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                   
+                    
+                    </el-col>
+                <el-col :span="12">
+                   <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="addProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="addProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="addProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                   <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input  v-model="addProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="addProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="addProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -1374,7 +1379,7 @@
                          </el-col>
             </el-row>
 
-            <div class="fenge1">夹层信息</div>
+            <div class="fenge1">手柄信息</div>
             <el-row>
               <el-col :span="12">
             <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
@@ -1440,7 +1445,7 @@
         </span>
       </el-dialog>
       <el-dialog
-        title="编辑生产商品"
+        title="编辑单层"
         :visible.sync="edityonghuDialogVisible"
         width="48%"
         :before-close="handleClose"
@@ -1464,7 +1469,20 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                     <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandinner">
                     <el-select v-model="editProductionForm.productBrandinner" placeholder="请选择" >
                         <el-option
@@ -1508,32 +1526,20 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -1597,7 +1603,7 @@
       </el-dialog>
 
       <el-dialog
-        title="编辑生产商品"
+        title="编辑双层"
         :visible.sync="edityonghuDialogVisible1"
         width="48%"
         :before-close="handleClose"
@@ -1605,7 +1611,7 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-           <div class="fenge">双层信息</div>
+           <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -1621,6 +1627,20 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
+                     <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
@@ -1665,33 +1685,21 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -1766,7 +1774,7 @@
       </el-dialog>
 
       <el-dialog
-        title="编辑生产商品"
+        title="编辑瓦楞"
         :visible.sync="edityonghuDialogVisible2"
         width="48%"
         :before-close="handleClose"
@@ -1774,7 +1782,7 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <div class="fenge">双层信息</div>
+            <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -1790,7 +1798,21 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                     <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -1834,34 +1856,21 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                    
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -1996,7 +2005,7 @@
       </el-dialog>
 
       <el-dialog
-        title="编辑生产商品"
+        title="编辑杯套"
         :visible.sync="edityonghuDialogVisible3"
         width="48%"
         :before-close="handleClose"
@@ -2004,7 +2013,7 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <div class="fenge">双层信息</div>
+            <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -2020,7 +2029,21 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                    <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -2064,34 +2087,21 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                   
+                    
+                    </el-col>
+                <el-col :span="12">
+                   <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                    
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input  v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                    
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -2227,7 +2237,7 @@
 
 
       <el-dialog
-        title="编辑生产商品"
+        title="编辑手柄"
         :visible.sync="edityonghuDialogVisible4"
         width="48%"
         :before-close="handleClose"
@@ -2235,7 +2245,7 @@
        <el-form :label-position="labelPosition" label-width="130px" :model="editProductionForm"
         ref="addProductionRef"
         :rules="addProductionRules">
-            <div class="fenge">双层信息</div>
+            <div class="fenge">外层信息</div>
              <el-row>
                 <el-col :span="12">
                     <el-form-item label="商品名称：" prop="productName">
@@ -2251,7 +2261,21 @@
                   </el-option>
                 </el-select>
                     </el-form-item>
-                    
+                     <el-form-item label="产品尺寸：" prop="productChanpchic">
+                      <el-input v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
+                  
+                    </el-form-item>  
+                  
+                    <el-form-item label="设计稿：" prop="designId">
+                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
+                        <el-option
+                          v-for="item in shejigao"
+                          :key="item.designId"
+                          :label="item.designModel+item.designName+item.designDate"
+                          :value="item.designId">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>  
                     <el-form-item label="纸张品牌：" prop="productBrandabroad">
                     <el-select v-model="editProductionForm.productBrandabroad" placeholder="请选择">
                         <el-option
@@ -2295,34 +2319,21 @@
                     <el-form-item label="单个克重：" prop="productOneke">
                     <el-input v-model="editProductionForm.productOneke" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item>   
-                    <el-form-item label="外箱尺寸/长：" prop="productSizelength">
+                    
+                    
+                    </el-col>
+                <el-col :span="12">
+                  <el-form-item label="外箱尺寸/长：" prop="productSizelength">
                       <el-input v-model="editProductionForm.productSizelength" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                     <el-form-item label="外箱尺寸/宽：" prop="productSizewide">
                       <el-input v-model="editProductionForm.productSizewide" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
-                    
-                    </el-col>
-                <el-col :span="12">
                     <el-form-item label="外箱尺寸/高：" prop="productSizehight">
                       <el-input v-model="editProductionForm.productSizehight" placeholder="请输入" class="xiang"></el-input>
                     </el-form-item> 
                    
-                    <el-form-item label="产品尺寸：" prop="productChanpchic">
-                      <el-input v-model="editProductionForm.productChanpchic" class="xiang" placeholder="请输入"></el-input>
-                  
-                    </el-form-item>  
-                  
-                    <el-form-item label="设计稿：" prop="designId">
-                    <el-select v-model="editProductionForm.designId" placeholder="请选择">
-                        <el-option
-                          v-for="item in shejigao"
-                          :key="item.designId"
-                          :label="item.designModel+item.designName+item.designDate"
-                          :value="item.designId">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>  
+                   
                     <el-form-item label="箱唛：" prop="productBoxMark">
                     <el-select v-model="editProductionForm.productBoxMark" placeholder="请选择">
                         <el-option
@@ -2390,7 +2401,7 @@
                 </el-select>
                     </el-form-item>
                     
-            <div class="fenge1">夹层信息</div>
+            <div class="fenge1">手柄信息</div>
             <el-row>
               <el-col :span="12">
             <el-form-item label="纸张品牌/夹：" prop="productBrandmid">
@@ -2960,6 +2971,9 @@ this.chaProductionForm.productLeixing="0";
     }
      .demo-table-expand {
     text-align:center;
+    .el-form-item {
+    margin-bottom: 0px;
+}
   }
     .fenge{
     position: absolute;

@@ -62,15 +62,6 @@
                       :on-remove="handleRemove">
                 <i class="el-icon-plus"></i>
             </el-upload>
-            <!-- <el-upload
-            class="avatar-uploader"
-            :action="ip"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="editUserForm.picUrl" :src="editUserForm.picUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload> -->
                 </el-form-item>
                 <el-form-item class="tian" label="用户名:" prop="name"><el-input  placeholder="请输入用户名" v-model="editUserForm.name"></el-input></el-form-item>
                 <el-form-item class="tian" label="手机号:" prop="mobile"><el-input  placeholder="请输入手机号" v-model="editUserForm.mobile"></el-input></el-form-item>
@@ -92,7 +83,6 @@ export default {
             imageUrl: '',
             labelPosition: 'right',
             shezhidialogVisible : false,
-            // menuList:[{"id":125,"authName":"基础资料","path":"basics","children":[{"id":110,"authName":"供应商管理","path":"supplier","children":[],"order":null},{"id":111,"authName":"客户管理","path":"client","children":[],"order":null},{"id":112,"authName":"供应商商品管理","path":"merchandise","children":[],"order":null},{"id":113,"authName":"生产商品管理","path":"production","children":[],"order":null},{"id":114,"authName":"产品设计稿维护","path":"product","children":[],"order":null},{"id":115,"authName":"印刷参数","path":"printing","children":[],"order":null},{"id":116,"authName":"基础数据维护","path":"maintenance","children":[],"order":null}],"order":1},{"id":103,"authName":"系统管理","path":"rights","children":[{"id":111,"authName":"部门设置","path":"department","children":[],"order":null},{"id":112,"authName":"职务设置","path":"duty","children":[],"order":null},{"id":113,"authName":"用户管理","path":"user","children":[],"order":null},{"id":114,"authName":"菜单管理","path":"menu","children":[],"order":null},{"id":115,"authName":"系统日志","path":"journal","children":[],"order":null}],"order":2},{"id":101,"authName":"进货管理","path":"goods","children":[],"order":3},{"id":102,"authName":"销售管理","path":"orders","children":[],"order":4},{"id":145,"authName":"生产管理","path":"reports","children":[],"order":5}],
             editUserForm:{
                 name:'',
                 password:'',

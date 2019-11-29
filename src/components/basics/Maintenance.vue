@@ -2273,11 +2273,11 @@ export default {
        const { data: res8 } = await this.$http.post("jc/Basic/selectsheji");
        this.chanpinchicun=res8;
        this.shejigaomingcheng=res7;
-        for (let index = 0; index < res6.length; index++) {
-      if(res6[index].basicRetainone.indexOf("*")!=-1){
-       res6[index].basicRetainone=res6[index].basicRetainone.substr(0, res6[index].basicRetainone.indexOf("*"))
-    }
-      }
+    //     for (let index = 0; index < res6.length; index++) {
+    //   if(res6[index].basicRetainone.indexOf("*")!=-1){
+    //    res6[index].basicRetainone=res6[index].basicRetainone.substr(0, res6[index].basicRetainone.indexOf("*"))
+    // }
+    //   }
        this.chanpinguigeyumingcheng=res6;
        
     },
@@ -2306,12 +2306,12 @@ export default {
     const { data: res } = await this.$http.post("jc/Basic/selectBasic",this.chaMaintenanceForm);
     console.log(res);
     
-    for (let index = 0; index < res.body.rows.length; index++) {
-      res.body.rows[index].basicName=tab.label;
-      if(res.body.rows[index].basicRetainone.indexOf("*")!=-1){
-        res.body.rows[index].basicRetainone=res.body.rows[index].basicRetainone.substr(0, res.body.rows[index].basicRetainone.indexOf("*"))
-    }
-      }
+    // for (let index = 0; index < res.body.rows.length; index++) {
+    //   res.body.rows[index].basicName=tab.label;
+    //   if(res.body.rows[index].basicRetainone.indexOf("*")!=-1){
+    //     res.body.rows[index].basicRetainone=res.body.rows[index].basicRetainone.substr(0, res.body.rows[index].basicRetainone.indexOf("*"))
+    // }
+    //   }
       
     this.total=res.body.total;
       this.maintenanceList = res.body.rows;

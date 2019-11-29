@@ -89,131 +89,470 @@
 </template>
 <script>
 export default {
-    created(){
-        this.getCateList()
-    },
-  data () {
+  data() {
     return {
-        activeIndex:'0',
-        addForm:{
-            goods_name:'',
-            goods_price:0,
-            goods_weight:0,
-            goods_number:0,
-            pics:[],
-            goods_introduce:''
-        },
-        // 数据列表
-        cateList:[],
-        // 规则
-        cateOptions:{ 
-          expandTrigger: 'hover',
-          value:'cat_id',
-          label:'cat_name',
-          children:'children' 
-        },
-        goods_cat:[],
-        addRuleForm:{
-           goods_name:[{required:true,message:'请输入商品名称',trigger:'blur'}],
-           goods_price:[{required:true,message:'请输入商品价格',trigger:'blur'}],
-           goods_weight:[{required:true,message:'请输入商品重量',trigger:'blur'}],
-           goods_number:[{required:true,message:'请输入商品数量',trigger:'blur'}]
-        },
-        // 动态参数
-        manyTabData:[],
-        // 静态属性
-        onlyTabData:[],
-        // 图片上传地址
-        uploadURL:'http://127.0.0.1:8888/api/private/v1/upload',
-        headerToken:{
-            Authorization:window.sessionStorage.getItem('token')
-        },
-        previewSrc:'',
-        previewDialogVisible:false
-
-        
+      labelPosition: "right",
+      delVisibleqi:false,
+      addOrdermanagementVisible: false,
+      addOrdermanagementVisible1: false,
+      addOrdermanagementVisible2: false,
+      editOrdermanagementVisible: false,
+      delVisible: false,
+      currentPage: 0,
+      total: 0,
+      selectedList: [],
+      xianshi:'',
+      xianshi1:'',
+      xianshi2:'',
+      ordermanagementList:[],
+      chaOrdermanagementForm: {
+        sorderCode:'',
+        customerId:'',
+        sorderStatus:'',
+        sorderTotalsum:'',
+        sorderWarehouse:'',
+        line:0,
+        pageCode: 1, //当前页
+        pageSize: 10 //每页显示的记录数
+      },
+      shengchanFrom:{
+        productLeixing:'',
+      },
+      caigouFrom:{
+        lab:'原纸',
+      },
+      shengchan:[{
+        id:0,
+        value:'单层'
+      },{
+        id:1,
+        value:'双层'
+      },{
+        id:2,
+        value:'瓦楞'
+      },{
+        id:3,
+        value:'杯套'
+      },{
+        id:4,
+        value:'手柄'
+      }],
+      caigou:[{
+        id:0,
+        value:'原纸'
+      },{
+        id:1,
+        value:'纸箱'
+      },{
+        id:2,
+        value:'袋子'
+      },{
+        id:3,
+        value:'油墨'
+      },{
+        id:4,
+        value:'其他'
+      }],
+      options: [{
+          value: '0',
+          label: '初始化'
+        }, {
+          value: '1',
+          label: '待初审'
+        }, {
+          value: '2',
+          label: '初审未通过'
+        }, {
+          value: '3',
+          label: '待复审'
+        }, {
+          value: '4',
+          label: '复审未通过'
+        }, {
+          value: '5',
+          label: '生产中'
+        }, {
+          value: '6',
+          label: '待发货'
+        }, {
+          value: '7',
+          label: '部分发货'
+        }, {
+          value: '8',
+          label: '全部发货'
+        }, {
+          value: '9',
+          label: '已完成'
+        }],
+        value:'',
+      addOrdermanagementForm: {
+        customerId: '',
+        sorderAddress: '',
+        sorderWarehouse:'',
+        sorderTotalsum:'',
+        sorderDeliverytime:'',
+        sorderCurrecytype:'', 
+        productName:'',
+        supgoolsId:'',
+        sorderExpressfee:'',
+        sorderFreigh:'',
+        sorderEditionfee:'',
+        sorderSinglefee:'',
+        sorderAllnumber:'',
+        sorderTotal:'',
+        sorderPayamount:'',
+        sorderRemark0:'',
+        commodityListDOs:[],
+      },
+      editOrdermanagementForm: {
+        customerId: '',
+        sorderAddress: '',
+        sorderWarehouse:'',
+        sorderTotalsum:'',
+        sorderDeliverytime:'',
+        sorderCurrecytype:'', 
+        productName:'',
+        supgoolsId:'',
+        sorderStatus:'',
+        sorderExpressfee:'',
+        sorderFreigh:'',
+        sorderEditionfee:'',
+        sorderSinglefee:'',
+        sorderAllnumber:'',
+        sorderTotal:'',
+        sorderPayamount:'',
+        sorderRemark0:'',
+        commodityListDOs:[],
+        sorderChushen:'',
+        sorderChushentime:'',
+        sorderChushendesc:'',
+        sorderFushen:'',
+        sorderFushentime:'',
+        sorderFushendesc:'',
+      },
+      addOrdermanagementRules: {
+        sorderAddress: [
+          { min: 1, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
+        ]
+      },
+      kehu:[],
+      shengchanlist:[],
+      // chaigoulist:[],
     };
   },
-    methods:{
-        async getCateList(){
-        const {data:res} = await this.$http.get('categories')
-        if(res.meta.status != 200)return this.$message.error('请求数据失败')
-        this.cateList = res.data 
-        console.log(res.data)
-        },
-        handleChange(){
-        console.log(this.goods_cat)
-        if(this.goods_cat.length<=2){
-            this.goods_cat=[]
-            return
-            }
-        },
-        // 如果未选商品分类 阻止代码向下执行
-        beforeLeave(){
-            if(this.activeIndex=='0'&&this.goods_cat.length!=3){
-                this.$message.error('请选择商品分类')
-                return false
-            }
-        },//点击切换tab时触发的函数
-       async tabClicked(){
-           if(this.activeIndex=='1'){
-              const{data:res} =await this.$http.get(`categories/${this.cateId}/attributes`,{params:{sel:'many'}})
-              if(res.meta.status!=200)return this.$message.error('请求失败')
-              console.log(res.data);
-              
-              res.data.forEach((item)=>{
-                  if(item.attr_vals==''){
-                      item.attr_vals=[]
-                  }else{
-                      item.attr_vals=item.attr_vals.split(' ')
-                  }
-              })
-              this.manyTabData=res.data
-           }else if(this.activeIndex=='2'){
-               const{data:res} =await this.$http.get(`categories/${this.cateId}/attributes`,{params:{sel:'only'}})
-              if(res.meta.status!=200)return this.$message.error('请求失败')
-               this.onlyTabData=res.data
-           }
-        },
-        // 图片上传是时触发的预览函数
-        handlePreview(file){
-            console.log(file);
-            
-            this.previewSrc=file.response.data.url
-            this.previewDialogVisible=true
-        },
-        // 点击图片删除时触发
-        handleRemove(file){
-            var tmp_path=file.response.data.tmp_path
-            for(var i=0;i<this.addForm.pics.length ;i++) {
-                if(this.addForm.pics[i]==tmp_path){
-                    this.addForm.pics.splice(i,1)
-                    break
-                }
-            }
-        },
-        handleSuccess(response){
-            var picsObj={pic:response.data.tmp_path}
-            this.addForm.pics.push(picsObj)
-        },
-        add(){
-            this.$refs.addRuleFormRef.validate(valid=>{
-                if(!valid) return this.$message.error('验证失败')
-            })
-        }
+  created() {
+    this.OrdermanagementList();
+    this.list();
+  },
+  methods: {
+   async OrdermanagementList() {
+     if (this.chaOrdermanagementForm.sorderCode!=''|| this.chaOrdermanagementForm.sorderTotalsum!=''|| this.chaOrdermanagementForm.sorderStatus!=''|| this.chaOrdermanagementForm.sorderWarehouse!='') {
+       this.chaOrdermanagementForm.pageCode=1;
+       this.chaOrdermanagementForm.pageSize=10;
+     }
+      const { data: res } = await this.$http.post("xs/saleorder/selectOrderComm",this.chaOrdermanagementForm);
+      this.total=res.body.total;
+      this.ordermanagementList = res.body.rows;
     },
-    computed:{
-        cateId(){
-            return this.goods_cat[this.goods_cat.length-1]
+    async list(){
+      const { data: res } = await this.$http.post("jc/customer/selectcustom1");
+      console.log(res);
+      this.kehu = res;
+    },
+   async shengchanshangping(){
+      const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.shengchanFrom);
+      console.log(res);
+      this.shengchanlist = res.body.rows;
+      this.addOrdermanagementVisible1=true;
+    },
+
+
+
+    // async chaigoushangpin(){
+    //   const { data: res } = await this.$http.post("jc/suppliergoods/selectSuppliergoolslist",{params:this.caigouFrom});
+    //   console.log(res);
+    //   this.chaigoulist = res.body.rows;
+    //   this.addOrdermanagementVisible2=true;
+    // },
+    addOrdermanagement() {
+      console.log(this.addOrdermanagementForm);
+      
+      this.$refs.addOrdermanagementRef.validate(async valid => {
+        if (!valid) return;
+        const { data: res } = await this.$http.post(
+          "xs/saleorder/insertSalesOrder",
+          this.addOrdermanagementForm
+        );
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
         }
-    }
-}
-</script>
-<style  lang="less">
-    .ql-container{
-        height: 400px!important
-    }
-</style>
-<style lang='less' scoped>
+        this.OrdermanagementList();
+        this.addOrdermanagementVisible = false;
+      });
+    },
+    jisuan() {
+      this.addOrdermanagementForm.sorderAllnumber=0;
+      this.addOrdermanagementForm.sorderTotal=0;
+      if(this.addOrdermanagementVisible==true){
+        for (
+        let index = 0; index < this.addOrdermanagementForm.commodityListDOs.length; index++) {
+        if (isNaN(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber) || isNaN(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice)) {
+          continue;
+        }
+        this.addOrdermanagementForm.sorderAllnumber += parseInt(
+          this.addOrdermanagementForm.commodityListDOs[index].commodityNumber
+        );
+
+        this.addOrdermanagementForm.sorderTotal +=
+          parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *
+          parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          console.log(this.addOrdermanagementForm.sorderTotal);
+          var tatal=this.addOrdermanagementForm.sorderTotal
+      }
+       this.addOrdermanagementForm.sorderTotal=parseInt(this.addOrdermanagementForm.sorderTotal)+parseInt(this.addOrdermanagementForm.sorderExpressfee)+parseInt(this.addOrdermanagementForm.sorderFreigh)+parseInt(this.addOrdermanagementForm.sorderEditionfee)+parseInt(this.addOrdermanagementForm.sorderSinglefee);
+
+      }else if(this.editOrdermanagementVisible==true){
+        this.editOrdermanagementForm.sorderTotal=0;
+        this.editOrdermanagementForm.sorderAllnumber=0;
+        for (
+        let index = 0; index < this.editOrdermanagementForm.commodityListDOs.length; index++) {
+        if (isNaN(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber) || isNaN(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice)) {
+          continue;
+        }
+        this.editOrdermanagementForm.sorderAllnumber += parseInt(
+          this.editOrdermanagementForm.commodityListDOs[index].commodityNumber
+        );
+
+        this.editOrdermanagementForm.sorderTotal +=
+          parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *
+          parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          console.log(this.editOrdermanagementForm.sorderTotal);
+          var tatal=this.editOrdermanagementForm.sorderTotal
+      }
+       this.editOrdermanagementForm.sorderTotal=parseInt(this.editOrdermanagementForm.sorderTotal)+parseInt(this.editOrdermanagementForm.sorderExpressfee)+parseInt(this.editOrdermanagementForm.sorderFreigh)+parseInt(this.editOrdermanagementForm.sorderEditionfee)+parseInt(this.editOrdermanagementForm.sorderSinglefee);
+
+      }
+      
+    },
+    chaordermanagementForm(formName) {
+      this.$refs.chaOrdermanagementRef.resetFields();
+      this.OrdermanagementList();
+    },
+   
+    async showEditOrdermanagement(sorderCode,xian,sorderStatus) {
+      if(xian=='0'){
+        this.xianshi=true;
+        if(sorderStatus=='0' || sorderStatus=='1'){
+          this.xianshi1=false;
+          this.xianshi2=false;
+        }else if(sorderStatus=='2' || sorderStatus=='3'){
+          this.xianshi1=true;
+        }else{
+          this.xianshi1=true;
+          this.xianshi2=true;
+        }
+      }else if(xian=='1'){
+        this.xianshi=false;
+       this.xianshi1=false;
+        this.xianshi2=false;
+      }
+      
+      let param = new URLSearchParams();
+      param.append("sorderCode", sorderCode);
+      const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
+      this.editOrdermanagementForm = res;
+      console.log(res);
+
+      this.editOrdermanagementVisible = true;
+    },
+    async editOrdermanagement() {
+      if(this.editOrdermanagementForm.sorderStatus == '2' || this.editOrdermanagementForm.sorderStatus == '4'){
+           this.editOrdermanagementForm.sorderStatus='0';
+      }
+      const { data: res } = await this.$http.post(
+        "xs/saleorder/updateSaleOrder",
+        this.editOrdermanagementForm
+      );
+     this.OrdermanagementList();
+      this.editOrdermanagementVisible = false;
+    },
+    selected(){
+      this.delVisible = true;
+      this.delarr=[];
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push(this.selectedList[i].productgoodsId)
+      }
+      console.log(this.delarr);
+    },
+     async deleteRow(){
+       console.log('---------------------');
+         console.log(this.delarr);
+         console.log('---------------------');
+         console.log(this.addOrdermanagementForm.commodityListDOs);
+         for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.addOrdermanagementForm.commodityListDOs.length; i++) {
+              if(this.delarr[index]==this.addOrdermanagementForm.commodityListDOs[i].productgoodsId)
+              this.addOrdermanagementForm.commodityListDOs.splice(i,1);
+           }
+         }
+         this.delVisible = false;
+         
+      },
+ selectedqi(status){
+      this.delarr=[];
+      this.delVisibleqi = true;
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push({sorderCode:this.selectedList[i].sorderCode,sorderStatus:status})
+      }
+      console.log(this.delarr);
+    },
+      async deleteRowqi(){
+         const {data:res} = await this.$http.post('xs/saleorder/tishen',this.delarr);
+         this.delVisibleqi = false;
+         this.OrdermanagementList();
+         if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
+      },
+      dialogClosed(){
+        this.$refs.addOrdermanagementRef.resetFields();
+        this.addOrdermanagementForm.commodityListDOs=[];
+      },
+      dialogClosed1(){
+         this.$refs.shengchantRef.resetFields();
+      },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+
+    deletebumen(sorderCode) {
+      this.$confirm("此操作将永久删除该职务, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          let param = new URLSearchParams();
+          param.append("sorderCode", sorderCode);
+          const { data: res } = await this.$http.post("xs/saleorder/deletesaleOrder", param);
+          this.OrdermanagementList();
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          });
+        });
+    },
+    shengchancaigou(){
+       for (let index = 0; index < this.selectedList.length; index++) {
+         if(this.addOrdermanagementVisible==true){
+           this.addOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+         }else if(this.editOrdermanagementVisible==true){
+           this.editOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+         }
+       }
+       this.addOrdermanagementVisible1=false;
+       this.addOrdermanagementVisible2=false;
+        this.editOrdermanagementVisible1=false;
+       this.editOrdermanagementVisible2=false;
+    },
     
-</style>
+    handleSelectionChange(val) {
+      console.log(val);
+      this.selectedList = val;
+    },
+
+   
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      // this.$refs[formName].resetFields();
+    },
+
+    //分页相关函数
+    handleSizeChange(val) {
+      this.chaOrdermanagementForm.pageSize = val;
+      this.OrdermanagementList();
+
+    },
+    handleCurrentChange(val) {
+      this.chaOrdermanagementForm.pageCode = val;
+      this.currentPage=val;
+      this.OrdermanagementList();
+    },
+    handleEdit(index, row) {
+      console.log(row); // , row
+    }
+  }
+};
+</script>
+<style lang='less' scoped>
+.el-card {
+  margin-top: 15px;
+}
+.el-row {
+  align-items: center;
+  display: flex;
+}
+ .w400{
+   width: 400px;
+ }
+ .w100{
+   width: 180px;
+ }
+ .el-table{
+   margin-bottom: 15px;
+ }
+.fenge{
+    position: absolute;
+    top: 34px;
+    left: 0px;
+    height: 25px;
+    width: 98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    
+    }
+  .fenge1{
+    height: 25px;
+    width:98.5%;
+    line-height: 25px;
+    padding-left:15px ;
+    background-color: #DCDFE6;
+    margin-bottom: 20px;
+    }
+   .demo-table-expand {
+    text-align:center;
+    .el-form-item {
+    margin-bottom: 0px;
+}
+  }
+  .sel{
+    width: 203px;
+  }
+</style>  

@@ -19,11 +19,14 @@ import Add from './components/goods/Add.vue'
 import User from './components/system/User.vue'
 import Menu from './components/system/Menu.vue'
 import Journal from './components/system/Journal.vue'
-import Audit from './components/purchase/Audit.vue'
+import AddReturnOrder from './components/purchase/AddReturnOrder.vue'
+
 import Cancel from './components/purchase/Cancel.vue'
 import First from './components/purchase/First.vue'
 import Order from './components/purchase/Order.vue'
-import Stored from './components/purchase/Stored.vue'
+
+import ReturnFirst from './components/purchase/ReturnFirst.vue'
+import ReturnSecond from './components/purchase/ReturnSecond.vue'
 import Second from './components/purchase/Second.vue'
 
 import Ordermanagement from './components/sales/Ordermanagement.vue'
@@ -69,17 +72,13 @@ const router = new Router({
                 { path: '/user', component: User },
                 { path: '/menu', component: Menu },
                 { path: '/journal', component: Journal },
-                { path: '/audit', component: Audit },
+                { path: '/addReturnOrder', component: AddReturnOrder },
                 { path: '/cancel', component: Cancel },
                 { path: '/first', component: First },
                 { path: '/order', component: Order },
-                { path: '/stored', component: Stored },
+                { path: '/returnFirst', component: ReturnFirst },
+                { path: '/returnSecond', component: ReturnSecond },
                 { path: '/second', component: Second },
-
-                { path: '/categories', component: Cate },
-                { path: '/params', component: Params },
-                { path: '/goods', component: Goods },
-                { path: '/goodsadd', component: Add },
                 { path: '/ordermanagement', component: Ordermanagement },
                 { path: '/orderauditing', component: Orderauditing },
                 { path: '/ordertobeshipped', component: Ordertobeshipped },

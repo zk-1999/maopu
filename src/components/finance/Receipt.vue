@@ -7,80 +7,27 @@
       <el-breadcrumb-item>收款单</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <!-- <el-row :gutter="20"> -->
-      <!-- ref作用？？ -->
-      <!-- ref="salesOrdermanagementForm" -->
       <el-form :inline="true" class="demo-form-inline" :model="queryReceiptForm">
-        <!-- 供应商名称 -->
-        <el-form-item label="供应商名称">
-          <el-input v-model="queryReceiptForm.supName" class="hu"></el-input>
+        <el-form-item label="收款单号：">
+          <el-input ></el-input>
         </el-form-item>
-        <!-- 收款制单人 -->
-        <el-form-item class="mar">
-          <el-input
-            placeholder="请输入内容"
-            v-model="queryReceiptForm.receivablesPayexamine"
-            style="width:220px;"
-          >
-            <!-- v-model="salesOrdermanagementForm.select" -->
-            <el-select value="0" slot="prepend" style="width:110px;">
-              <el-option label="收款制单人" value="0"></el-option>
-            </el-select>
-            <!-- <el-button slot="append" icon="el-icon-search"></el-button> -->
-          </el-input>
+        <el-form-item label="制单人员：">
+          <el-input ></el-input>
         </el-form-item>
-        <!-- 付款单日期 -->
-        <el-form-item label="收款单日期" class="mar">
-          <el-date-picker
-            v-model="queryReceiptForm.receivablesPaydate"
-            type="date"
-            placeholder="选择日期"
-            format="yyyy 年 MM 月 dd 日"
-            value-format="yyyy-MM-dd"
-          ></el-date-picker>
+        <el-form-item label="制单时间：">
+          <el-input ></el-input>
         </el-form-item>
-
-        <!-- 供应商编码 -->
-        <el-form-item label="供应商编码">
-          <el-input v-model="queryReceiptForm.supId" class="hu"></el-input>
+        <el-form-item label="结账方式：">
+          <el-input ></el-input>
         </el-form-item>
-
-        <br />
-
-        <!-- 结算方式 -->
-        <el-form-item label="结算方式">
-          <el-select v-model="queryReceiptForm.receivablesSettlemethod" class="hu">
-            <el-option label="挂应付账" value="0"></el-option>
-          </el-select>
+        <el-form-item label="资金账户：">
+          <el-input ></el-input>
         </el-form-item>
-
-        <!-- 收款方式 -->
-        <el-form-item label="收款方式" class="mar">
-          <el-select v-model="queryReceiptForm.receivablesPaymode" class="hu">
-            <el-option label="银行转账" value="0"></el-option>
-          </el-select>
+        <el-form-item label="收支类型：">
+          <el-input ></el-input>
         </el-form-item>
-
-        <!-- 收款类型 -->
-        <el-form-item label="收款类型" class="mar">
-          <el-select v-model="queryReceiptForm.receivablesRectype" class="hu">
-            <el-option label="预付款" value="0"></el-option>
-            <el-option label="应付款" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 审核状态 -->
-        <el-form-item label="审核状态" class="mar">
-          <el-select v-model="queryReceiptForm.receivablesStatus" class="hu">
-            <el-option label="待审核" value="0"></el-option>
-            <el-option label="审核通过" value="1"></el-option>
-            <el-option label="审核不通过" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 查询按钮 -->
         <el-form-item>
-          <el-button type="primary" size="small" @click="queryReceiptList" class="mar">查 询</el-button>
+          <el-button type="primary" >查 询</el-button>
         </el-form-item>
       </el-form>
       <!-- </el-row> -->

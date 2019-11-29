@@ -407,7 +407,7 @@ export default {
     async showEditPrinting(pId){
       let param = new URLSearchParams();
       param.append("pId", pId);
-      const {data:res} = await this.$http.post('jc/Parameters/selectParameterbyid',param);g
+      const {data:res} = await this.$http.post('jc/Parameters/selectParameterbyid',param);
          this.editPrintingForm.parametersName=Number(res.parametersName);
          this.editPrintingForm.parametersDoorwidth=Number(res.parametersDoorwidth);
          this.editPrintingForm.parametersDoornum=res.parametersDoornum;

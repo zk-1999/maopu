@@ -64,8 +64,8 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-      <el-table-column type="selection" width="35"></el-table-column>
-        <el-table-column type="index" label="序号" width="55"></el-table-column>
+ 
+        <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
         <el-table-column prop="sorderCode" label="订单号" width="140px"></el-table-column>
         <el-table-column prop="customerDOs.cusName" label="客户名称"></el-table-column>
         <el-table-column prop="sorderWarehouse" label="合同号"></el-table-column>
@@ -77,23 +77,35 @@
         <el-table-column prop="sorderDeliverytime" label="交货日期"></el-table-column>
         <el-table-column prop="sorderCreatetime" label="下单日期"></el-table-column>
         <el-table-column prop="sorderStatus" label="订单状态" align="center">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
           <el-tag type="danger" v-if="scope.row.sorderStatus=='0'">初始化</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='1'">待初审</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='2'">初审未通过</el-tag>
-          <el-tag type="danger" v-if="scope.row.sorderStatus=='3'">待复审</el-tag>
-          <el-tag type="danger" v-if="scope.row.sorderStatus=='4'">复审未通过</el-tag>
-          <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">复审通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='3'">待审核</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='4'">已驳回</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">已通过</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='6'">待发货</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='7'">部分发货</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='8'">全部发货</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='9'">已完成</el-tag>
-          </template >
+          </template > -->
+          <template slot-scope="scope">
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='0'">初始化</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='1'">待初审</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='2'">初审未通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='3'">待审核</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='4'">已驳回</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">已通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='6'">待发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='7'">部分发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='8'">全部发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='9'">已完成</el-tag>
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="150px" style="text-align:center">
           <template slot-scope="scope">
               <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true,0)" type="success" size="small">查 看</el-button>
-             <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true,1)" type="primary" size="small">审 批</el-button>
+             <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true,1)" type="primary" size="small" :disabled="scope.row.sorderStatus!=3">审 批</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -234,7 +246,7 @@
     </el-form-item>
     <div class="fenge1" v-if="xianshi1">复审信息</div>
     <el-form-item label="审核人：" v-if="xianshi1" prop="sorderFushen">
-      <el-input v-model="editOrdermanagementForm.sorderFushen"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderFushen"  :disabled="true"></el-input>
     </el-form-item>
      <el-form-item label="审核结果：" v-if="xianshi1">
       <el-radio @change="guoqudangqianshijian" label="5" v-model="editOrdermanagementForm.sorderStatus">通过</el-radio>
@@ -249,10 +261,10 @@
   </el-form>
         <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrdermanagement">确 定</el-button>
+        <el-button type="primary" @click="editOrdermanagement" v-if="xianshi1">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title=" '新增预收款单' " :visible.sync="addOrdermanagementVisible5" width="55%" :before-close="handleClose">
+    <!-- <el-dialog :title=" '新增预收款单' " :visible.sync="addOrdermanagementVisible5" width="55%" :before-close="handleClose">
       <div class="fenge">预收款信息</div>
         <el-form ref="form" label-width="110px" :inline="true">
           <el-form-item label="收款制单人：">
@@ -287,23 +299,23 @@
           </el-form-item>
           <div class="fenge1">收款凭证</div>
           <el-form-item>
-            <el-upload
+            <!-- <el-upload
               action="https://jsonplaceholder.typicode.com/posts/"
               list-type="picture-card"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
-            </el-upload>
-            <el-dialog :visible.sync="dialogVisible">
+            </el-upload> -->
+            <!-- <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog>
-          </el-form-item>
+            </el-dialog> -->
+          <!-- </el-form-item>
         </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrdermanagementVisible5 = false">取 消</el-button>
         <el-button type="primary" @click="addOrder">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> --> 
     <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
       <div class="del-dialog-cnt">此操作将批量启用, 是否继续？</div>
       <span slot="footer" class="dialog-footer">
@@ -388,13 +400,13 @@ export default {
       }],
       options: [{
           value: '3',
-          label: '待复审'
+          label: '待审核'
         }, {
           value: '4',
-          label: '复审未通过'
+          label: '已驳回'
         }, {
           value: '5',
-          label: '复审通过'
+          label: '已通过'
         }],
         value:'',
       addOrdermanagementForm: {
@@ -443,6 +455,7 @@ export default {
         sorderFushendesc:'',
         advancereceivedAdvanceorderno:'',
       },
+      shenpiren:'',
       addOrdermanagementRules: {
         sorderAddress: [
           { min: 1, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
@@ -456,8 +469,23 @@ export default {
   created() {
     this.OrdermanagementList();
     this.list();
+    this.getCookie();
   },
   methods: {
+     //读取cookie
+    getCookie: function() {
+      if (document.cookie.length > 0) {
+        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+        for (var i = 0; i < arr.length; i++) {
+          var arr2 = arr[i].split("="); //再次切割
+          //判断查找相对应的值
+          if (arr2[0] == "userName") {
+            this.shenpiren = arr2[1]; //保存到保存数据的地方
+          }
+        }
+        this.checked = true;
+      }
+    },
      // 查询订单列表
    async OrdermanagementList() {
      if (this.chaOrdermanagementForm.sorderCode!=''||this.chaOrdermanagementForm.sorderTotalsum!=''||this.chaOrdermanagementForm.sorderStatus!=''||this.chaOrdermanagementForm.sorderWarehouse!='') {
@@ -571,13 +599,13 @@ export default {
       }else if(zhi==1){
         this.xianshi1=xian;
       }
-      
       let param = new URLSearchParams();
       param.append("sorderCode", sorderCode);
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
+      if(res.sorderFushen==null || res.sorderFushen==''){
+        res.sorderFushen=this.shenpiren;
+      }
       this.editOrdermanagementForm = res;
-      console.log(res);
-
       this.editOrdermanagementVisible = true;
     },
     async editOrdermanagement() {
@@ -603,13 +631,9 @@ export default {
            for (let i = 0; i < this.shengchanpin.length; i++) {
               if(this.delarr[index]==this.shengchanpin[i].productgoodsId)
               this.shengchanpin.splice(i);
-           }
-          
-          
-           
+           }    
          }
-         this.delVisible = false;
-         
+         this.delVisible = false; 
       },
  selectedqi(){
       this.delarr=[];

@@ -79,6 +79,18 @@
         <el-table-column prop="sorderDeliverytime" label="交货日期"></el-table-column>
         <el-table-column prop="sorderCreatetime" label="下单日期"></el-table-column>
         <el-table-column prop="sorderStatus" label="订单状态" align="center">
+          <!-- <template slot-scope="scope">
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='0'">初始化</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='1'">待初审</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='2'">初审未通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='3'">待复审</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='4'">复审未通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">生产中</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='6'">待发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='7'">部分发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='8'">全部发货</el-tag>
+          <el-tag type="danger" v-if="scope.row.sorderStatus=='9'">已完成</el-tag>
+          </template > -->
           <template slot-scope="scope">
           <el-tag type="danger" v-if="scope.row.sorderStatus=='0'">初始化</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='1'">待初审</el-tag>
@@ -90,12 +102,12 @@
           <el-tag type="danger" v-if="scope.row.sorderStatus=='7'">部分发货</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='8'">全部发货</el-tag>
           <el-tag type="danger" v-if="scope.row.sorderStatus=='9'">已完成</el-tag>
-          </template >
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="220px" style="text-align:center">
           <template slot-scope="scope">
-              <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true)" type="success" size="small">查 看</el-button>
-             <el-button @click="showEditOrdermanagement(scope.row.sorderCode)" type="primary" size="small" :disabled="scope.row.sorderStatus==1 || scope.row.sorderStatus==3 ||scope.row.sorderStatus==5 ||scope.row.sorderStatus==6 ||scope.row.sorderStatus==7 ||scope.row.sorderStatus==8 ||scope.row.sorderStatus==9"  >编 辑</el-button>
+              <el-button @click="showEditOrdermanagement(scope.row.sorderCode,'0',scope.row.sorderStatus)" type="success" size="small">查 看</el-button>
+             <el-button @click="showEditOrdermanagement(scope.row.sorderCode,'1')" type="primary" size="small" :disabled="scope.row.sorderStatus==1 || scope.row.sorderStatus==3 ||scope.row.sorderStatus==5 ||scope.row.sorderStatus==6 ||scope.row.sorderStatus==7 ||scope.row.sorderStatus==8 ||scope.row.sorderStatus==9"  >编 辑</el-button>
             <el-button @click="deletebumen(scope.row.sorderCode)" type="danger" size="small" :disabled="scope.row.sorderStatus==1 || scope.row.sorderStatus==3 ||scope.row.sorderStatus==5 ||scope.row.sorderStatus==6 ||scope.row.sorderStatus==7 ||scope.row.sorderStatus==8 ||scope.row.sorderStatus==9"  >删 除</el-button>
 
           </template>
@@ -112,7 +124,7 @@
     </el-card>
     <!-- 新增销售订单 -->
 
-    <el-dialog :title=" '新增销售订单' " :visible.sync="addOrdermanagementVisible" width="70%" :before-close="handleClose">
+    <el-dialog :title=" '新增销售订单' " :visible.sync="addOrdermanagementVisible" width="70%" :before-close="handleClose" @closed="dialogClosed">
         <div class="fenge">基础信息</div>
         <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="addOrdermanagementForm" :rules="addOrdermanagementRules">
           <el-form-item label="客户名称：" prop="customerId">
@@ -125,7 +137,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-          <el-form-item label="交货地点：" prop="">
+          <el-form-item label="交货地点：" prop="sorderAddress">
             <el-input v-model="addOrdermanagementForm.sorderAddress"></el-input>
           </el-form-item>
           <el-form-item label="合同号：" prop="sorderWarehouse">
@@ -222,9 +234,9 @@
         <el-button type="primary" @click="addOrdermanagement">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title=" '新增生产商品' " :visible.sync="addOrdermanagementVisible1" width="55%" :before-close="handleClose">
-        <el-form ref="form" label-width="110px" :inline="true" :model="shengchanFrom" :rules="addOrdermanagementRules">
-          <el-form-item label="生产商品类型：">
+    <el-dialog :title=" '新增生产商品' " :visible.sync="addOrdermanagementVisible1" width="55%" :before-close="handleClose" @closed="dialogClosed1" >
+        <el-form ref="shengchantRef" label-width="110px" :inline="true" :model="shengchanFrom" :rules="addOrdermanagementRules">
+          <el-form-item label="生产商品类型：" prop="productLeixing">
             <el-select v-model="shengchanFrom.productLeixing" placeholder="请选择">
               <el-option
                 v-for="item in shengchan"
@@ -418,10 +430,38 @@
     <el-form-item label="备注：" prop="sorderRemark0">
       <el-input class="w400" :disabled="xianshi" v-model="editOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
+    <div class="fenge1" v-if='xianshi1'>初审信息</div>
+    <el-form-item label="审核人：" prop="sorderChushen" v-if='xianshi1'>
+      <el-input v-model="editOrdermanagementForm.sorderChushen" :disabled="xianshi"></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果："  prop="sorderStatus" v-if='xianshi1'>
+      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='3'  :disabled="xianshi">通过</el-radio>
+      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='2'  :disabled="xianshi">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间：" prop="sorderChushentime" v-if='xianshi1'>
+      <el-input v-model="editOrdermanagementForm.sorderChushentime" :disabled="xianshi"></el-input>
+    </el-form-item> 
+    <el-form-item label="审核描述："  prop="sorderChushendesc" v-if='xianshi1'>
+      <el-input class="w400" v-model="editOrdermanagementForm.sorderChushendesc" :disabled="xianshi"></el-input>
+    </el-form-item>
+    <div class="fenge1" v-if='xianshi2'>复审信息</div>
+    <el-form-item label="审核人："  prop="sorderFushen" v-if='xianshi2'>
+      <el-input v-model="editOrdermanagementForm.sorderFushen" :disabled="xianshi"></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果：" v-if='xianshi2'>
+      <el-radio  label="5" v-model="editOrdermanagementForm.sorderStatus" :disabled="xianshi">通过</el-radio>
+      <el-radio  label="4" v-model="editOrdermanagementForm.sorderStatus" :disabled="xianshi">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间："  prop="sorderFushentime" v-if='xianshi2'>
+      <el-input v-model="editOrdermanagementForm.sorderFushentime" :disabled="xianshi"></el-input>
+    </el-form-item>
+    <el-form-item label="审核描述："  prop="sorderFushendesc" v-if='xianshi2'>
+      <el-input class="w400" v-model="editOrdermanagementForm.sorderFushendesc" :disabled="xianshi"></el-input>
+    </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrdermanagement">确 定</el-button>
+        <el-button type="primary" @click="editOrdermanagement" v-if="!xianshi">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
@@ -454,7 +494,9 @@ export default {
       currentPage: 0,
       total: 0,
       selectedList: [],
-      xianshi:false,
+      xianshi:'',
+      xianshi1:'',
+      xianshi2:'',
       ordermanagementList:[],
       chaOrdermanagementForm: {
         sorderCode:'',
@@ -564,6 +606,7 @@ export default {
         sorderCurrecytype:'', 
         productName:'',
         supgoolsId:'',
+        sorderStatus:'',
         sorderExpressfee:'',
         sorderFreigh:'',
         sorderEditionfee:'',
@@ -573,6 +616,12 @@ export default {
         sorderPayamount:'',
         sorderRemark0:'',
         commodityListDOs:[],
+        sorderChushen:'',
+        sorderChushentime:'',
+        sorderChushendesc:'',
+        sorderFushen:'',
+        sorderFushentime:'',
+        sorderFushendesc:'',
       },
       addOrdermanagementRules: {
         sorderAddress: [
@@ -589,9 +638,8 @@ export default {
     this.list();
   },
   methods: {
-     // 查询订单列表
    async OrdermanagementList() {
-     if (this.chaOrdermanagementForm.sorderCode!=''||this.chaOrdermanagementForm.sorderTotalsum!=''||this.chaOrdermanagementForm.sorderStatus!=''||this.chaOrdermanagementForm.sorderWarehouse!='') {
+     if (this.chaOrdermanagementForm.sorderCode!=''|| this.chaOrdermanagementForm.sorderTotalsum!=''|| this.chaOrdermanagementForm.sorderStatus!=''|| this.chaOrdermanagementForm.sorderWarehouse!='') {
        this.chaOrdermanagementForm.pageCode=1;
        this.chaOrdermanagementForm.pageSize=10;
      }
@@ -610,6 +658,9 @@ export default {
       this.shengchanlist = res.body.rows;
       this.addOrdermanagementVisible1=true;
     },
+
+
+
     // async chaigoushangpin(){
     //   const { data: res } = await this.$http.post("jc/suppliergoods/selectSuppliergoolslist",{params:this.caigouFrom});
     //   console.log(res);
@@ -688,8 +739,25 @@ export default {
       this.$refs.chaOrdermanagementRef.resetFields();
       this.OrdermanagementList();
     },
-    async showEditOrdermanagement(sorderCode,xian) {
-      this.xianshi=xian;
+   
+    async showEditOrdermanagement(sorderCode,xian,sorderStatus) {
+      if(xian=='0'){
+        this.xianshi=true;
+        if(sorderStatus=='0' || sorderStatus=='1'){
+          this.xianshi1=false;
+          this.xianshi2=false;
+        }else if(sorderStatus=='2' || sorderStatus=='3'){
+          this.xianshi1=true;
+        }else{
+          this.xianshi1=true;
+          this.xianshi2=true;
+        }
+      }else if(xian=='1'){
+        this.xianshi=false;
+       this.xianshi1=false;
+        this.xianshi2=false;
+      }
+      
       let param = new URLSearchParams();
       param.append("sorderCode", sorderCode);
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
@@ -699,6 +767,9 @@ export default {
       this.editOrdermanagementVisible = true;
     },
     async editOrdermanagement() {
+      if(this.editOrdermanagementForm.sorderStatus == '2' || this.editOrdermanagementForm.sorderStatus == '4'){
+           this.editOrdermanagementForm.sorderStatus='0';
+      }
       const { data: res } = await this.$http.post(
         "xs/saleorder/updateSaleOrder",
         this.editOrdermanagementForm
@@ -715,12 +786,14 @@ export default {
       console.log(this.delarr);
     },
      async deleteRow(){
+       console.log('---------------------');
          console.log(this.delarr);
-         console.log(this.shengchanpin);
+         console.log('---------------------');
+         console.log(this.addOrdermanagementForm.commodityListDOs);
          for (let index = 0; index < this.delarr.length; index++) {
-           for (let i = 0; i < this.shengchanpin.length; i++) {
-              if(this.delarr[index]==this.shengchanpin[i].productgoodsId)
-              this.shengchanpin.splice(i);
+           for (let i = 0; i < this.addOrdermanagementForm.commodityListDOs.length; i++) {
+              if(this.delarr[index]==this.addOrdermanagementForm.commodityListDOs[i].productgoodsId)
+              this.addOrdermanagementForm.commodityListDOs.splice(i,1);
            }
          }
          this.delVisible = false;
@@ -750,7 +823,13 @@ export default {
           });
         }
       },
-
+      dialogClosed(){
+        this.$refs.addOrdermanagementRef.resetFields();
+        this.addOrdermanagementForm.commodityListDOs=[];
+      },
+      dialogClosed1(){
+         this.$refs.shengchantRef.resetFields();
+      },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
@@ -852,7 +931,7 @@ export default {
     background-color: #DCDFE6;
     
     }
-     .fenge1{
+  .fenge1{
     height: 25px;
     width:98.5%;
     line-height: 25px;

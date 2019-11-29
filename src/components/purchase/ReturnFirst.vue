@@ -3,7 +3,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>进货管理</el-breadcrumb-item>
-      <el-breadcrumb-item>采购退货管理</el-breadcrumb-item>
+      <el-breadcrumb-item>采购退货-初审</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
       <el-form
@@ -24,22 +24,10 @@
             </el-form-item>
             <el-form-item label="订单状态" prop="preturnState">
               <el-select v-model="chaOrderFrom.preturnState" placeholder="请选择" class="hu">
-                <el-option value label="全部"></el-option>
-                <el-option value="0" label="初始化"></el-option>
-                <el-option value="1" label="待初审"></el-option>
-                <el-option value="2" label="初审未通过"></el-option>
-                <el-option value="3" label="待复审"></el-option>
-                <el-option value="4" label="复审未通过"></el-option>
-                <el-option value="5" label="退货中"></el-option>
-                <el-option value="6" label="已完成"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="退货情况" prop="preturnSituation">
-              <el-select v-model="chaOrderFrom.preturnSituation" placeholder="请选择" class="hu">
-                <el-option value label="全部"></el-option>
-                <el-option value="0" label="待退货"></el-option>
-                <el-option value="1" label="部分退货"></el-option>
-                <el-option value="2" label="全部退货"></el-option>
+                <el-option value="7" label="全部"></el-option>
+                <el-option value="1" label="待审核"></el-option>
+                <el-option value="2" label="已驳回"></el-option>
+                <el-option value="3" label="已通过"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="制单时间" prop="time">
@@ -52,48 +40,42 @@
                 end-placeholder="结束日期"
               ></el-date-picker>
             </el-form-item>
+            <!-- <el-form-item label="退货情况" prop="preturnSituation">
+              <el-select v-model="chaOrderFrom.preturnSituation" placeholder="请选择" class="hu">
+                <el-option value label="全部"></el-option>
+                <el-option value="0" label="待退货"></el-option>
+                <el-option value="1" label="部分退货"></el-option>
+                <el-option value="2" label="全部退货"></el-option>
+              </el-select>
+            </el-form-item>-->
             <el-form-item>
               <el-button @click="getList(1)">查 询</el-button>
               <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
-              <!-- <el-button type="primary" @click="AddVisible = true">重 置</el-button>
-              <el-button type="primary" @click="createReturnVisible = true">重 置</el-button>-->
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <el-row>
-        <!-- <el-button @click="changeAddVisible()" type="primary">新增退货单</el-button> -->
-        <router-link to="addReturnOrder" tag="el-button" type="primary">新增退货单</router-link>
-        <el-button @click="checkOrderList()" type="primary" :disabled="selectedList.length == 0">提 审</el-button>
-        <el-button @click="stopOrderList()" type="danger" :disabled="selectedList.length == 0">终 止</el-button>
-        <!-- <el-button @click="returnOrder('10101010101','2020202020202')" type="primary">退货</el-button> -->
-      </el-row>
       <el-table border :data="orderList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="50px"></el-table-column>
-        <el-table-column type="index" width="50px" label="序号"></el-table-column>
+        <el-table-column type="index" label="序号" width="50px"></el-table-column>
         <el-table-column prop="preturnCode" label="订单编号" width="200px" align="center"></el-table-column>
-        <el-table-column prop="preturnAmount" label="退款总金额" width="100px"></el-table-column>
-        <el-table-column prop="preturnAlltotal" label="退货总数量" width="100px"></el-table-column>
-        <el-table-column prop="preturnTotal" label="已退数量" width="100px"></el-table-column>
-        <el-table-column prop="preturnSituation" label="退货情况">
+        <el-table-column prop="preturnAmount" label="退款总金额"></el-table-column>
+        <el-table-column prop="preturnAlltotal" label="退货总数量"></el-table-column>
+        <!-- <el-table-column prop="preturnTotal" label="已退数量"></el-table-column> -->
+        <!-- <el-table-column prop="preturnSituation" label="退货情况">
           <template slot-scope="scope">
             <span v-if="scope.row.preturnSituation == 0">待退货</span>
             <span v-if="scope.row.preturnSituation == 1">部分退货</span>
             <span v-if="scope.row.preturnSituation == 2">全部退货</span>
           </template>
-        </el-table-column>
+        </el-table-column>-->
         <!-- <el-table-column prop="basicDO.basicRetainone" label="出库仓库"></el-table-column> -->
         <el-table-column prop="supplierDO.supName" label="供应商"></el-table-column>
         <el-table-column prop="preturnProducer" label="制单人员"></el-table-column>
         <el-table-column prop="preturnState" label="退货单状态" align="center">
           <template slot-scope="scope">
-            <el-tag type="danger" v-if="scope.row.preturnState==0">初始化</el-tag>
-            <el-tag type="danger" v-if="scope.row.preturnState==1">待初审</el-tag>
-            <el-tag type="danger" v-if="scope.row.preturnState==2">初审未通过</el-tag>
-            <el-tag type="danger" v-if="scope.row.preturnState==3">待复审</el-tag>
-            <el-tag type="danger" v-if="scope.row.preturnState==4">复审未通过</el-tag>
-            <el-tag type="danger" v-if="scope.row.preturnState==5">退货中</el-tag>
-            <el-tag type="danger" v-if="scope.row.preturnState==6">已完成</el-tag>
+            <el-tag type="danger" v-if="scope.row.preturnState==1">待审核</el-tag>
+            <el-tag type="danger" v-if="scope.row.preturnState==2">已驳回</el-tag>
+            <el-tag type="danger" v-if="scope.row.preturnState==3">已通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="preturnTime" label="制单时间" width="200px" align="center"></el-table-column>
@@ -107,49 +89,21 @@
             <el-tag type="danger" v-if="scope.row.preturnState==4">复审未通过</el-tag>
           </template>
         </el-table-column>-->
-        <el-table-column label="操作" width="270px" align="center" fixed="right">
+        <el-table-column label="操作" width="180px" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="success"
               icon="el-icon-edit"
               size="mini"
-              @click="lookUpState = true;showEditOrder(scope.row.preturnCode)"
+              @click="lookUpState2 = true;lookUpState = true;showEditOrder(scope.row.preturnCode)"
             >查看</el-button>
             <el-button
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              :disabled="scope.row.preturnState==1||scope.row.preturnState==3||scope.row.preturnState==5||scope.row.preturnState==6"
-              @click="lookUpState = false;showEditOrder(scope.row.preturnCode)"
-            >编辑</el-button>
-
-            <!-- v-if="scope.row.porderState==0||scope.row.porderState==2||scope.row.porderState==4" -->
-            <!-- <el-button
-              type="primary"
-              icon="el-icon-edit"
-              size="mini"
-              
-              @click="edit(scope.row.porderCode)"
-            >提审</el-button>-->
-            <!-- v-if="scope.row.porderState==0" -->
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              :disabled="scope.row.preturnState==1||scope.row.preturnState==3||scope.row.preturnState==5||scope.row.preturnState==6"
-              @click="deletebReturnOrder(scope.row.preturnCode)"
-            >删除</el-button>
-            <!-- v-if="scope.row.porderState==0||scope.row.porderState==2||scope.row.porderState==4" -->
-
-            <!-- v-if="scope.row.porderState==2||scope.row.porderState==4" -->
-            <!-- <el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-             
-              @click="deletebumen(scope.row.porderCode)"
-            >终止</el-button>-->
-            <!-- v-if="scope.row.porderState==5" -->
+              :disabled="scope.row.preturnState != 1"
+              @click="lookUpState2 = false;lookUpState = true;showEditOrder(scope.row.preturnCode)"
+            >审核</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -162,226 +116,9 @@
         :total="orderTotal"
       ></el-pagination>
     </el-card>
-    <el-dialog title="新增退货单" :visible.sync="AddVisible" width="60%" :before-close="handleCloseAdd" @closed='handleClosedAdd'>
-      <!-- @closed="$refs.cancel_.resetFields()" -->
-      <!-- label-position="left"  -->
-      <el-form
-        :inline="true"
-        :model="addQueryForm"
-        label-width="90px"
-        label-position="left"
-        ref="addQueryForm"
-      >
-        <el-row :gutter="20" class="row">
-          <el-col :span="24">
-            <el-form-item label="采购订单号" prop="porderCode">
-              <el-input class="hu" v-model="addQueryForm.porderCode"></el-input>
-            </el-form-item>
-            <!-- <el-form-item label="入库仓库" prop="basicId">
-              <el-select v-model="addQueryForm.basicId" placeholder="请选择" class="_small">
-            <el-option
-              v-for="item in cangku"
-              :key="item.basicId"
-              :label="item.basicRetainone"
-              :value="item.basicId"
-            ></el-option>
-          </el-select>
-            </el-form-item> -->
-            <el-form-item label="制单人员" prop="porderProducer">
-              <el-input class="hu" v-model="addQueryForm.porderProducer"></el-input>
-            </el-form-item>
-            <el-form-item label="制单时间" prop="time">
-              <el-date-picker
-                v-model="addQueryForm.time"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-              ></el-date-picker>
-            </el-form-item>
-            <el-form-item label="到货情况" prop="porderArrivalstatus">
-              <el-select v-model="addQueryForm.porderArrivalstatus" placeholder="请选择" class="hu">
-                <el-option value="3" label="全部"></el-option>
-                <el-option value="1" label="部分到货"></el-option>
-                <el-option value="2" label="全部到货"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="getPurchaseList(1)">查 询</el-button>
-              <el-button type="primary" @click="ResetForm('addQueryForm')">重 置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <!-- <el-row>
-        <el-button :disabled="GoodsSelectedList.length==0" type="danger">删除</el-button>
-      </el-row>-->
-      <el-table border :data="purchaseOrderList">
-        <!-- <el-table-column type="selection" width="50px"></el-table-column> -->
-        <el-table-column prop="porderCode" label="订单编号" width="180px" align="center"></el-table-column>
-        <el-table-column prop="porderPalnmoney" label="预付款金额" width="100px"></el-table-column>
-        <el-table-column prop="porderTotalmoney" label="总金额" ></el-table-column>
-        <el-table-column prop="porderTotalnum" label="总数量" ></el-table-column>
-        <el-table-column prop="porderArrivalnumber" label="到货数量"></el-table-column>
-        <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column>
-        <!-- <el-table-column prop="basicDO.basicRetainone" label="入库仓库" width="100px"></el-table-column> -->
-        <el-table-column prop="supplierDO.supName" label="供应商" width="120px" align="center"></el-table-column>
-        <el-table-column prop="porderArrivalstatus" label="到货情况">
-          <template slot-scope="scope">
-            <span v-if="scope.row.porderArrivalstatus == 0">未到货</span>
-            <span v-if="scope.row.porderArrivalstatus == 1">部分到货</span>
-            <span v-if="scope.row.porderArrivalstatus == 2">全部到货</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="xxx" label="制单人员"></el-table-column>
-        <el-table-column prop="porderTime" label="制单时间" width="200px" align="center"></el-table-column>
-        <!-- 复审时间 -->
-        <!-- <el-table-column prop="porderReviewedtime" label="审核时间" width="200px" align="center"></el-table-column> -->
-        <el-table-column prop="porderState" label="订单状态">
-          <template slot-scope="scope">
-            <!-- <el-tag type="danger" v-if="scope.row.porderState==0">初始化</el-tag>
-            <el-tag type="danger" v-if="scope.row.porderState==1">待初审</el-tag>
-            <el-tag type="danger" v-if="scope.row.porderState==2">初审未通过</el-tag>
-            <el-tag type="danger" v-if="scope.row.porderState==3">待复审</el-tag>
-            <el-tag type="danger" v-if="scope.row.porderState==4">复审未通过</el-tag>-->
-            <el-tag type="danger" v-if="scope.row.porderState==5">采购中</el-tag>
-            <!-- <el-tag type="danger" v-if="scope.row.porderState==6">待入库</el-tag> -->
-            <!-- <el-tag type="danger" v-if="scope.row.porderState==7">部分入库</el-tag> -->
-            <el-tag type="danger" v-if="scope.row.porderState==8">已完成</el-tag>
-            <!-- <el-tag type="danger" v-if="scope.row.porderState==9">结束</el-tag> -->
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" fixed="right">
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              v-if="scope.row.porderArrivalstatus==1||scope.row.porderArrivalstatus==2"
-              @click="returnOrder(scope.row.porderCode,scope.row.supplierId)"
-            >退货</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        @current-change="handleCurrentChange2"
-        :current-page.sync="currentPage2"
-        :page-size="10"
-        layout="total,prev, pager, next"
-        :total="addOrderTotal"
-      ></el-pagination>
-      <span slot="footer" class="dialog-footer">
-        <el-row>
-          <el-col :span="7" style="float: right">
-            <el-button @click="cancelAddVisible()">取 消</el-button>
-            <!-- <el-button @click="Save" type="primary">保存</el-button> -->
-          </el-col>
-        </el-row>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="生成退货单"
-      :visible.sync="createReturnVisible"
-      width="60%"
-      :before-close="handleClose"
-      @closed="dialogClosed('createReturnFrom')"
-    >
-      <el-form
-        label-position="left"
-        label-width="100px"
-        :inline="true"
-        class="demo-form-inline search"
-        :model="createReturnFrom"
-        ref="createReturnFrom"
-      >
-        <el-table :data="createReturnFrom.pcommodityDos" style="width: 100%">
-          <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
-          <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
-          <el-table-column prop="supgoolsSplicing" label="商品描述" width="200px" align="center"></el-table-column>
-          <el-table-column prop="pcommodityPrice" label="单价"></el-table-column>
-          <el-table-column prop="pcommodityPalnnum" label="数量"></el-table-column>
-          <el-table-column prop="xxx" label="金额">
-            <template slot-scope="scope">{{scope.row.pcommodityPrice * scope.row.pcommodityPalnnum}}</template>
-          </el-table-column>
-          <el-table-column prop="productDhnumber" label="已到货数量"></el-table-column>
-          <el-table-column prop="productThnumber" label="退货数量">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.productThnumber" @blur="calculate(createReturnFrom)"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                @click="deleteReturnGoods(scope.row.supgoolsId)"
-              >删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <br />
-        <el-form-item label="退货总数量" prop="preturnAlltotal">
-          <el-input class="hu" v-model="createReturnFrom.preturnAlltotal" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="退货总金额" prop="preturnAmount">
-          <el-input class="hu" v-model="createReturnFrom.preturnAmount" :disabled="true"></el-input>
-        </el-form-item>
-        <hr />
-
-        <el-table :data="createReturnFromGongyingshang" style="width: 100%">
-          <el-table-column prop="supName" label="供应商名称"></el-table-column>
-          <el-table-column prop="supId" label="供应商编码"></el-table-column>
-          <el-table-column prop="supType" label="供应商类型"></el-table-column>
-          <el-table-column prop="supContacts" label="联系人"></el-table-column>
-          <el-table-column prop="supPhone" label="手机"></el-table-column>
-        </el-table>
-
-        <hr />
-
-        <!-- <el-form-item label="出库仓库" prop="preturnOutwarehouse">
-          <el-select
-            v-model="createReturnFrom.preturnOutwarehouse"
-            placeholder="请选择"
-            class="_small"
-          >
-            <el-option
-              v-for="item in cangku"
-              :key="item.basicId"
-              :label="item.basicRetainone"
-              :value="item.basicId"
-            ></el-option>
-          </el-select>
-        </el-form-item> -->
-        <el-form-item label="制单人员" prop="preturnProducer">
-          <el-input class="hu" v-model="createReturnFrom.preturnProducer" :disabled="true"></el-input>
-        </el-form-item>
-        <br />
-        <el-form-item label="备注" prop="preturnDesc">
-          <el-input type="textarea" v-model="createReturnFrom.preturnDesc" style="width: 600px"></el-input>
-        </el-form-item>
-
-        <hr />
-
-        <el-form-item label="收货人" prop="preturnAddressee">
-          <el-input class="hu" v-model="createReturnFrom.preturnAddressee"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" prop="preturnTel">
-          <el-input class="hu" v-model="createReturnFrom.preturnTel"></el-input>
-        </el-form-item>
-        <br />
-        <el-form-item label="收货地址" prop="preturnAddress">
-          <el-input type="textarea" v-model="createReturnFrom.preturnAddress" style="width: 600px"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="createReturnVisible = false;createReturnFromGongyingshang = []">取 消</el-button>
-        <el-button type="primary" @click="createReturnOrder()">保 存</el-button>
-      </span>
-    </el-dialog>
 
     <el-dialog
-      :title="lookUpState?'查看退货单':'编辑退货单'"
+      title="审核"
       :visible.sync="editReturnVisible"
       width="60%"
       :before-close="handleClose"
@@ -414,7 +151,7 @@
               ></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <!-- <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
                 type="danger"
@@ -424,7 +161,7 @@
                 :disabled="lookUpState"
               >删除</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <br />
         <el-form-item label="退货总数量" prop="preturnAlltotal">
@@ -491,43 +228,44 @@
           ></el-input>
         </el-form-item>
 
-        <div v-if="editReturnFrom.preturnState != 0 && editReturnFrom.preturnState != 1">
+        <div v-if="lookUpState2 && editReturnFrom.preturnState != 1">
           <hr />
 
-          <el-form-item label="审核人" prop="preturnChushen">
-            <el-input v-model="editReturnFrom.preturnChushen" :disabled="true"></el-input>
-          </el-form-item>
-          <br />
-          <el-form-item label="备注" prop="preturnRemark0">
-            <el-input type="textarea" v-model="editReturnFrom.preturnRemark0" style="width:600px" :disabled="true"></el-input>
-          </el-form-item>
+        <el-form-item label="审核人" prop="preturnChushen">
+          <el-input v-model="editReturnFrom.preturnChushen" :disabled="true"></el-input>
+        </el-form-item>&nbsp; &nbsp;
+        <el-form-item label="审核结果">
+          <el-radio v-model="editReturnFrom.preturnState" label="3" :disabled="true">通过</el-radio>
+          <el-radio v-model="editReturnFrom.preturnState" label="2" :disabled="true">驳回</el-radio>
+        </el-form-item>
+        <br />
+        <el-form-item label="备注" prop="preturnRemark0">
+          <el-input type="textarea" v-model="editReturnFrom.preturnRemark0" style="width:600px" :disabled="true"></el-input>
+        </el-form-item>
         </div>
 
-        <div v-if="editReturnFrom.preturnState == 4 || editReturnFrom.preturnState == 5 || editReturnFrom.preturnState == 6">
+        <div v-if="!lookUpState2">
           <hr />
 
-          <el-form-item label="审核人" prop="preturnFushen">
-            <el-input v-model="editReturnFrom.preturnFushen" :disabled="true"></el-input>
-          </el-form-item>
-          <br />
-          <el-form-item label="备注" prop="preturnRemark1">
-            <el-input type="textarea" v-model="editReturnFrom.preturnRemark1" style="width:600px" :disabled="true"></el-input>
-          </el-form-item>
+        <el-form-item label="审核人" prop="preturnChushen">
+          <el-input v-model="editReturnFrom.preturnChushen" :disabled="true"></el-input>
+        </el-form-item>&nbsp; &nbsp;
+        <el-form-item label="审核结果">
+          <el-radio v-model="radio" label="0">通过</el-radio>
+          <el-radio v-model="radio" label="1">驳回</el-radio>
+        </el-form-item>
+        <br />
+        <el-form-item label="备注" prop="preturnRemark0">
+          <el-input type="textarea" v-model="editReturnFrom.preturnRemark0" style="width:600px"></el-input>
+        </el-form-item>
         </div>
-
 
       </el-form>
-
-      <span slot="footer" class="dialog-footer" v-if="!lookUpState">
+      <span slot="footer" class="dialog-footer">
         <el-button
-          @click="editReturnVisible = false;lookUpState = false;editReturnFromGongyingshang = []"
+          @click="editReturnVisible = false;editReturnFromGongyingshang = [];ClearChedkMsg()"
         >取 消</el-button>
-        <el-button type="primary" @click="editReturnOrder()">保 存</el-button>
-      </span>
-      <span slot="footer" class="dialog-footer" v-if="lookUpState">
-        <el-button
-          @click="editReturnVisible = false;lookUpState = false;editReturnFromGongyingshang = []"
-        >确 定</el-button>
+        <el-button type="primary" @click="editReturnOrder()" v-if="!lookUpState2">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -546,7 +284,7 @@ export default {
         preturnCode: "", //退货单号
         preturnProducer: "", //制单人
         // supplierId: "", 供应商id
-        preturnState: "", //审核状态
+        preturnState: "7", //审核状态
         preturnSituation: "", //退货状态
         time: [], //制单时间
         pageCode: 1,
@@ -576,7 +314,7 @@ export default {
         // pageSize: 10
         porderCode: "", //采购订单号
         basicId: "", //入库仓库
-        porderProducer: "", //制单人员
+        preturnProducer: "", //制单人员
         time: [], //制单时间
         porderArrivalstatus: "3", //到货情况
         pageCode: 1,
@@ -586,7 +324,7 @@ export default {
       addQuery: {
         porderCode: "", //采购订单号
         basicId: "", //入库仓库
-        porderProducer: "", //制单人员
+        preturnProducer: "", //制单人员
         time: [], //制单时间
         porderArrivalstatus: "3", //到货情况
         pageCode: 1,
@@ -622,17 +360,18 @@ export default {
       },
 
       editReturnFrom: {}, //编辑退款单表单
-      lookUpState: false, //查看按钮 状态
+      lookUpState: true, //控制审核禁用
       editReturnFromGongyingshang: [], //编辑form供应商
       editReturnVisible: false, //编辑表单可见标识
-      currentPage:1,
-      currentPage2:1,
+
+      radio: "",
+      lookUpState2:false,//查看按钮状态
     };
   },
   created() {
     this.getCha();
     this.getList();
-    this.getCookie();
+    // this.getCookie();
     this.chaCopy();
   },
   methods: {
@@ -649,14 +388,10 @@ export default {
     handleCloseAdd(done) {
       this.$confirm("确认关闭？")
         .then(_ => {
-          
+          this.ResetForm("addQueryForm");
           done();
         })
         .catch(_ => {});
-    },
-    handleClosedAdd(){
-      this.currentPage2 = 1
-          this.ResetForm("addQueryForm");
     },
     goodsListSelect(val) {
       this.GoodsSelectedList = val;
@@ -669,14 +404,6 @@ export default {
       });
       return count;
     },
-    allMoney: function() {
-      var count = 0;
-      this.goodsList.forEach(function(val) {
-        count += parseInt(val.jine);
-      });
-      return count;
-    },
-    Save() {},
     //表单重置
     ResetForm(formName) {
       this.$refs[formName].resetFields();
@@ -708,7 +435,7 @@ export default {
       if (val) {
         this.addQuery.porderCode = this.addQueryForm.porderCode;
         this.addQuery.basicId = this.addQueryForm.basicId;
-        this.addQuery.porderProducer = this.addQueryForm.porderProducer;
+        this.addQuery.preturnProducer = this.addQueryForm.preturnProducer;
         this.addQuery.time = this.addQueryForm.time;
         this.addQuery.porderArrivalstatus = this.addQueryForm.porderArrivalstatus;
         this.addQuery.pageCode = 1;
@@ -752,7 +479,6 @@ export default {
     },
     // 生成退货单
     async returnOrder(porderCode, supplierId) {
-      this.createReturnFromGongyingshang = []
       this.createReturnFrom.porderCode = porderCode;
       this.createReturnFrom.supplierId = supplierId;
 
@@ -841,7 +567,6 @@ export default {
       ///this.createReturnFrom.pcommodityDos赋值
       //制单人员反显
       // this.preturnProducer = ?
-      
       this.createReturnVisible = true;
     },
 
@@ -925,7 +650,6 @@ export default {
       this.createReturnVisible = false;
       this.createReturnFrom.pcommodityDos = [];
       this.createReturnFromGongyingshang = [];
-      this.getPurchaseList()
       this.getList();
     },
     // 获取供应商 仓库
@@ -993,13 +717,14 @@ export default {
           //判断查找相对应的值
           if (arr2[0] == "userName") {
             //  console.log(arr2[1])
-            this.createReturnFrom.preturnProducer = arr2[1]; //保存到保存数据的地方
+            this.editReturnFrom.preturnChushen = arr2[1]; //保存到保存数据的地方
           }
         }
         this.checked = true;
       }
     },
     dialogClosed(val) {
+      this.editReturnFrom = {};
       this.$refs[val].resetFields();
     },
     // 深层拷贝
@@ -1035,12 +760,13 @@ export default {
     // 编辑退货单初始化
     async showEditOrder(preturnCode) {
       this.editReturnFromGongyingshang = [];
+      this.radio = "";
       const { data: res } = await this.$http.post("jh/preturn/dtjresultMap", {
         preturnCode: preturnCode
       });
       this.editReturnFrom = res.body.result[0];
 
-      
+
 
       // 封装供应商
       let supplierId = this.editReturnFrom.supplierId;
@@ -1056,10 +782,6 @@ export default {
         porderCode: this.editReturnFrom.porderCode
       });
       // 查看状态不用获取
-      // console.log(this.editReturnFrom)
-      // console.log('res3')
-      // console.log(res3)
-
       if (!this.lookUpState) {
         for (let x = 0; x < res3.body.result[0].pcommodityDos.length; x++) {
           for (let y = 0; y < this.editReturnFrom.returnListDos.length; y++) {
@@ -1088,18 +810,14 @@ export default {
         "jc/suppliergoods/selectSuppliergoolslistmore",
         ids
       );
-
-      console.log('res2')
-      console.log(res2)
-
       for (let j = 0; j < val.length; j++) {
         for (let i = 0; i < res2.length; i++) {
           if (
             this.editReturnFrom.returnListDos[j].suppliergoolsId ==
             res2[i].suppliergoolsId
           ) {
-            // this.editReturnFrom.returnListDos[j].supgoolsBigType =
-            //   res2[i].supgoolsBigType;
+            this.editReturnFrom.returnListDos[j].supgoolsBigType =
+              res2[i].supgoolsBigType;
             this.editReturnFrom.returnListDos[j].supgoolssmallType =
               res2[i].supgoolssmallType;
             this.editReturnFrom.returnListDos[j].supgoolsId =
@@ -1133,7 +851,11 @@ export default {
         this.editReturnFrom.preturnOutwarehouse
       );
 
+      this.editReturnFrom.preturnState = this.editReturnFrom.preturnState + '';
+
       console.log(this.editReturnFrom);
+      console.log(this.editReturnFrom.preturnState);
+      this.getCookie();
       this.editReturnVisible = true;
     },
     // 编辑订单保存
@@ -1154,8 +876,27 @@ export default {
         return;
       }
       delete this.editReturnFrom.preturnTime;
+
+      console.log("radio");
+      console.log(this.radio);
+      // 根据审核结果修改订单状态
+      if (this.radio != "" && this.radio == 0) {
+        this.editReturnFrom.preturnState = 3;
+      } else if (this.radio == 1) {
+        this.editReturnFrom.preturnState = 2;
+      } else {
+        this.$message({
+          type: "info",
+          message: "未进行审核！"
+        });
+        this.editReturnVisible = false;
+        this.editReturnFrom = {};
+        this.radio = "";
+        return;
+      }
+
       const { data: res } = await this.$http.post(
-        "/jh/preturn/bianjith",
+        "/jh/preturn/examine",
         this.editReturnFrom
       );
       // 判断是否编辑成功！！！
@@ -1163,18 +904,19 @@ export default {
       if (res.body.respCode == 200) {
         this.$message({
           type: "success",
-          message: res.body.msg
+          message: "审核成功！"
         });
-        this.getList()
+        this.getList();
       } else {
         this.$message({
           type: "info",
-          message: res.body.msg
+          message: "审核失败！"
         });
       }
 
       this.editReturnVisible = false;
       this.editReturnFrom = {};
+      this.radio = "";
     },
     // 删除退货单
     async deletebReturnOrder(preturnCode) {
@@ -1219,16 +961,16 @@ export default {
       this.selectedList.forEach((item, index, arr) => {
         preturnCodes.push(item.preturnCode);
         if (item.preturnState != 0) {
+          this.$message({
+            type: "info",
+            message: "存在非初始化状态订单，请重新选择！"
+          });
           flag = true;
-          return false;
+          return;
         }
       });
 
       if (flag) {
-        this.$message({
-            type: "info",
-            message: "存在非初始化状态订单，请重新选择！"
-          });
         return;
       }
       const { data: res } = await this.$http.post(
@@ -1258,17 +1000,16 @@ export default {
       this.selectedList.forEach((item, index, arr) => {
         preturnCodes.push(item.preturnCode);
         if (item.preturnState != 5) {
+          this.$message({
+            type: "info",
+            message: "存在非退货中状态订单，请重新选择！"
+          });
           flag = true;
-          return false;
+          return;
         }
       });
 
       if (flag) {
-        this.$message({
-            type: "info",
-            message: "存在非退货中状态订单，请重新选择！"
-          });
-         
         return;
       }
 
@@ -1290,6 +1031,10 @@ export default {
           message: "批量终止失败！"
         });
       }
+    },
+    // 清空审核信息
+    ClearChedkMsg() {
+      this.radio = "";
     }
   },
   watch: {

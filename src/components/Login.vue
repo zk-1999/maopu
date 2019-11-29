@@ -50,6 +50,7 @@ export default {
   },
   created () {
        this.getCookie();
+
   }
   ,
     methods:{
@@ -68,14 +69,14 @@ export default {
                 window.sessionStorage.setItem('token',res.body.user.token);              
                 const self = this;
                 //判断复选框是否被勾选 勾选则调用配置cookie方法
-                if (self.checked == true) {
+                // if (self.checked == true) {
                     //传入账号名，密码，和保存天数3个参数
                     self.setCookie(self.loginForm.username, self.loginForm.password, 7);
-                }else {
+                // }else {
                 // console.log("清空Cookie");
-                //清空Cookie
-                self.clearCookie();
-                }
+                // // 清空Cookie
+                // self.clearCookie();
+                // }
                 this.$router.push('/home')
             })
         },

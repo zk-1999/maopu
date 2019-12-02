@@ -416,6 +416,7 @@ export default {
          this.editPrintingForm.parametersNumber=res.parametersNumber;
          this.editPrintingForm.parametersTeethnum=res.parametersTeethnum;
          this.editPrintingForm.parametersId=res.parametersId;
+         this.editPrintingForm.pId=res.pId;
       this.edityonghuDialogVisible=true;
     },
     async editPrinting(){

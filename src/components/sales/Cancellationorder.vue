@@ -474,17 +474,19 @@ export default {
   methods: {
      //读取cookie
     getCookie: function() {
-      if (document.cookie.length > 0) {
-        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
-        for (var i = 0; i < arr.length; i++) {
-          var arr2 = arr[i].split("="); //再次切割
-          //判断查找相对应的值
-          if (arr2[0] == "userName") {
-            this.shenpiren = arr2[1]; //保存到保存数据的地方
-          }
-        }
-        this.checked = true;
-      }
+      var storage=window.localStorage;
+      this.shenpiren = storage.getItem("username");
+      // if (document.cookie.length > 0) {
+      //   var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+      //   for (var i = 0; i < arr.length; i++) {
+      //     var arr2 = arr[i].split("="); //再次切割
+      //     //判断查找相对应的值
+      //     if (arr2[0] == "userName") {
+      //       this.shenpiren = arr2[1]; //保存到保存数据的地方
+      //     }
+      //   }
+      //   this.checked = true;
+      // }
     },
      // 查询订单列表
    async OrdermanagementList() {

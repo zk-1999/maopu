@@ -916,7 +916,6 @@ export default {
       this.zhizhangmenfu=res4;
     },
    async handleClick(tab) {
-     console.log(tab);
      
         this.chamerchandiseForm.pageCode=1;
         this.chamerchandiseForm.pageSize=10;
@@ -1007,7 +1006,6 @@ export default {
       let param = new URLSearchParams();
       param.append("suppliergoolsId", suppliergoolsId);
       const {data:res} = await this.$http.post('jc/suppliergoods/selectSugoolsByid',param);
-      console.log(res);
       
       this.editMerchandiseFrom.supgoolCoated=Number(res.supgoolCoated);
       this.editMerchandiseFrom.supgoolssmallType=Number(res.supgoolssmallType);
@@ -1056,7 +1054,6 @@ export default {
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push({suppliergoolsId:this.selectedList[i].suppliergoolsId,supgoolsState:this.selectedList[i].supgoolsState==1?0:1})
       }
-      console.log(this.delarr);
     },
     selected(){
       this.delarr=[];
@@ -1064,7 +1061,6 @@ export default {
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push(this.selectedList[i].suppliergoolsId)
       }
-      console.log(this.delarr);
     },
     async deleteRow(){
          const {data:res} = await this.$http.post('jc/suppliergoods/deletemoresupgools',this.delarr);
@@ -1099,7 +1095,6 @@ export default {
         }
       },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     showshoop(value) {

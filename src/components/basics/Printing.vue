@@ -542,7 +542,6 @@ export default {
         });
     },
      handleNodeClick(data) {
-        console.log(data);
      }
   }
 }

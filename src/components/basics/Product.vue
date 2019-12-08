@@ -459,7 +459,6 @@ export default {
                 this.editProductForm.designPicture=file.response.message;
 
                 // this.productList.picture=file.response.message;
-                console.log(file.response.message);
                 
             }
         },
@@ -679,7 +678,6 @@ export default {
         });
     },
      handleNodeClick(data) {
-        console.log(data);
      }
   }
 }

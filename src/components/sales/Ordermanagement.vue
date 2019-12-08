@@ -126,7 +126,7 @@
 
     <el-dialog :title=" '新增销售订单' " :visible.sync="addOrdermanagementVisible" width="70%" :before-close="handleClose" @closed="dialogClosed">
         <div class="fenge">基础信息</div>
-        <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="addOrdermanagementForm" :rules="addOrdermanagementRules">
+        <el-form ref="addOrdermanagementRef" label-width="115px" :inline="true" :model="addOrdermanagementForm" :rules="addOrdermanagementRules">
           <el-form-item label="客户名称：" prop="customerId">
           <el-select v-model="addOrdermanagementForm.customerId" class="sel" placeholder="请选择" >
             <el-option
@@ -146,12 +146,27 @@
           <el-form-item label="交货方式：" prop="sorderTotalsum">
             <el-input v-model="addOrdermanagementForm.sorderTotalsum"></el-input>
           </el-form-item>
-          <el-form-item label="交货日期：" prop="sorderDeliverytime">
-            <el-input v-model="addOrdermanagementForm.sorderDeliverytime"></el-input>
-          </el-form-item>
           <el-form-item label="货币类型：" prop="sorderCurrecytype">
-            <el-input v-model="addOrdermanagementForm.sorderCurrecytype"></el-input>
+            <!-- <el-input v-model="addOrdermanagementForm.sorderCurrecytype"></el-input> -->
+             <el-select class="w200" v-model="addOrdermanagementForm.sorderCurrecytype" placeholder="请选择">
+                  <el-option
+                    v-for="item in huobileixing"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
           </el-form-item>
+          <el-form-item label="交货日期：" prop="sorderDeliverytime">
+            <!-- <el-input v-model="addOrdermanagementForm.sorderDeliverytime"></el-input> -->
+            <el-date-picker
+            v-model="addOrdermanagementForm.sorderDeliverytime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期" class="w200">
+          </el-date-picker>
+          </el-form-item>
+          
           <div class="fenge1">商品信息</div>
         <el-button type="primary" @click="shengchanshangping">添加生产商品</el-button>
         <el-button type="primary" @click="selected">删除商品</el-button>
@@ -164,12 +179,8 @@
     <el-table-column type="expand"  label="展开"  width="50" >
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="" >
-            {{ props.row.productSplicing }}
-          </el-form-item>
-          <br>
-          <el-form-item label="特备注意：">
-          <el-input v-model="props.row.commodityRemark"></el-input>
+          <el-form-item label="">
+            {{ props.row ? props.row.productSplicing : '' }}
           </el-form-item>
         </el-form>
       </template>
@@ -256,7 +267,7 @@
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand" >
           <el-form-item label="">
-            {{ props.row.productSplicing}}
+            {{ props.row ? props.row.productSplicing : '' }}
           </el-form-item>
         </el-form>
       </template>
@@ -327,7 +338,7 @@
       :before-close="handleClose"
     >
      <div class="fenge">基础信息</div>
-        <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
+        <el-form ref="addOrdermanagementRef" label-width="115px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
           <el-form-item label="客户名称：" prop="customerId">
           <el-select v-model="editOrdermanagementForm.customerId" class="sel" placeholder="请选择" :disabled="xianshi">
             <el-option
@@ -347,12 +358,27 @@
           <el-form-item label="交货方式：" prop="sorderTotalsum">
             <el-input v-model="editOrdermanagementForm.sorderTotalsum" :disabled="xianshi"></el-input>
           </el-form-item>
-          <el-form-item label="交货日期：" prop="sorderDeliverytime">
-            <el-input v-model="editOrdermanagementForm.sorderDeliverytime" :disabled="xianshi"></el-input>
-          </el-form-item>
           <el-form-item label="货币类型：" prop="sorderCurrecytype">
-            <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input>
+            <!-- <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input> -->
+            <el-select v-model="editOrdermanagementForm.sorderCurrecytype" class="w200" placeholder="请选择">
+                  <el-option
+                    v-for="item in huobileixing"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
           </el-form-item>
+          <el-form-item label="交货日期：" prop="sorderDeliverytime">
+            <!-- <el-input v-model="editOrdermanagementForm.sorderDeliverytime" :disabled="xianshi"></el-input> -->
+            <el-date-picker
+            v-model="editOrdermanagementForm.sorderDeliverytime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期" class="w200">
+          </el-date-picker>
+          </el-form-item>
+          
           <div class="fenge1">商品信息</div>
 
         <el-button v-if="!xianshi" type="primary" @click="shengchanshangping" :disabled="xianshi">添加生产商品</el-button>
@@ -367,7 +393,7 @@
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
           <el-form-item label="" >
-            {{ props.row.producinggoodsDOs.productSplicing }}
+            {{ props.row ? props.row.productSplicing : '' }}
           </el-form-item>
           <br>
           <el-form-item label="特备注意：">
@@ -376,20 +402,20 @@
         </el-form>
       </template>
     </el-table-column>
-    <el-table-column label="商品名称" prop="producinggoodsDOs.productName" width="150px"></el-table-column>
-    <el-table-column label="产品类别" prop="producinggoodsDOs.productType" width="150px"></el-table-column>
-    <el-table-column label="产品尺寸" prop="producinggoodsDOs.productChanpchic"></el-table-column>
-    <el-table-column label="个/包" prop="producinggoodsDOs.productInnerbao"></el-table-column>
-    <el-table-column label="包/箱" prop="producinggoodsDOs.productOutbao"></el-table-column>
-    <el-table-column label="个/箱" prop="producinggoodsDOs.productOnege" ></el-table-column>
+    <el-table-column label="商品名称" prop="productName" width="150px"></el-table-column>
+    <el-table-column label="产品类别" prop="productType" width="150px"></el-table-column>
+    <el-table-column label="产品尺寸" prop="productChanpchic"></el-table-column>
+    <el-table-column label="个/包" prop="productInnerbao"></el-table-column>
+    <el-table-column label="包/箱" prop="productOutbao"></el-table-column>
+    <el-table-column label="个/箱" prop="productOnege" ></el-table-column>
    
     <el-table-column label="外箱尺寸" width="150px">
       <template scope="scope">
-        {{scope.row.producinggoodsDOs.productSizelength}}*{{scope.row.producinggoodsDOs.productSizelength}}*{{scope.row.producinggoodsDOs.productSizelength}}
+        {{scope.row.productSizehight}}*{{scope.row.productSizelength}}*{{scope.row.productSizewide}}
       </template>
     </el-table-column>
-    <el-table-column label="立方" prop="producinggoodsDOs.lifang"></el-table-column>
-    <el-table-column label="净/毛" prop="producinggoodsDOs.productOneke"></el-table-column>
+    <el-table-column label="立方" prop="lifang"></el-table-column>
+    <el-table-column label="净/毛" prop="productOneke"></el-table-column>
      <el-table-column label="数量">
       <template scope="scope">
         <el-input v-model="scope.row.commodityNumber" @blur="jisuan" :disabled="xianshi"></el-input>
@@ -630,6 +656,7 @@ export default {
       },
       kehu:[],
       shengchanlist:[],
+      huobileixing:[],
       // chaigoulist:[],
     };
   },
@@ -649,8 +676,9 @@ export default {
     },
     async list(){
       const { data: res } = await this.$http.post("jc/customer/selectcustom1");
-      console.log(res);
+      const { data: res1 } = await this.$http.post("jc/Basic/selectpaymode");
       this.kehu = res;
+      this.huobileixing=res1;
     },
    async shengchanshangping(){
       const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.shengchanFrom);
@@ -761,6 +789,22 @@ export default {
       let param = new URLSearchParams();
       param.append("sorderCode", sorderCode);
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
+      res.sorderCurrecytype=Number(res.sorderCurrecytype);
+      for(let index = 0; index < res.commodityListDOs.length; index++){
+        res.commodityListDOs[index].productSplicing = res.commodityListDOs[index].producinggoodsDOs.productSplicing;
+        res.commodityListDOs[index].productName=res.commodityListDOs[index].producinggoodsDOs.productName;
+        res.commodityListDOs[index].productType=res.commodityListDOs[index].producinggoodsDOs.productType;
+        res.commodityListDOs[index].productChanpchic=res.commodityListDOs[index].producinggoodsDOs.productChanpchic;
+        res.commodityListDOs[index].productInnerbao=res.commodityListDOs[index].producinggoodsDOs.productInnerbao;
+        res.commodityListDOs[index].productOutbao=res.commodityListDOs[index].producinggoodsDOs.productOutbao;
+        res.commodityListDOs[index].productOnege=res.commodityListDOs[index].producinggoodsDOs.productOnege;
+        res.commodityListDOs[index].productSizehight=res.commodityListDOs[index].producinggoodsDOs.productSizehight;
+        res.commodityListDOs[index].productSizelength=res.commodityListDOs[index].producinggoodsDOs.productSizelength;
+        res.commodityListDOs[index].productSizewide=res.commodityListDOs[index].producinggoodsDOs.productSizewide;
+        res.commodityListDOs[index].lifang=res.commodityListDOs[index].producinggoodsDOs.lifang;
+        res.commodityListDOs[index].productOneke=res.commodityListDOs[index].producinggoodsDOs.productOneke;
+      }
+      
       this.editOrdermanagementForm = res;
       console.log(res);
 
@@ -783,19 +827,25 @@ export default {
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push(this.selectedList[i].productgoodsId)
       }
-      console.log(this.delarr);
     },
      async deleteRow(){
-       console.log('---------------------');
-         console.log(this.delarr);
-         console.log('---------------------');
-         console.log(this.addOrdermanagementForm.commodityListDOs);
-         for (let index = 0; index < this.delarr.length; index++) {
+        if(this.addOrdermanagementVisible==true){
+             for (let index = 0; index < this.delarr.length; index++) {
            for (let i = 0; i < this.addOrdermanagementForm.commodityListDOs.length; i++) {
               if(this.delarr[index]==this.addOrdermanagementForm.commodityListDOs[i].productgoodsId)
               this.addOrdermanagementForm.commodityListDOs.splice(i,1);
            }
          }
+        }else if(this.editOrdermanagementVisible==true){
+           console.log('**********************');
+          for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.editOrdermanagementForm.commodityListDOs.length; i++) {
+              if(this.delarr[index]==this.editOrdermanagementForm.commodityListDOs[i].productgoodsId)
+              this.editOrdermanagementForm.commodityListDOs.splice(i,1);
+           }
+         }
+        }
+         
          this.delVisible = false;
          
       },
@@ -805,7 +855,6 @@ export default {
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push({sorderCode:this.selectedList[i].sorderCode,sorderStatus:status})
       }
-      console.log(this.delarr);
     },
       async deleteRowqi(){
          const {data:res} = await this.$http.post('xs/saleorder/tishen',this.delarr);
@@ -848,6 +897,7 @@ export default {
           let param = new URLSearchParams();
           param.append("sorderCode", sorderCode);
           const { data: res } = await this.$http.post("xs/saleorder/deletesaleOrder", param);
+          
           this.OrdermanagementList();
           this.$message({
             type: "success",
@@ -862,13 +912,59 @@ export default {
         });
     },
     shengchancaigou(){
-       for (let index = 0; index < this.selectedList.length; index++) {
-         if(this.addOrdermanagementVisible==true){
-           this.addOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
-         }else if(this.editOrdermanagementVisible==true){
-           this.editOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
-         }
-       }
+      var chongfu=0;
+      var charu=0;
+        if(this.addOrdermanagementForm.commodityListDOs.length>=1||this.editOrdermanagementForm.commodityListDOs.length>=1){
+          if(this.addOrdermanagementVisible==true){
+            var arr=this.addOrdermanagementForm.commodityListDOs.concat(this.selectedList);
+              var hash=[];//一定要在这里置空啊
+              for (var i = 0; i < arr.length; i++) {
+                for (var j = i+1; j < arr.length; j++) {
+                  if(arr[i].productgoodsId==arr[j].productgoodsId){
+                    ++i;//如果一样就继续往下循环
+                    chongfu++;
+                  }
+                }
+                  hash.push(arr[i]);
+              }
+              charu=this.selectedList.length-chongfu;
+              this.addOrdermanagementForm.commodityListDOs=hash;
+              this.$message({
+                type: "info",
+                message:"此次添加有重复数据，重复数据:"+chongfu+"条，插入"+charu+"条！"
+              });
+          }else if(this.editOrdermanagementVisible==true){
+             console.log('************************');
+            console.log(this.editOrdermanagementVisible);
+            console.log(this.selectedList);
+            var arr=this.editOrdermanagementForm.commodityListDOs.concat(this.selectedList);
+              var hash=[];//一定要在这里置空啊
+              for (var i = 0; i < arr.length; i++) {
+                for (var j = i+1; j < arr.length; j++) {
+                  if(arr[i].productgoodsId==arr[j].productgoodsId){
+                    ++i;//如果一样就继续往下循环
+                     chongfu++;
+                  }
+                }
+                  hash.push(arr[i]);
+              }
+               charu=this.selectedList.length-chongfu;
+              this.editOrdermanagementForm.commodityListDOs=hash;
+              this.$message({
+                type: "info",
+                message:"此次添加有重复数据，重复数据:"+chongfu+"条，插入"+charu+"条！"
+              });
+          }
+        }else{
+          for (let index = 0; index < this.selectedList.length; index++) {
+            if(this.addOrdermanagementVisible==true){
+              this.addOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+            }else if(this.editOrdermanagementVisible==true){
+              this.editOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+          }
+        }
+          
+    }
        this.addOrdermanagementVisible1=false;
        this.addOrdermanagementVisible2=false;
         this.editOrdermanagementVisible1=false;
@@ -920,31 +1016,34 @@ export default {
  .el-table{
    margin-bottom: 15px;
  }
-.fenge{
-    position: absolute;
-    top: 34px;
-    left: 0px;
-    height: 25px;
-    width: 98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
+// .fenge{
+//     position: absolute;
+//     top: 34px;
+//     left: 0px;
+//     height: 25px;
+//     width: 98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
     
-    }
-  .fenge1{
-    height: 25px;
-    width:98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
-    margin-bottom: 20px;
-    }
+//     }
+//   .fenge1{
+//     height: 25px;
+//     width:98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
+//     margin-bottom: 20px;
+//     }
    .demo-table-expand {
     text-align:center;
     .el-form-item {
     margin-bottom: 0px;
 }
   }
+  .w200{
+   width: 200px;
+ }
   .sel{
     width: 203px;
   }

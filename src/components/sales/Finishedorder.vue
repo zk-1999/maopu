@@ -13,67 +13,63 @@
       <el-form
         :inline="true"
         class="demo-form-inline"
-        :model="salesOrdermanagementForm"
-        ref="salesOrdermanagementForm"
+        :model="chaOrdertobeshippedForm"
+        ref="chaOrdertobeshippedRef"
       >
         <!-- 订单号 -->
-        <el-form-item label="发货单号：">
-          <el-input class="hu"></el-input>
+        <el-form-item label="发货单号：" prop="deliveryCode">
+          <el-input  class="w200" v-model="chaOrdertobeshippedForm.deliveryCode" ></el-input>
         </el-form-item>
         <!-- 订单状态 -->
-        <el-form-item label="审核状态：" class="mar">
-          <el-select v-model="salesOrdermanagementForm.state" class="hu">
-            <el-option value="0">初始化</el-option>
-            <el-option value="1">待审核</el-option>
-            <el-option value="2">初审不通过</el-option>
-            <el-option value="3">复审不通过</el-option>
+        <el-form-item label="订单状态：" prop="deliveryStatus">
+           <el-select v-model="chaOrdertobeshippedForm.deliveryStatus" placeholder="请选择" class="w200">
+            <el-option
+              v-for="item in dingdan"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
+            </el-option>
           </el-select>
         </el-form-item>
-        <!-- 手机号码 -->
-        <el-form-item label="发货日期：" class="mar" prop="phoneNumber">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-        <!-- 收货姓名 -->
-        <el-form-item label="制单人：" class="mar">
-          <el-input v-model="salesOrdermanagementForm.name" class="hu"></el-input>
-        </el-form-item>
-        <!-- 收货省份 -->
-        <el-form-item label="发货方式：" class="mar">
-          <el-input v-model="salesOrdermanagementForm.province" class="hu"></el-input>
+        <el-form-item label="发货方式：" prop="deliveryMode">
+          <el-input v-model="chaOrdertobeshippedForm.deliveryMode" class="w200" ></el-input>
         </el-form-item>
         <!-- 查询按钮 -->
-        <el-form-item class="mar">
-          <el-button type="primary" size="small" @click="queryOrderList">查 询</el-button>
-          <el-button type="primary" size="small" @click="resetForm('salesOrdermanagementForm')">重 置</el-button>
+        <el-form-item >
+         <el-button @click="getOrdertobeshipped">查 询</el-button>
+          <el-button type="primary" @click="chaOrdertobeshippedFormRef">重 置</el-button>
         </el-form-item>
       </el-form>
       <!-- </el-row> -->
       <!-- 4个按钮 -->
-      <el-button type="primary" size="small" @click="addOrdermanagementVisible = true">新 建</el-button>
+      <!-- <el-button type="success" @click="addOrdermanagementVisible = true">新 建</el-button> -->
       <!-- 表格 -->
       <el-table
         ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
+        :data="ordertobeshippedList"
         style="width: 100%"
         border
-        
         @selection-change="handleSelectionChange"
       >
-        <el-table-column prop="no" label="序号"></el-table-column>
-        <el-table-column prop="orderNum" label="发货单号"></el-table-column>
-        <el-table-column prop="username" label="发货日期"></el-table-column>
-        <el-table-column prop="goodsInfo" label="发货方式"></el-table-column>
-        <el-table-column prop="overbookingTime" label="制单人"></el-table-column>
-        <el-table-column prop="money1" label="制单时间"></el-table-column>
-        <el-table-column prop="money2" label="总数量"></el-table-column>
-        <el-table-column prop="payTime" label="审核状态"></el-table-column>
-        <el-table-column label="操作" width="240px" style="text-align:center">
+        <el-table-column type="index" label="序号" width="55"></el-table-column>
+        <el-table-column prop="deliveryCode" label="发货单号"></el-table-column>
+        <el-table-column prop="deliveryTime" label="发货日期"></el-table-column>
+        <el-table-column prop="deliveryMode" label="发货方式"></el-table-column>
+        <el-table-column prop="deliveryMan" label="制单人"></el-table-column>
+        <el-table-column prop="deliveryTimenow" label="制单时间"></el-table-column>
+        <el-table-column prop="deliveryNumber" label="总数量"></el-table-column>
+        <el-table-column prop="deliveryStatus" label="审核状态">
           <template slot-scope="scope">
-            <el-button @click="checkOrder(scope.row.orderNum)" type="primary" size="small" v-if="scope.row.orderState==='未完成'">提 审</el-button>
-            <!-- v-if="scope.row.orderState!=='未完成' -->
-            <el-button @click="editOrdermanagementVisible(scope.row.orderNum)" type="primary" size="small">编 辑</el-button>
-            <el-button @click="deleteOrder(scope.row.orderNum)" type="danger" size="small">删 除</el-button>
+            <el-tag type="danger" v-if="scope.row.deliveryStatus=='0'">待审核</el-tag>
+            <el-tag type="danger" v-if="scope.row.deliveryStatus=='1'">审核通过</el-tag>
+            <el-tag type="danger" v-if="scope.row.deliveryStatus=='2'">审核不通过</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150px" style="text-align:center">
+          <template slot-scope="scope">
+            <el-button @click="showEditOrdertobeshipped(scope.row.deliveryCode,true,0)" type="success" size="small">查 看</el-button>
+            <el-button @click="showEditOrdertobeshipped(scope.row.deliveryCode,true,1)" type="primary" size="small" :disabled="scope.row.deliveryStatus==1||scope.row.deliveryStatus==2">审 核</el-button>
+            <!-- <el-button @click="deletebumen(scope.row.deliveryCode)" type="danger" size="small">删 除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -86,194 +82,80 @@
         :total="total"
       ></el-pagination>
     </el-card>
-    <!-- 新增销售订单 -->
-
-    <el-dialog :title=" '新增发货通知单' " :visible.sync="addOrdermanagementVisible" width="60%" :before-close="handleClose">
-        <el-form ref="form" label-width="110px" :inline="true">
-          <el-form-item label="制单人：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="发货日期：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="发货方式：">
-            <el-input ></el-input>
-          </el-form-item>
-          <el-form-item label="备注：">
-      <el-input class="w400"></el-input>
-    </el-form-item>
-          <div class="fenge1">商品信息</div>
-      <el-table
-    :data="ProductionList"
-    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
-    <!-- default-expand-all -->
-    <el-table-column type="expand"  label="展开"  width="50">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="">
-            箱唛<span>{{ props.row.productBoxMark }}</span>,
-            标唛<span>{{ props.row.productLabel }}</span>,
-            <span>{{ props.row.productInnerbao }}</span>/条,
-            <span>{{ props.row.productOutbao }}</span>/包,
-            <span>{{ props.row.productOnege }}</span>/箱,
-            <span>{{ props.row.productSizelength }}</span>,
-            <span>{{ props.row.productSizewide }}</span>,
-            <span>{{ props.row.productSizehight }}</span>
-          </el-form-item>
-        </el-form>
-      </template>
-    </el-table-column>
-    <el-table-column label="销售单号" prop="productName"></el-table-column>
-    <el-table-column label="客户名称" prop="productType"></el-table-column>
-    <el-table-column label="合同号" prop="productBrandabroad"></el-table-column>
-    <el-table-column label="交货地点" prop="productZhizleix"></el-table-column>
-    <el-table-column label="交货方式" prop="productGramabroad"></el-table-column>
-    <el-table-column label="商品名称" prop="productCoatedabroad"></el-table-column>
-    <el-table-column label="数量" prop="productOneke"></el-table-column>
-    <el-table-column label="已发数量" prop="productChanpchic"></el-table-column>
-    <el-table-column label="本次发货数量" prop="designId"></el-table-column>
-    <el-table-column label="操作" width="90px" align="center">
-      <template slot-scope="scope">
-        <el-button type="danger" icon="el-icon-delete" @click="deletebumen(scope.row.productgoodsId)">删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-    <div class="fenge1">审核信息</div>
-    <el-form-item label="审核人：">
-      <el-input ></el-input>
-    </el-form-item>
-     <el-form-item label="审核结果：">
-      <el-radio  label="1">通过</el-radio>
-      <el-radio  label="2">驳回</el-radio>
-    </el-form-item>
-    <el-form-item label="审核时间：">
-      <el-input ></el-input>
-    </el-form-item>
-    <el-form-item label="审核描述：">
-      <el-input class="w400"></el-input>
-    </el-form-item>
-   
-  </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addOrder">确 定</el-button>
-      </span>
-    </el-dialog>
-
-
-    <el-dialog :title=" '新增发货商品' " :visible.sync="addOrdermanagementVisible1" width="55%" :before-close="handleClose">
-        <el-form ref="form" label-width="110px" :inline="true">
-          <el-form-item label="销售单号：">
-            <el-input ></el-input>
-          </el-form-item>
-        <el-button type="primary" >查询</el-button>
-      <el-table
-    :data="ProductionList"
-    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
-    <!-- default-expand-all -->
-    <el-table-column type="expand"  label="展开"  width="50">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="">
-            箱唛<span>{{ props.row.productBoxMark }}</span>,
-            标唛<span>{{ props.row.productLabel }}</span>,
-            <span>{{ props.row.productInnerbao }}</span>/条,
-            <span>{{ props.row.productOutbao }}</span>/包,
-            <span>{{ props.row.productOnege }}</span>/箱,
-            <span>{{ props.row.productSizelength }}</span>,
-            <span>{{ props.row.productSizewide }}</span>,
-            <span>{{ props.row.productSizehight }}</span>
-          </el-form-item>
-        </el-form>
-      </template>
-    </el-table-column>
-    <el-table-column label="商品名称" prop="productName"></el-table-column>
-    <el-table-column label="产品类别" prop="productType"></el-table-column>
-    <el-table-column label="尺寸" prop="productBrandabroad"></el-table-column>
-    <el-table-column label="个/包" prop="productZhizleix"></el-table-column>
-    <el-table-column label="包/箱" prop="productGramabroad"></el-table-column>
-    <el-table-column label="个/箱" prop="productCoatedabroad"></el-table-column>
-    <el-table-column label="数量" prop="productOneke"></el-table-column>
-    <el-table-column label="外箱尺寸" prop="designId"></el-table-column>
-    <el-table-column label="立方" prop="designId"></el-table-column>
-    <el-table-column label="净/毛" prop="designId"></el-table-column>
-    <el-table-column label="操作" width="90px" align="center">
-      <template slot-scope="scope">
-        <el-button type="danger" icon="el-icon-delete" @click="deletebumen(scope.row.productgoodsId)">删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-    
-  </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrdermanagementVisible1 = false">取 消</el-button>
-        <el-button type="primary" @click="addOrder">确 定</el-button>
-      </span>
-    </el-dialog>
     <!-- 编辑销售订单 -->
-    <el-dialog
-      :title=" '编辑销售订单' "
+     <el-dialog
+      :title=" '发货审核' "
       :visible.sync="editOrdermanagementVisible"
       width="60%"
       :before-close="handleClose"
     >
-    <el-form ref="form" label-width="110px" :inline="true">
-          <el-form-item label="制单人：">
-            <el-input ></el-input>
+    <el-form ref="addOrdertobeshippedRef" label-width="85px" :inline="true" :model="editOrdertobeshippedForm">
+          <el-form-item label="制单人：" prop="deliveryMan">
+            <el-input v-model="editOrdertobeshippedForm.deliveryMan" disabled></el-input>
           </el-form-item>
-          <el-form-item label="发货日期：">
-            <el-input ></el-input>
+          <el-form-item label="发货日期：" prop="deliveryTime">
+            <el-input v-model="editOrdertobeshippedForm.deliveryTime" :disabled="xianshi"></el-input>
           </el-form-item>
-          <el-form-item label="发货方式：">
-            <el-input ></el-input>
+          <el-form-item label="发货方式：" prop="deliveryMode">
+            <el-input v-model="editOrdertobeshippedForm.deliveryMode" :disabled="xianshi"></el-input>
           </el-form-item>
-          <el-form-item label="备注：">
-      <el-input class="w400"></el-input>
-    </el-form-item>
+          <el-form-item label="备注：" prop="deliveryRemark">
+      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark" :disabled="xianshi"></el-input>
+    </el-form-item >
           <div class="fenge1">商品信息</div>
-        <el-button type="primary" @click="addOrdermanagementVisible1 = true">添加商品</el-button>
       <el-table
-    :data="ProductionList"
-    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange">
+    :data="editOrdertobeshippedForm.deliveryOrderDOs"
+    style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column type="expand"  label="展开"  width="50">
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
           <el-form-item label="">
-            箱唛<span>{{ props.row.productBoxMark }}</span>,
-            标唛<span>{{ props.row.productLabel }}</span>,
-            <span>{{ props.row.productInnerbao }}</span>/条,
-            <span>{{ props.row.productOutbao }}</span>/包,
-            <span>{{ props.row.productOnege }}</span>/箱,
-            <span>{{ props.row.productSizelength }}</span>,
-            <span>{{ props.row.productSizewide }}</span>,
-            <span>{{ props.row.productSizehight }}</span>
+            {{ props.row.producinggoodsDOs.productSplicing }}
           </el-form-item>
         </el-form>
       </template>
     </el-table-column>
-    <el-table-column label="商品名称" prop="productName"></el-table-column>
-    <el-table-column label="产品类别" prop="productType"></el-table-column>
-    <el-table-column label="尺寸" prop="productBrandabroad"></el-table-column>
-    <el-table-column label="个/包" prop="productZhizleix"></el-table-column>
-    <el-table-column label="包/箱" prop="productGramabroad"></el-table-column>
-    <el-table-column label="个/箱" prop="productCoatedabroad"></el-table-column>
-    <el-table-column label="数量" prop="productOneke"></el-table-column>
-    <el-table-column label="单价" prop="productChanpchic"></el-table-column>
-    <el-table-column label="总计" prop="designId"></el-table-column>
-    <el-table-column label="外箱尺寸" prop="designId"></el-table-column>
-    <el-table-column label="立方" prop="designId"></el-table-column>
-    <el-table-column label="净/毛" prop="designId"></el-table-column>
-    <el-table-column label="操作" width="90px" align="center">
-      <template slot-scope="scope">
-        <el-button type="danger" icon="el-icon-delete" @click="deletebumen(scope.row.productgoodsId)">删除</el-button>
+     <el-table-column label="销售单号" prop="sorderCode" width="140"></el-table-column>
+    <el-table-column label="客户名称" prop="saleOrderDO.customerDOs.cusName"></el-table-column>
+    <el-table-column label="合同号" prop="saleOrderDO.sorderWarehouse"></el-table-column>
+    <el-table-column label="交货地点" prop="saleOrderDO.sorderAddress"></el-table-column>
+    <el-table-column label="交货方式" prop="saleOrderDO.sorderTotalsum"></el-table-column>
+    <el-table-column label="商品名称" prop="producinggoodsDOs.productName"></el-table-column>
+    <el-table-column label="数量" prop="saleOrderDO.commodityListDOs[0].commodityNumber"></el-table-column>
+    <el-table-column label="已发数量" prop="saleOrderDO.sorderAuqntityshipped"></el-table-column>
+    <el-table-column label="发货数量" prop="dorderNumbers">
+       <template scope="scope">
+        <el-input v-model="scope.row.dorderNumbers" :disabled="xianshi"></el-input>
       </template>
     </el-table-column>
-  </el-table> 
+  </el-table>
+    <div class="fenge1" v-if="xianshi1">审核信息</div>
+    <el-form-item label="审核人："  prop="deliveryReviewedman" v-if="xianshi1">
+      <el-input v-model="editOrdertobeshippedForm.deliveryReviewedman" :disabled="true"></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果：" prop="deliveryStatus" v-if="xianshi1">
+      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='1' @change="guoqudangqianshijian">通过</el-radio>
+      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='2' @change="guoqudangqianshijian">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间：" prop="deliveryReviewedtime" v-if="xianshi1">
+      <el-input v-model="editOrdertobeshippedForm.deliveryReviewedtime"></el-input>
+    </el-form-item> 
+    <el-form-item label="审核描述："  prop="deliveryRemark1" v-if="xianshi1">
+      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark1"></el-input>
+    </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrder">确 定</el-button>
+        <el-button type="primary" @click="editOrdertobeshipped">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="delVisible" width="300px">
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="delVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRow" >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -282,7 +164,6 @@
 export default {
   data() {
     return {
-      // v:false,
       labelPosition: "right",
       addOrdermanagementVisible: false,
       addOrdermanagementVisible1: false,
@@ -290,19 +171,37 @@ export default {
       delVisible: false,
       currentPage: 0,
       total: 0,
+      shenpiren:'',
       selectedList: [],
-      chaDepartmentForm: {
-        name: "",
+      chaOrdertobeshippedForm: {
         pageCode: 1, //当前页
-        pageSize: 3 //每页显示的记录数
+        pageSize: 10 ,//每页显示的记录数
+        deliveryCode:'',
+        deliveryStatus:'',
+        deliveryMode:'',
       },
-      addDepartmentForm: {
-        name: "",
-        orderNum: ""
+      addOrdertobeshippedForm: {
+        deliveryTime: "",
+        deliveryMan: "",
+        deliveryMode:"",
+        deliveryRemark:"",
+        deliveryOrderDOs:[],
+        dorderNumbers:'',
       },
-      editDepartmentForm: {
-        name: "",
-        orderNum: ""
+      chaOrdermanagementForm:{
+         sorderCode:'',
+      },
+      editOrdertobeshippedForm: {
+        deliveryTime: "",
+        deliveryMan: "",
+        deliveryMode:"",
+        deliveryRemark:"",
+        deliveryOrderDOs:[],
+        dorderNumbers:'',
+        deliveryReviewedman:'',
+        deliveryReviewedtime:'',
+        deliveryRemark1:'',
+        deliveryStatus:'',
       },
       addDepartmentRules: {
         name: [
@@ -310,86 +209,160 @@ export default {
           { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
-      //   自己做的部分
-      salesOrdermanagementForm: {
-        // 要发送的真实字段
-        orderNum: "", //订单号
-        select: "1", //订单号类型选择
-        warehouse: "", //仓库
-        pageCode: 1, //当前页
-        pageSize: 10, //每页显示的记录数
-        state: "",
-        phoneNumber: "",
-        name: "",
-        province: ""
-      },
+      xianshi:false,
+      xianshi1:false,
+      ordertobeshippedList:[],
+      ordermanagementList:[],
+      dingdan:[{
+        id:0,
+        value:'待审核'
+      },{
+        id:1,
+        value:'审核通过'
+      },{
+        id:2,
+        value:'审核不通过'
+      }],
     };
   },
   created() {
-    //自己写的方法
-    this.getWarehouseOptions();
-
-    this.getDepartmentList();
+      this.getOrdertobeshipped();
+      this.getCookie();
   },
   methods: {
+      async getOrdertobeshipped() {
+      const { data: res } = await this.$http.post("xs/delivery/selectDeliveryNotice",this.chaOrdertobeshippedForm);
+      this.ordertobeshippedList = res.body.rows; 
+      this.total=res.body.total;
+    },
+    async getOrdermanagement() {
+      const { data: res } = await this.$http.post("xs/saleorder/selectOrderComm",this.chaOrdermanagementForm);
+      for (let index = 0; index <  res.body.rows[0].commodityListDOs.length; index++) {
+        if(res.body.rows[0].commodityListDOs[index].sorderCode==res.body.rows[0].sorderCode){
+          res.body.rows[0].commodityListDOs[index].cusName=res.body.rows[0].customerDOs.cusName;
+          res.body.rows[0].commodityListDOs[index].sorderWarehouse=res.body.rows[0].sorderWarehouse;
+          res.body.rows[0].commodityListDOs[index].sorderAddress=res.body.rows[0].sorderAddress;
+          res.body.rows[0].commodityListDOs[index].sorderTotalsum=res.body.rows[0].sorderTotalsum;
+        }
+      }
+      this.ordermanagementList = res.body.rows[0].commodityListDOs; 
+      this.total=res.body.total;
+    },
+    fahuoshangpin(){
+    for (let index = 0; index < this.selectedList.length; index++) {
+         if(this.addOrdermanagementVisible==true){
+           this.addOrdertobeshippedForm.deliveryOrderDOs.push(this.selectedList[index]);
+         }else if(this.editOrdermanagementVisible==true){
+           this.editOrdertobeshippedForm.deliveryOrderDOs.push(this.selectedList[index]);
+         }
+       }
+       this.addOrdermanagementVisible1=false;
+       this.addOrdermanagementVisible2=false;
+        this.editOrdermanagementVisible1=false;
+       this.editOrdermanagementVisible2=false;
+       this.chaOrdermanagementForm.sorderCode='';
+       this.ordermanagementList=[];
+    },
+    selected(){
+      this.delVisible = true;
+      this.delarr=[];
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push(this.selectedList[i].producinggoodsDOs.productgoodsId)
+      }
+    },
+     async deleteRow(){
+         for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.addOrdertobeshippedForm.deliveryOrderDOs.length; i++) {
+              if(this.delarr[index]==this.addOrdertobeshippedForm.deliveryOrderDOs[i].producinggoodsDOs.productgoodsId)
+              this.addOrdertobeshippedForm.deliveryOrderDOs.splice(i,1);
+           }
+         }
+         this.delVisible = false;
+         
+      },
+      guoqudangqianshijian(){
+      var date = new Date();
+      var y = date.getFullYear()
+      var mm = date.getMonth() + 1
+      var d = date.getDate()
+      this.editOrdertobeshippedForm.deliveryReviewedtime=`${y}-${mm}-${d}`
+    },
     addDepartment() {
-      this.$refs.addDepartmentRef.validate(async valid => {
+      this.$refs.addOrdertobeshippedRef.validate(async valid => {
         if (!valid) return;
-        const { data: res } = await this.$http.post(
-          "sys/dept/save",
-          this.addDepartmentForm
-        );
-        this.$message.success("用户创建成功！");
-        this.getDepartmentList();
-        this.addbumenDialogVisible = false;
+        const { data: res } = await this.$http.post("xs/delivery/insertDeliveryNotice", this.addOrdertobeshippedForm);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
+        this.getOrdertobeshipped();
+        this.addOrdermanagementVisible = false;
       });
     },
-    chaDepartmentResetForm(formName) {
-      this.$refs.chaDepartmentRef.resetFields();
-      this.getDepartmentList();
+    chaOrdertobeshippedFormRef(formName) {
+      this.$refs.chaOrdertobeshippedRef.resetFields();
+      this.getOrdertobeshipped();
     },
-    async userStateChanged(userInfo) {
-      const { data: res } = await this.$http.post("sys/dept/update", userInfo);
-      this.getDepartmentList();
+    getCookie: function() {
+      var storage=window.localStorage;
+      this.addOrdertobeshippedForm.deliveryMan = storage.getItem("username")
+       this.shenpiren= storage.getItem("username")
     },
-    async showEditDepartment(id) {
-      let param = new URLSearchParams();
-      param.append("id", id);
-      const { data: res } = await this.$http.post("sys/dept/getDept", param);
-      this.editDepartmentForm = res.body.dept;
-      console.log(res);
-
-      this.editbumenDialogVisible = true;
-    },
-    async editDepartment() {
-      const { data: res } = await this.$http.post(
-        "sys/dept/update",
-        this.editDepartmentForm
-      );
-      this.getDepartmentList();
-      this.editbumenDialogVisible = false;
-    },
-
-    selected() {
-      this.delarr = [];
-      this.delVisible = true;
-      for (let i = 0; i < this.selectedList.length; i++) {
-        // this.delarr.push(this.selectedList[i].deptId)
-
-        this.delarr += this.selectedList[i].deptId + ",";
+    async showEditOrdertobeshipped(deliveryCode,xian,zhi) {
+     this.xianshi=xian;
+      if(zhi==0){
+         this.xianshi1=!xian;
+         
+      }else if(zhi==1){
+        this.xianshi1=xian;
       }
-      console.log(this.delarr);
-    },
-    async deleteRow() {
       let param = new URLSearchParams();
-      param.append("deptIds", this.delarr);
-      const { data: res } = await this.$http.post(
-        "sys/dept/batchRemove",
-        param
-      );
-      this.delVisible = false;
-      this.getDepartmentList();
+      param.append("deliveryCode", deliveryCode);
+      const { data: res } = await this.$http.post("xs/delivery/selectDeliveryNoticebyid", param);
+       if(res.body.DeliveryNoticeDO.deliveryReviewedman==null || res.body.DeliveryNoticeDO.deliveryReviewedman==''){
+        res.body.DeliveryNoticeDO.deliveryReviewedman=this.shenpiren;
+      }
+      this.editOrdertobeshippedForm = res.body.DeliveryNoticeDO;
+
+      this.editOrdermanagementVisible = true;
     },
+    async editOrdertobeshipped() {
+      const { data: res } = await this.$http.post("xs/delivery/updateDelivery",this.editOrdertobeshippedForm);
+      this.editOrdermanagementVisible = false;
+      this.getOrdertobeshipped();
+    },
+    dialogClosed(){
+        this.$refs.addOrdertobeshippedRef.resetFields();
+        this.addOrdertobeshippedForm.deliveryOrderDOs=[];
+      },
+  
+    // selected() {
+    //   this.delarr = [];
+    //   this.delVisible = true;
+    //   for (let i = 0; i < this.selectedList.length; i++) {
+    //     // this.delarr.push(this.selectedList[i].deptId)
+
+    //     this.delarr += this.selectedList[i].deptId + ",";
+    //   }
+    //   console.log(this.delarr);
+    // },
+    // async deleteRow() {
+    //   let param = new URLSearchParams();
+    //   param.append("deptIds", this.delarr);
+    //   const { data: res } = await this.$http.post(
+    //     "sys/dept/batchRemove",
+    //     param
+    //   );
+    //   this.delVisible = false;
+    //   this.getDepartmentList();
+    // },
 
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -399,7 +372,7 @@ export default {
         .catch(_ => {});
     },
 
-    deletebumen(deptId) {
+    deletebumen(deliveryCode) {
       this.$confirm("此操作将永久删除该职务, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -407,9 +380,9 @@ export default {
       })
         .then(async () => {
           let param = new URLSearchParams();
-          param.append("deptId", deptId);
-          const { data: res } = await this.$http.post("sys/dept/remove", param);
-          this.getDepartmentList();
+          param.append("deliveryCode", deliveryCode);
+          const { data: res } = await this.$http.post("xs/delivery/deleteDelivery", param);
+          this.getOrdertobeshipped();
           this.$message({
             type: "success",
             message: "删除成功!"
@@ -423,35 +396,7 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
-    },
-
-    // 自己写的方法
-    // 获取仓库列表
-    async getWarehouseOptions() {
-      const { data: res } = await this.$http.get("/getWarehouseOptions");
-      this.warehouseOptions = res.body.rows; //如何取
-    },
-    // 查询订单列表
-    async queryOrderList() {
-      // const { data: res } = await
-      this.$http
-        .get("/queryOrderList", {
-          params: {
-            salesOrdermanagementForm: this.salesOrdermanagementForm
-          }
-        })
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(error) {
-          console.log(error);
-        })
-        .then(function() {
-          // always executed
-        });
-      this.tableData = res.body.rows; //如何取
     },
 
     resetForm(formName) {
@@ -460,20 +405,15 @@ export default {
     },
 
     //分页相关函数
-    handleSizeChange(val) {
-      this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
-      this.queryOrderList();
+   handleSizeChange(val) {
+      this.chaOrdertobeshippedForm.pageSize = val;
+      this.getOrdertobeshipped();
     },
     handleCurrentChange(val) {
-      this.salesOrdermanagementForm.pageCode = val;
-      console.log(`当前页: ${val}`);
+      this.chaOrdertobeshippedForm.pageCode = val;
       this.currentPage = val;
-      this.queryOrderList();
+       this.getOrdertobeshipped();
     },
-    handleEdit(index, row) {
-      console.log(row); // , row
-    }
   }
 };
 </script>
@@ -488,26 +428,35 @@ export default {
  .w400{
    width: 400px;
  }
+ .w200{
+   width: 200px;
+ }
  .el-table{
    margin-bottom: 15px;
  }
-.fenge{
-    position: absolute;
-    top: 34px;
-    left: 0px;
-    height: 25px;
-    width: 98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
+   .demo-table-expand {
+    text-align:center;
+    .el-form-item {
+    margin-bottom: 0px;
+}
+  }
+// .fenge{
+//     position: absolute;
+//     top: 34px;
+//     left: 0px;
+//     height: 25px;
+//     width: 98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
     
-    }
-     .fenge1{
-    height: 25px;
-    width:98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
-    margin-bottom: 20px;
-    }
+//     }
+//      .fenge1{
+//     height: 25px;
+//     width:98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
+//     margin-bottom: 20px;
+//     }
 </style>  

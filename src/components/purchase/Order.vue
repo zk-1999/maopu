@@ -1582,7 +1582,6 @@ export default {
       );
       this.delarr = [];
       // console.log(res);
-
       for (let index = 0; index < res.body.result[0].pcommodityDos.length; index++) {
         for (let i = 0; i < res1.length; i++) {
           if (

@@ -2304,7 +2304,6 @@ export default {
      this.ta.index=tab.index;     
      this.chaMaintenanceForm.basicValue=tab.index;
     const { data: res } = await this.$http.post("jc/Basic/selectBasic",this.chaMaintenanceForm);
-    console.log(res);
     
     // for (let index = 0; index < res.body.rows.length; index++) {
     //   res.body.rows[index].basicName=tab.label;
@@ -2323,7 +2322,6 @@ export default {
         if (!valid) return;           
         this.addMaintenance.basicValue=this.ta.index;
         // this.addMaintenance1.basicValue=this.ta.index;
-        console.log(this.addMaintenance1.limozongzhong1);
         
         if (this.addMaintenance1.limozongzhong1!=''&&this.addMaintenance1.limozongzhong!=''&&this.addMaintenance1.limoleixing!='') {
            this.addMaintenance.basicRetainone=this.addMaintenance1.limoleixing+','+this.addMaintenance1.limozongzhong+','+this.addMaintenance1.limozongzhong1;
@@ -2472,7 +2470,6 @@ export default {
         });
     },
      handleNodeClick(data) {
-        console.log(data);
      }
   }
 }

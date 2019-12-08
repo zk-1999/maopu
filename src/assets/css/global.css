@@ -146,3 +146,23 @@ body,
     transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
     width: 100%;
 }
+
+.fenge {
+    position: absolute;
+    top: 34px;
+    left: 0px;
+    height: 25px;
+    width: 98.5%;
+    line-height: 25px;
+    padding-left: 15px;
+    background-color: #DCDFE6;
+}
+
+.fenge1 {
+    height: 25px;
+    width: 98.5%;
+    line-height: 25px;
+    padding-left: 15px;
+    background-color: #DCDFE6;
+    margin-bottom: 20px;
+}

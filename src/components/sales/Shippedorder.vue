@@ -633,12 +633,10 @@ export default {
     },
     handleSizeChange(val) {
       this.chaDepartmentForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
       this.getDepartmentList();
     },
     handleCurrentChange(val) {
       this.chaDepartmentForm.pageCode = val;
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
       this.getDepartmentList();
     },
@@ -667,7 +665,6 @@ export default {
       param.append("id", id);
       const { data: res } = await this.$http.post("sys/dept/getDept", param);
       this.editDepartmentForm = res.body.dept;
-      console.log(res);
 
       this.editbumenDialogVisible = true;
     },
@@ -688,7 +685,6 @@ export default {
 
         this.delarr += this.selectedList[i].deptId + ",";
       }
-      console.log(this.delarr);
     },
     async deleteRow() {
       let param = new URLSearchParams();
@@ -733,12 +729,10 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     // 标签页函数
     handleClick(tab, event) {
-      console.log(tab, event);
     }
   }
 };

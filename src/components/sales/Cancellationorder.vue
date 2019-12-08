@@ -125,7 +125,7 @@
       :before-close="handleClose"
     >
      <div class="fenge">基础信息</div>
-        <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
+        <el-form ref="addOrdermanagementRef" label-width="115px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
           <el-form-item label="客户名称：" prop="customerId">
           <el-select v-model="editOrdermanagementForm.customerId" class="sel" placeholder="请选择" :disabled="xianshi">
             <el-option
@@ -145,12 +145,25 @@
           <el-form-item label="交货方式：" prop="sorderTotalsum">
             <el-input v-model="editOrdermanagementForm.sorderTotalsum" :disabled="xianshi"></el-input>
           </el-form-item>
-          <el-form-item label="交货日期：" prop="sorderDeliverytime">
-            <el-input v-model="editOrdermanagementForm.sorderDeliverytime" :disabled="xianshi"></el-input>
-          </el-form-item>
           <el-form-item label="货币类型：" prop="sorderCurrecytype">
-            <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input>
+            <!-- <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input> -->
+             <el-select v-model="editOrdermanagementForm.sorderCurrecytype" placeholder="请选择" class="w200">
+                  <el-option
+                    v-for="item in huobileixing"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
           </el-form-item>
+          <el-form-item label="交货日期：" prop="sorderDeliverytime">
+            <el-date-picker
+            v-model="editOrdermanagementForm.sorderDeliverytime"
+            type="date"
+            placeholder="选择日期" class="w200">
+          </el-date-picker>
+          </el-form-item>
+          
           <div class="fenge1">商品信息</div>
         <!-- <el-button type="primary" @click="chaigoushangpin">添加采购商品</el-button> -->
       <el-table
@@ -604,6 +617,7 @@ export default {
       let param = new URLSearchParams();
       param.append("sorderCode", sorderCode);
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
+      res.sorderCurrecytype=Number(res.sorderCurrecytype);
       if(res.sorderFushen==null || res.sorderFushen==''){
         res.sorderFushen=this.shenpiren;
       }
@@ -749,28 +763,31 @@ export default {
  .w100{
    width: 180px;
  }
+ .w200{
+   width: 200px;
+ }
  .el-table{
    margin-bottom: 15px;
  }
-.fenge{
-    position: absolute;
-    top: 34px;
-    left: 0px;
-    height: 25px;
-    width: 98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
+// .fenge{
+//     position: absolute;
+//     top: 34px;
+//     left: 0px;
+//     height: 25px;
+//     width: 98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
     
-    }
-     .fenge1{
-    height: 25px;
-    width:98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
-    margin-bottom: 20px;
-    }
+//     }
+//      .fenge1{
+//     height: 25px;
+//     width:98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
+//     margin-bottom: 20px;
+//     }
    .demo-table-expand {
     text-align:center;
     .el-form-item {

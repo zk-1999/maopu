@@ -570,7 +570,7 @@
                       </el-select>
                     </el-form-item>
                      <el-form-item label="内包装：" prop="productInnerbao">
-                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择">
+                    <el-select v-model="addProductionForm.productInnerbao" placeholder="请选择" @change="jisu">
                         <el-option
                           v-for="item in niebaozhuang"
                           :key="item.basicId"
@@ -580,7 +580,7 @@
                       </el-select>
                     </el-form-item>
                      <el-form-item label="外包装：" prop="productOutbao">
-                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择">
+                    <el-select v-model="addProductionForm.productOutbao" placeholder="请选择" @change="jisu">
                         <el-option
                           v-for="item in waibaozhuang"
                           :key="item.basicId"
@@ -590,7 +590,7 @@
                       </el-select>
                     </el-form-item>
                      <el-form-item label="个/箱：" prop="productOnege">
-                    <el-input v-model="addProductionForm.productInnerbao*addProductionForm.productOutbao" placeholder="请输入内容" class="xiang"></el-input>
+                    <el-input v-model="addProductionForm.productOnege" placeholder="请输入内容" class="xiang"></el-input>
                     </el-form-item>
                     <el-form-item label="配盖：" prop="productCover">
                     <el-select v-model="addProductionForm.productCover" placeholder="请选择">
@@ -2629,7 +2629,6 @@ export default {
         this.chaProductionForm.pageCode=1;
         this.chaProductionForm.pageSize=10;
         this.currentPage=0;
-        console.log(tab.index);
         if(tab.index){
       this.chaProductionForm.productLeixing=tab.index;
       this.editProductionForm.productLeixing=tab.index;
@@ -2699,12 +2698,13 @@ this.chaProductionForm.productLeixing="0";
       this.shoubin=res10;
       this.waleng=res11;
     },
-    
+    jisu(){
+      this.addProductionForm.productOnege=parseInt(this.addProductionForm.productInnerbao.split("/")[0])*parseInt(this.addProductionForm.productOutbao.split("/")[0]);
+    },
     addProduction(productId) {
       this.$refs.addProductionRef.validate(async valid => {
         if (!valid) return;    
-        console.log(this.addProductionForm);
-        this.addProductionForm.productOnege=this.addProductionForm.productInnerbao*this.addProductionForm.productOutbao;
+        
         const { data: res } = await this.$http.post("jc/Produconggoods/addProducing",this.addProductionForm);
         this.getProductionList();
         this.getProductionList1();
@@ -2737,7 +2737,6 @@ this.chaProductionForm.productLeixing="0";
       param.append("productgoodsId", productgoodsId);
       param.append("productLeixing",this.chaProductionForm.productLeixing);
       const {data:res} = await this.$http.post('jc/Produconggoods/selectProducingbyid',param);
-      console.log(res);
       
         this.editProductionForm.productBrandinner=Number(res.productBrandinner);
         this.editProductionForm.productGraminner=Number(res.productGraminner);
@@ -2773,7 +2772,6 @@ this.chaProductionForm.productLeixing="0";
         this.editProductionForm.productOneke=res.productOneke;
 
       this.editProductionForm.designCode=res.designDOs[0].designId;
-      console.log(this.editProductionForm);
       
       if (zhi==0) {
         this.edityonghuDialogVisible=true;

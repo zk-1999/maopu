@@ -123,7 +123,7 @@
       :before-close="handleClose"
     >
      <div class="fenge">基础信息</div>
-        <el-form ref="addOrdermanagementRef" label-width="110px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
+        <el-form ref="addOrdermanagementRef" label-width="115px" :inline="true" :model="editOrdermanagementForm" :rules="addOrdermanagementRules">
           <el-form-item label="客户名称：" prop="customerId">
           <el-select v-model="editOrdermanagementForm.customerId" class="sel" placeholder="请选择" :disabled="xianshi">
             <el-option
@@ -143,12 +143,25 @@
           <el-form-item label="交货方式：" prop="sorderTotalsum">
             <el-input v-model="editOrdermanagementForm.sorderTotalsum" :disabled="xianshi"></el-input>
           </el-form-item>
-          <el-form-item label="交货日期：" prop="sorderDeliverytime">
-            <el-input v-model="editOrdermanagementForm.sorderDeliverytime" :disabled="xianshi"></el-input>
-          </el-form-item>
           <el-form-item label="货币类型：" prop="sorderCurrecytype">
-            <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input>
+            <!-- <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input> -->
+             <el-select v-model="editOrdermanagementForm.sorderCurrecytype" placeholder="请选择" class="w200">
+                  <el-option
+                    v-for="item in huobileixing"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
           </el-form-item>
+          <el-form-item label="交货日期：" prop="sorderDeliverytime">
+            <el-date-picker
+            v-model="editOrdermanagementForm.sorderDeliverytime"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
+          </el-form-item>
+          
           <div class="fenge1">商品信息</div>
         <!-- <el-button type="primary" @click="chaigoushangpin">添加采购商品</el-button> -->
       <el-table
@@ -400,7 +413,6 @@ export default {
       
       var storage=window.localStorage;
       this.shenpiren = storage.getItem("username")
-      console.log( this.shenpiren);
       
     },
      // 查询订单列表
@@ -415,12 +427,10 @@ export default {
     },
     async list(){
       const { data: res } = await this.$http.post("jc/customer/selectcustom1");
-      console.log(res);
       this.kehu = res;
     },
    async shengchanshangping(){
       const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.shengchanFrom);
-      console.log(res);
       this.shengchanlist = res.body.rows;
       this.addOrdermanagementVisible1=true;
     },
@@ -431,7 +441,6 @@ export default {
     //   this.addOrdermanagementVisible2=true;
     // },
     addOrdermanagement() {
-      console.log(this.addOrdermanagementForm);
       
       this.$refs.addOrdermanagementRef.validate(async valid => {
         if (!valid) return;
@@ -470,7 +479,6 @@ export default {
         this.addOrdermanagementForm.sorderTotal +=
           parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *
           parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber);
-          console.log(this.addOrdermanagementForm.sorderTotal);
           var tatal=this.addOrdermanagementForm.sorderTotal
       }
        this.addOrdermanagementForm.sorderTotal=parseInt(this.addOrdermanagementForm.sorderTotal)+parseInt(this.addOrdermanagementForm.sorderExpressfee)+parseInt(this.addOrdermanagementForm.sorderFreigh)+parseInt(this.addOrdermanagementForm.sorderEditionfee)+parseInt(this.addOrdermanagementForm.sorderSinglefee);
@@ -486,17 +494,13 @@ export default {
         this.editOrdermanagementForm.sorderAllnumber += parseInt(
           this.editOrdermanagementForm.commodityListDOs[index].commodityNumber
         );
-
         this.editOrdermanagementForm.sorderTotal +=
           parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *
           parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
-          console.log(this.editOrdermanagementForm.sorderTotal);
           var tatal=this.editOrdermanagementForm.sorderTotal
       }
        this.editOrdermanagementForm.sorderTotal=parseInt(this.editOrdermanagementForm.sorderTotal)+parseInt(this.editOrdermanagementForm.sorderExpressfee)+parseInt(this.editOrdermanagementForm.sorderFreigh)+parseInt(this.editOrdermanagementForm.sorderEditionfee)+parseInt(this.editOrdermanagementForm.sorderSinglefee);
-
       }
-      
     },
     chaordermanagementForm(formName) {
       this.$refs.chaOrdermanagementRef.resetFields();
@@ -520,12 +524,12 @@ export default {
       let param = new URLSearchParams();
       param.append("sorderCode", sorderCode);
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
-       if(res.sorderFushen==null || res.sorderFushen==''){
+      res.sorderCurrecytype=Number(res.sorderCurrecytype);
+      if(res.sorderFushen==null || res.sorderFushen==''){
         res.sorderChushen=this.shenpiren;
       }
       this.editOrdermanagementForm = res;
        
-      console.log(res);
 
       this.editOrdermanagementVisible = true;
     },
@@ -543,11 +547,8 @@ export default {
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push(this.selectedList[i].productgoodsId)
       }
-      console.log(this.delarr);
     },
      async deleteRow(){
-         console.log(this.delarr);
-         console.log(this.shengchanpin);
          for (let index = 0; index < this.delarr.length; index++) {
            for (let i = 0; i < this.shengchanpin.length; i++) {
               if(this.delarr[index]==this.shengchanpin[i].productgoodsId)
@@ -566,7 +567,6 @@ export default {
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push({sorderCode:this.selectedList[i].sorderCode,sorderStatus:1})
       }
-      console.log(this.delarr);
     },
       async deleteRowqi(){
          const {data:res} = await this.$http.post('xs/saleorder/tishen',this.delarr);
@@ -631,7 +631,6 @@ export default {
     },
     
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
 
@@ -653,7 +652,6 @@ export default {
       this.OrdermanagementList();
     },
     handleEdit(index, row) {
-      console.log(row); // , row
     }
   }
 };
@@ -675,25 +673,25 @@ export default {
  .el-table{
    margin-bottom: 15px;
  }
-.fenge{
-    position: absolute;
-    top: 34px;
-    left: 0px;
-    height: 25px;
-    width: 98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
+// .fenge{
+//     position: absolute;
+//     top: 34px;
+//     left: 0px;
+//     height: 25px;
+//     width: 98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
     
-    }
-     .fenge1{
-    height: 25px;
-    width:98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
-    margin-bottom: 20px;
-    }
+//     }
+//      .fenge1{
+//     height: 25px;
+//     width:98.5%;
+//     line-height: 25px;
+//     padding-left:15px ;
+//     background-color: #DCDFE6;
+//     margin-bottom: 20px;
+//     }
    .demo-table-expand {
     text-align:center;
     .el-form-item {
@@ -703,4 +701,7 @@ export default {
   .sel{
     width: 203px;
   }
+   .w200{
+   width: 200px;
+ }
 </style>  

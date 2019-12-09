@@ -391,33 +391,33 @@ export default {
       // this.sorderCodeList.push(this.addOrdertobeshippedForm.deliveryOrderDOs[k].sorderCode);
       // }
 
-      let array = [];
-      console.log(this.addOrdertobeshippedForm.deliveryOrderDOs);
-      if (!this.addOrdertobeshippedForm.deliveryOrderDOs.length == 0) {
-        for (
-          let j = 0;
-          j < this.addOrdertobeshippedForm.deliveryOrderDOs.length;
-          j++
-        ) {
-          if (array.length == 0) {
-            array.push(this.addOrdertobeshippedForm.deliveryOrderDOs[j]);
-          }
-          for (let i = 0; i < array.length; i++) {
-            if (
-              array[i].sorderCode ==
-              this.addOrdertobeshippedForm.deliveryOrderDOs[j].sorderCode
-            ) {
-              break;
-            }
-            if (i == array.length - 1) {
-              array.push(this.addOrdertobeshippedForm.deliveryOrderDOs[j]);
-              break;
-            }
-          }
-        }
-      }
+      // let array = [];
+      // console.log(this.addOrdertobeshippedForm.deliveryOrderDOs);
+      // if (!this.addOrdertobeshippedForm.deliveryOrderDOs.length == 0) {
+      //   for (
+      //     let j = 0;
+      //     j < this.addOrdertobeshippedForm.deliveryOrderDOs.length;
+      //     j++
+      //   ) {
+      //     if (array.length == 0) {
+      //       array.push(this.addOrdertobeshippedForm.deliveryOrderDOs[j]);
+      //     }
+      //     for (let i = 0; i < array.length; i++) {
+      //       if (
+      //         array[i].sorderCode ==
+      //         this.addOrdertobeshippedForm.deliveryOrderDOs[j].sorderCode
+      //       ) {
+      //         break;
+      //       }
+      //       if (i == array.length - 1) {
+      //         array.push(this.addOrdertobeshippedForm.deliveryOrderDOs[j]);
+      //         break;
+      //       }
+      //     }
+      //   }
+      // }
 
-      this.sorderCodeList = array;
+      // this.sorderCodeList = array;
       if (this.addOrdermanagementVisible == true) {
         this.sorderCodeList = this.addOrdertobeshippedForm.deliveryOrderDOs.map(
           item => {

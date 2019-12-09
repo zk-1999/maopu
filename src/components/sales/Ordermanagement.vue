@@ -182,6 +182,10 @@
           <el-form-item label="">
             {{ props.row ? props.row.productSplicing : '' }}
           </el-form-item>
+          <br>
+          <el-form-item label="特备注意：">
+          <el-input v-model="props.row.commodityRemark" ></el-input>
+          </el-form-item>
         </el-form>
       </template>
     </el-table-column>
@@ -216,22 +220,22 @@
   </el-table>
   <div class="fenge1">合计信息</div>
     <el-form-item label="快递费：" prop="sorderExpressfee">
-      <el-input v-model="addOrdermanagementForm.sorderExpressfee" @blur="jisuan"></el-input>
+      <el-input v-model="addOrdermanagementForm.sorderExpressfee" @blur="jisuan" @focus="fukong"></el-input>
     </el-form-item>
     <el-form-item label="运费：" prop="sorderFreigh">
-      <el-input v-model="addOrdermanagementForm.sorderFreigh" @blur="jisuan"></el-input>
+      <el-input v-model="addOrdermanagementForm.sorderFreigh" @blur="jisuan" @focus="fukong1"></el-input>
     </el-form-item>
      <el-form-item label="版费：" prop="sorderEditionfee">
-      <el-input v-model="addOrdermanagementForm.sorderEditionfee" @blur="jisuan"></el-input>
+      <el-input v-model="addOrdermanagementForm.sorderEditionfee" @blur="jisuan" @focus="fukong2"></el-input>
     </el-form-item>
     <el-form-item label="小单费：" prop="sorderSinglefee">
-      <el-input v-model="addOrdermanagementForm.sorderSinglefee" @blur="jisuan"></el-input>
+      <el-input v-model="addOrdermanagementForm.sorderSinglefee" @blur="jisuan" @focus="fukong3"></el-input>
     </el-form-item>
     <el-form-item label="总数量：" prop="sorderAllnumber">
-      <el-input v-model="addOrdermanagementForm.sorderAllnumber"></el-input>
+      <el-input v-model="addOrdermanagementForm.sorderAllnumber" disabled></el-input>
     </el-form-item>
     <el-form-item label="总金额：" prop="sorderTotal">
-      <el-input v-model="addOrdermanagementForm.sorderTotal"></el-input>
+      <el-input v-model="addOrdermanagementForm.sorderTotal" disabled></el-input>
     </el-form-item>
     <el-form-item label="预收款金额：" prop="sorderPayamount">
       <el-input v-model="addOrdermanagementForm.sorderPayamount"></el-input>
@@ -433,22 +437,22 @@
   </el-table>
   <div class="fenge1">合计信息</div>
     <el-form-item label="快递费：" prop="sorderExpressfee">
-      <el-input v-model="editOrdermanagementForm.sorderExpressfee" @blur="jisuan" :disabled="xianshi"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderExpressfee" @blur="jisuan"  @focus="fukong" :disabled="xianshi"></el-input>
     </el-form-item>
     <el-form-item label="运费：" prop="sorderFreigh">
-      <el-input v-model="editOrdermanagementForm.sorderFreigh" @blur="jisuan" :disabled="xianshi"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderFreigh" @blur="jisuan"  @focus="fukong1" :disabled="xianshi"></el-input>
     </el-form-item>
      <el-form-item label="版费：" prop="sorderEditionfee">
-      <el-input v-model="editOrdermanagementForm.sorderEditionfee" @blur="jisuan" :disabled="xianshi"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderEditionfee" @blur="jisuan"  @focus="fukong2" :disabled="xianshi"></el-input>
     </el-form-item>
     <el-form-item label="小单费：" prop="sorderSinglefee">
-      <el-input v-model="editOrdermanagementForm.sorderSinglefee" @blur="jisuan" :disabled="xianshi"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderSinglefee" @blur="jisuan"  @focus="fukong3" :disabled="xianshi"></el-input>
     </el-form-item>
     <el-form-item label="总数量：" prop="sorderAllnumber">
-      <el-input v-model="editOrdermanagementForm.sorderAllnumber" :disabled="xianshi"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderAllnumber"  disabled></el-input>
     </el-form-item>
     <el-form-item label="总金额：" prop="sorderTotal">
-      <el-input v-model="editOrdermanagementForm.sorderTotal" :disabled="xianshi"></el-input>
+      <el-input v-model="editOrdermanagementForm.sorderTotal" disabled></el-input>
     </el-form-item>
     <el-form-item label="预收款金额：" prop="sorderPayamount">
       <el-input v-model="editOrdermanagementForm.sorderPayamount" :disabled="xianshi"></el-input>
@@ -604,6 +608,7 @@ export default {
           label: '已完成'
         }],
         value:'',
+        productgoodsIdList:[],
       addOrdermanagementForm: {
         customerId: '',
         sorderAddress: '',
@@ -681,6 +686,24 @@ export default {
       this.huobileixing=res1;
     },
    async shengchanshangping(){
+     if (this.addOrdermanagementVisible == true) {
+        this.productgoodsIdList = this.addOrdermanagementForm.commodityListDOs.map(
+          item => {
+            return item.productgoodsId;
+          }
+        );
+      } else {
+        console.log('--------------');
+        
+        console.log(this.editOrdermanagementForm.commodityListDOs);
+        
+        this.productgoodsIdList = this.editOrdermanagementForm.commodityListDOs.map(
+          item => {
+            
+            return parseInt(item.productgoodsId);
+          }
+        );
+      }
       const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.shengchanFrom);
       console.log(res);
       this.shengchanlist = res.body.rows;
@@ -719,7 +742,39 @@ export default {
         this.addOrdermanagementVisible = false;
       });
     },
+    fukong(){
+       if(this.addOrdermanagementForm.sorderExpressfee=='0'){
+        this.addOrdermanagementForm.sorderExpressfee=''
+      }
+    },
+    fukong1(){
+       if(this.addOrdermanagementForm.sorderFreigh=='0'){
+        this.addOrdermanagementForm.sorderFreigh=''
+      }
+    },
+    fukong2(){
+       if(this.addOrdermanagementForm.sorderEditionfee=='0'){
+        this.addOrdermanagementForm.sorderEditionfee=''
+      }
+    },
+    fukong3(){
+       if(this.addOrdermanagementForm.sorderSinglefee=='0'){
+        this.addOrdermanagementForm.sorderSinglefee=''
+      }
+    },
     jisuan() {
+      // if(addOrdermanagementForm.sorderExpressfee=='0'){
+      //   addOrdermanagementForm.sorderExpressfee==''
+      // }
+      // if(addOrdermanagementForm.sorderFreigh=='0'){
+      //   addOrdermanagementForm.sorderFreigh==''
+      // }
+      // if(addOrdermanagementForm.sorderEditionfee=='0'){
+      //   addOrdermanagementForm.sorderEditionfee==''
+      // }
+      // if(addOrdermanagementForm.sorderSinglefee=='0'){
+      //   addOrdermanagementForm.sorderSinglefee==''
+      // }
       this.addOrdermanagementForm.sorderAllnumber=0;
       this.addOrdermanagementForm.sorderTotal=0;
       if(this.addOrdermanagementVisible==true){
@@ -728,17 +783,35 @@ export default {
         if (isNaN(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber) || isNaN(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice)) {
           continue;
         }
-        this.addOrdermanagementForm.sorderAllnumber += parseInt(
+        this.addOrdermanagementForm.sorderAllnumber += parseFloat(
           this.addOrdermanagementForm.commodityListDOs[index].commodityNumber
         );
 
         this.addOrdermanagementForm.sorderTotal +=
-          parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *
-          parseInt(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          parseFloat(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *
+          parseFloat(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber);
           console.log(this.addOrdermanagementForm.sorderTotal);
           var tatal=this.addOrdermanagementForm.sorderTotal
       }
-       this.addOrdermanagementForm.sorderTotal=parseInt(this.addOrdermanagementForm.sorderTotal)+parseInt(this.addOrdermanagementForm.sorderExpressfee)+parseInt(this.addOrdermanagementForm.sorderFreigh)+parseInt(this.addOrdermanagementForm.sorderEditionfee)+parseInt(this.addOrdermanagementForm.sorderSinglefee);
+      if(this.addOrdermanagementForm.sorderExpressfee==''){
+        this.addOrdermanagementForm.sorderExpressfee=0
+      }
+      if(this.addOrdermanagementForm.sorderFreigh==''){
+        this.addOrdermanagementForm.sorderFreigh=0
+      }
+      if(this.addOrdermanagementForm.sorderEditionfee==''){
+        this.addOrdermanagementForm.sorderEditionfee=0
+      }
+      if(this.addOrdermanagementForm.sorderSinglefee==''){
+        this.addOrdermanagementForm.sorderSinglefee=0
+      }
+      
+      // this.addOrdermanagementForm.sorderExpressfee== '' ? 0      :this.addOrdermanagementForm.sorderExpressfee
+      // this.addOrdermanagementForm.sorderFreigh==''?0:this.addOrdermanagementForm.sorderFreigh
+      // this.addOrdermanagementForm.sorderEditionfee==''?0:this.addOrdermanagementForm.sorderEditionfee
+      // this.addOrdermanagementForm.sorderSinglefee==''?0:this.addOrdermanagementForm.sorderSinglefee
+      
+       this.addOrdermanagementForm.sorderTotal=parseFloat(this.addOrdermanagementForm.sorderTotal)+parseFloat(this.addOrdermanagementForm.sorderExpressfee)+parseFloat(this.addOrdermanagementForm.sorderFreigh)+parseFloat(this.addOrdermanagementForm.sorderEditionfee)+parseFloat(this.addOrdermanagementForm.sorderSinglefee);
 
       }else if(this.editOrdermanagementVisible==true){
         this.editOrdermanagementForm.sorderTotal=0;
@@ -748,17 +821,17 @@ export default {
         if (isNaN(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber) || isNaN(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice)) {
           continue;
         }
-        this.editOrdermanagementForm.sorderAllnumber += parseInt(
+        this.editOrdermanagementForm.sorderAllnumber += parseFloat(
           this.editOrdermanagementForm.commodityListDOs[index].commodityNumber
         );
 
         this.editOrdermanagementForm.sorderTotal +=
-          parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *
-          parseInt(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *
+          parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
           console.log(this.editOrdermanagementForm.sorderTotal);
           var tatal=this.editOrdermanagementForm.sorderTotal
       }
-       this.editOrdermanagementForm.sorderTotal=parseInt(this.editOrdermanagementForm.sorderTotal)+parseInt(this.editOrdermanagementForm.sorderExpressfee)+parseInt(this.editOrdermanagementForm.sorderFreigh)+parseInt(this.editOrdermanagementForm.sorderEditionfee)+parseInt(this.editOrdermanagementForm.sorderSinglefee);
+       this.editOrdermanagementForm.sorderTotal=parseFloat(this.editOrdermanagementForm.sorderTotal)+parseFloat(this.editOrdermanagementForm.sorderExpressfee)+parseFloat(this.editOrdermanagementForm.sorderFreigh)+parseFloat(this.editOrdermanagementForm.sorderEditionfee)+parseFloat(this.editOrdermanagementForm.sorderSinglefee);
 
       }
       
@@ -913,47 +986,69 @@ export default {
     },
     shengchancaigou(){
       var chongfu=0;
-      var charu=0;
         if(this.addOrdermanagementForm.commodityListDOs.length>=1||this.editOrdermanagementForm.commodityListDOs.length>=1){
           if(this.addOrdermanagementVisible==true){
-            var arr=this.addOrdermanagementForm.commodityListDOs.concat(this.selectedList);
-              var hash=[];//一定要在这里置空啊
-              for (var i = 0; i < arr.length; i++) {
-                for (var j = i+1; j < arr.length; j++) {
-                  if(arr[i].productgoodsId==arr[j].productgoodsId){
-                    ++i;//如果一样就继续往下循环
-                    chongfu++;
-                  }
-                }
-                  hash.push(arr[i]);
-              }
-              charu=this.selectedList.length-chongfu;
-              this.addOrdermanagementForm.commodityListDOs=hash;
-              this.$message({
-                type: "info",
-                message:"此次添加有重复数据，重复数据:"+chongfu+"条，插入"+charu+"条！"
-              });
+            const needAdd = [];
+          this.selectedList.forEach(item => {
+            if (this.productgoodsIdList.indexOf(item.productgoodsId) === -1) {
+              needAdd.push(item);
+            } else {
+              chongfu ++;
+            }
+          });
+          this.addOrdermanagementForm.commodityListDOs = [
+            ...this.addOrdermanagementForm.commodityListDOs,
+            ...needAdd
+          ];
+            // var arr=this.addOrdermanagementForm.commodityListDOs.concat(this.selectedList);
+            //   var hash=[];//一定要在这里置空啊
+            //   for (var i = 0; i < arr.length; i++) {
+            //     for (var j = i+1; j < arr.length; j++) {
+            //       if(arr[i].productgoodsId==arr[j].productgoodsId){
+            //         ++i;//如果一样就继续往下循环
+            //         chongfu++;
+            //       }
+            //     }
+            //       hash.push(arr[j]);
+            //   }
+            //   charu=this.selectedList.length-chongfu;
+            //   this.addOrdermanagementForm.commodityListDOs=hash;
+            //   this.$message({
+            //     type: "info",
+            //     message:"此次添加有重复数据，重复数据:"+chongfu+"条，插入"+charu+"条！"
+            //   });
           }else if(this.editOrdermanagementVisible==true){
-             console.log('************************');
-            console.log(this.editOrdermanagementVisible);
-            console.log(this.selectedList);
-            var arr=this.editOrdermanagementForm.commodityListDOs.concat(this.selectedList);
-              var hash=[];//一定要在这里置空啊
-              for (var i = 0; i < arr.length; i++) {
-                for (var j = i+1; j < arr.length; j++) {
-                  if(arr[i].productgoodsId==arr[j].productgoodsId){
-                    ++i;//如果一样就继续往下循环
-                     chongfu++;
-                  }
-                }
-                  hash.push(arr[i]);
-              }
-               charu=this.selectedList.length-chongfu;
-              this.editOrdermanagementForm.commodityListDOs=hash;
-              this.$message({
-                type: "info",
-                message:"此次添加有重复数据，重复数据:"+chongfu+"条，插入"+charu+"条！"
-              });
+            const needAdd = [];
+          this.selectedList.forEach(item => {
+            if (this.productgoodsIdList.indexOf(item.productgoodsId) === -1) {
+              needAdd.push(item);
+            } else {
+              chongfu ++;
+            }
+          });
+          this.editOrdermanagementForm.commodityListDOs = [
+            ...this.editOrdermanagementForm.commodityListDOs,
+            ...needAdd
+          ];
+
+
+            // var arr=this.editOrdermanagementForm.commodityListDOs.concat(this.selectedList);
+            //   var hash=[];//一定要在这里置空啊
+            //   for (var i = 0; i < arr.length; i++) {
+            //     for (var j = i+1; j < arr.length; j++) {
+            //       if(arr[i].productgoodsId==arr[j].productgoodsId){
+            //         ++i;//如果一样就继续往下循环
+            //          chongfu++;
+            //       }
+            //     }
+            //       hash.push(arr[i]);
+            //   }
+            //    charu=this.selectedList.length-chongfu;
+            //   this.editOrdermanagementForm.commodityListDOs=hash;
+            //   this.$message({
+            //     type: "info",
+            //     message:"此次添加有重复数据，重复数据:"+chongfu+"条，插入"+charu+"条！"
+            //   });
           }
         }else{
           for (let index = 0; index < this.selectedList.length; index++) {
@@ -965,6 +1060,11 @@ export default {
         }
           
     }
+      const charu = this.selectedList.length - chongfu;
+      this.$message({
+        type: "info",
+        message: chongfu > 0 ? `此次添加有重复数据，重复数据${chongfu}条，成功插入${charu}条` : `此次成功插入${charu}条`
+      });
        this.addOrdermanagementVisible1=false;
        this.addOrdermanagementVisible2=false;
         this.editOrdermanagementVisible1=false;

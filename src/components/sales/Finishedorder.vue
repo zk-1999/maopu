@@ -84,7 +84,7 @@
     </el-card>
     <!-- 编辑销售订单 -->
      <el-dialog
-      :title=" '发货审核' "
+      :title=" xianshi1?'发货审核': '查看发货审核'"
       :visible.sync="editOrdermanagementVisible"
       width="60%"
       :before-close="handleClose"
@@ -107,7 +107,7 @@
     :data="editOrdertobeshippedForm.deliveryOrderDOs"
     style="width: 100%" border default-expand-all    @selection-change="handleSelectionChange" class="tb">
     <!-- default-expand-all -->
-    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="selection" width="35" align="center" v-if="xianshi1"></el-table-column>
     <el-table-column type="expand"  label="展开"  width="50">
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -131,24 +131,24 @@
       </template>
     </el-table-column>
   </el-table>
-    <div class="fenge1" v-if="xianshi1">审核信息</div>
-    <el-form-item label="审核人："  prop="deliveryReviewedman" v-if="xianshi1">
+    <div class="fenge1" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">审核信息</div>
+    <el-form-item label="审核人："  prop="deliveryReviewedman" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
       <el-input v-model="editOrdertobeshippedForm.deliveryReviewedman" :disabled="true"></el-input>
     </el-form-item>
-     <el-form-item label="审核结果：" prop="deliveryStatus" v-if="xianshi1">
+     <el-form-item label="审核结果：" prop="deliveryStatus" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
       <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='1' @change="guoqudangqianshijian">通过</el-radio>
       <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='2' @change="guoqudangqianshijian">驳回</el-radio>
     </el-form-item>
-    <el-form-item label="审核时间：" prop="deliveryReviewedtime" v-if="xianshi1">
+    <el-form-item label="审核时间：" prop="deliveryReviewedtime" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
       <el-input v-model="editOrdertobeshippedForm.deliveryReviewedtime"></el-input>
     </el-form-item> 
-    <el-form-item label="审核描述："  prop="deliveryRemark1" v-if="xianshi1">
+    <el-form-item label="审核描述："  prop="deliveryRemark1" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
       <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark1"></el-input>
     </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrdertobeshipped">确 定</el-button>
+        <el-button type="primary" @click="editOrdertobeshipped" v-if="xianshi1">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="delVisible" width="300px">

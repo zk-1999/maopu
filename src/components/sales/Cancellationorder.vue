@@ -119,7 +119,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-      :title=" '审批销售订单' "
+      :title="xianshi1? '审批销售订单':'查看审批销售订单'"
       :visible.sync="editOrdermanagementVisible"
       width="70%"
       :before-close="handleClose"
@@ -146,8 +146,8 @@
             <el-input v-model="editOrdermanagementForm.sorderTotalsum" :disabled="xianshi"></el-input>
           </el-form-item>
           <el-form-item label="货币类型：" prop="sorderCurrecytype">
-            <!-- <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></el-input> -->
-             <el-select v-model="editOrdermanagementForm.sorderCurrecytype" placeholder="请选择" class="w200">
+            <!-- <el-input v-model="editOrdermanagementForm.sorderCurrecytype" :disabled="xianshi"></!--> 
+             <el-select v-model="editOrdermanagementForm.sorderCurrecytype" placeholder="请选择" class="w200" :disabled="xianshi">
                   <el-option
                     v-for="item in huobileixing"
                     :key="item.basicId"
@@ -156,8 +156,8 @@
                   </el-option>
                 </el-select>
           </el-form-item>
-          <el-form-item label="交货日期：" prop="sorderDeliverytime">
-            <el-date-picker
+          <el-form-item label="交货日期：" prop="sorderDeliverytime" >
+            <el-date-picker :disabled="xianshi"
             v-model="editOrdermanagementForm.sorderDeliverytime"
             type="date"
             placeholder="选择日期" class="w200">
@@ -170,7 +170,7 @@
     style="width: 100%" border class="tb" default-expand-all @selection-change="handleSelectionChange"
     :data="editOrdermanagementForm.commodityListDOs" >
     <!-- default-expand-all -->
-    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="selection" width="35" align="center" v-if="!xianshi"></el-table-column>
     <el-table-column type="expand"  label="展开"  width="50" >
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -239,16 +239,16 @@
       <el-input class="w400" :disabled="xianshi" v-model="editOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
     <br>
-    <el-form-item label="预收款单号：" prop="advancereceivedAdvanceorderno">
+    <el-form-item label="预收款单号：" prop="advancereceivedAdvanceorderno" v-if="xianshi1">
       <el-input v-model="editOrdermanagementForm.advancereceivedAdvanceorderno" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-button type="primary" @click="addOrdermanagementVisible5=true">新增预收款单</el-button>
+    <el-button type="primary" @click="addOrdermanagementVisible5=true" v-if="xianshi1">新增预收款单</el-button>
     <div class="fenge1" >初审信息</div>
     <el-form-item label="审核人：" prop="sorderChushen" >
       <el-input v-model="editOrdermanagementForm.sorderChushen" :disabled="xianshi"></el-input>
     </el-form-item>
      <el-form-item label="审核结果："  prop="sorderStatus">
-      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='3' @change="guoqudangqianshijian" :disabled="xianshi">通过</el-radio>
+      <el-radio v-model="radio" label='3' @change="guoqudangqianshijian" :disabled="xianshi">通过</el-radio>
       <el-radio v-model="editOrdermanagementForm.sorderStatus" label='2' @change="guoqudangqianshijian" :disabled="xianshi">驳回</el-radio>
     </el-form-item>
     <el-form-item label="审核时间：" prop="sorderChushentime">
@@ -257,19 +257,19 @@
     <el-form-item label="审核描述："  prop="sorderChushendesc">
       <el-input class="w400" v-model="editOrdermanagementForm.sorderChushendesc" :disabled="xianshi"></el-input>
     </el-form-item>
-    <div class="fenge1" v-if="xianshi1">复审信息</div>
-    <el-form-item label="审核人：" v-if="xianshi1" prop="sorderFushen">
+    <div class="fenge1" v-if="xianshi1||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5">复审信息</div>
+    <el-form-item label="审核人：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderFushen">
       <el-input v-model="editOrdermanagementForm.sorderFushen"  :disabled="true"></el-input>
     </el-form-item>
-     <el-form-item label="审核结果：" v-if="xianshi1">
-      <el-radio @change="guoqudangqianshijian" label="5" v-model="editOrdermanagementForm.sorderStatus">通过</el-radio>
-      <el-radio @change="guoqudangqianshijian" label="4" v-model="editOrdermanagementForm.sorderStatus">驳回</el-radio>
+     <el-form-item label="审核结果：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5">
+      <el-radio @change="guoqudangqianshijian" label="5" v-model="editOrdermanagementForm.sorderStatus" :disabled="!xianshi1">通过</el-radio>
+      <el-radio @change="guoqudangqianshijian" label="4" v-model="editOrdermanagementForm.sorderStatus" :disabled="!xianshi1">驳回</el-radio>
     </el-form-item>
-    <el-form-item label="审核时间：" v-if="xianshi1" prop="sorderFushentime">
-      <el-input v-model="editOrdermanagementForm.sorderFushentime"></el-input>
+    <el-form-item label="审核时间：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderFushentime">
+      <el-input v-model="editOrdermanagementForm.sorderFushentime" :disabled="!xianshi1"></el-input>
     </el-form-item>
-    <el-form-item label="审核描述：" v-if="xianshi1" prop="sorderFushendesc">
-      <el-input class="w400" v-model="editOrdermanagementForm.sorderFushendesc"></el-input>
+    <el-form-item label="审核描述：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderFushendesc">
+      <el-input class="w400" v-model="editOrdermanagementForm.sorderFushendesc" :disabled="!xianshi1"></el-input>
     </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
@@ -312,17 +312,17 @@
           </el-form-item>
           <div class="fenge1">收款凭证</div>
           <el-form-item>
-            <!-- <el-upload
+             <el-upload
               action="https://jsonplaceholder.typicode.com/posts/"
               list-type="picture-card"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
-            </el-upload> -->
-            <!-- <el-dialog :visible.sync="dialogVisible">
+            </el-upload>
+             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog> -->
-          <!-- </el-form-item>
+            </el-dialog> 
+          </el-form-item>
         </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrdermanagementVisible5 = false">取 消</el-button>
@@ -467,13 +467,16 @@ export default {
         sorderFushentime:'',
         sorderFushendesc:'',
         advancereceivedAdvanceorderno:'',
+        
       },
+      radio:'3',
       shenpiren:'',
       addOrdermanagementRules: {
         sorderAddress: [
           { min: 1, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
+      huobileixing:[],
       kehu:[],
       shengchanlist:[],
       // chaigoulist:[],
@@ -513,7 +516,8 @@ export default {
     },
     async list(){
       const { data: res } = await this.$http.post("jc/customer/selectcustom1");
-      console.log(res);
+      const { data: res1 } = await this.$http.post("jc/Basic/selectpaymode");
+      this.huobileixing=res1;
       this.kehu = res;
     },
    async shengchanshangping(){

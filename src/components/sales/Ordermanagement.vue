@@ -169,7 +169,7 @@
           
           <div class="fenge1">商品信息</div>
         <el-button type="primary" @click="shengchanshangping">添加生产商品</el-button>
-        <el-button type="primary" @click="selected">删除商品</el-button>
+        <el-button type="primary" @click="selected" >删除商品</el-button>
         <!-- <el-button type="primary" @click="chaigoushangpin">添加采购商品</el-button> -->
       <el-table
     style="width: 100%" border class="tb" default-expand-all @selection-change="handleSelectionChange"
@@ -336,7 +336,7 @@
     </el-dialog> -->
     <!-- 编辑销售订单 -->
     <el-dialog
-      :title=" '编辑销售订单' "
+      :title="xianshi1? '编辑销售订单':'查看编辑销售订单'"
       :visible.sync="editOrdermanagementVisible"
       width="70%"
       :before-close="handleClose"
@@ -392,7 +392,7 @@
     style="width: 100%" border class="tb" default-expand-all @selection-change="handleSelectionChange"
     :data="editOrdermanagementForm.commodityListDOs" >
     <!-- default-expand-all -->
-    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="selection" width="35" align="center" v-if="!xianshi"></el-table-column>
     <el-table-column type="expand"  label="展开"  width="50" >
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -895,7 +895,16 @@ export default {
       this.editOrdermanagementVisible = false;
     },
     selected(){
-      this.delVisible = true;
+      if(this.selectedList.length == 0){
+        this.delVisible = false;
+        this.$message({
+        type: "info",
+        message: '未选择商品,请选择商品进行删除！'
+      });
+      }else{
+        this.delVisible = true;
+      }
+      
       this.delarr=[];
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push(this.selectedList[i].productgoodsId)

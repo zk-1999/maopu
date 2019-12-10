@@ -75,13 +75,13 @@
               @click="showEditOrdertobeshipped(scope.row.deliveryCode,true,1)"
               type="primary"
               size="small"
-              :disabled="scope.row.deliveryStatus==1 "
+              :disabled="scope.row.deliveryStatus==0||scope.row.deliveryStatus==1 "
             >编 辑</el-button>
             <el-button
               @click="deletebumen(scope.row.deliveryCode)"
               type="danger"
               size="small"
-              :disabled="scope.row.deliveryStatus==1"
+              :disabled="scope.row.deliveryStatus==0||scope.row.deliveryStatus==1"
             >删 除</el-button>
           </template>
         </el-table-column>
@@ -222,7 +222,7 @@
     </el-dialog>
     <!-- 编辑销售订单 -->
     <el-dialog
-      :title=" '编辑发货通知单' "
+      :title="!xianshi ? '编辑发货通知单': '查看发货通知单'"
       :visible.sync="editOrdermanagementVisible"
       width="60%"
       :before-close="handleClose"
@@ -242,6 +242,7 @@
         <el-date-picker
       v-model="editOrdertobeshippedForm.deliveryTime"
       type="date"
+      :disabled="xianshi"
       value-format="yyyy-MM-dd"
       placeholder="选择日期">
     </el-date-picker>
@@ -270,7 +271,7 @@
           class="tb"
         >
           <!-- default-expand-all -->
-          <el-table-column type="selection" width="35" align="center"></el-table-column>
+          <el-table-column type="selection" width="35" align="center" v-if="!xianshi"></el-table-column>
           <el-table-column type="expand" label="展开" width="50">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -292,10 +293,24 @@
             </template>
           </el-table-column>
         </el-table>
+        <div class="fenge1" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">审核信息</div>
+    <el-form-item label="审核人："  prop="deliveryReviewedman"  v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
+      <el-input v-model="editOrdertobeshippedForm.deliveryReviewedman" :disabled="true"></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果：" prop="deliveryStatus" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
+      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='1'  :disabled="xianshi">通过</el-radio>
+      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='2'  :disabled="xianshi">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间：" prop="deliveryReviewedtime" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
+      <el-input v-model="editOrdertobeshippedForm.deliveryReviewedtime" :disabled="xianshi"></el-input>
+    </el-form-item> 
+    <el-form-item label="审核描述："  prop="deliveryRemark1" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
+      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark1" :disabled="xianshi"></el-input>
+    </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrdertobeshipped">确 定</el-button>
+        <el-button type="primary" @click="editOrdertobeshipped" v-if="!xianshi">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="delVisible" width="300px">
@@ -656,7 +671,16 @@ export default {
       this.ordermanagementList = [];
     },
     selected() {
-      this.delVisible = true;
+      if(this.selectedList.length == 0){
+        this.delVisible = false;
+        this.$message({
+        type: "info",
+        message: '未选择商品,请选择商品进行删除！'
+      });
+      }else{
+        this.delVisible = true;
+      }
+      
       this.delarr = [];
       for (let i = 0; i < this.selectedList.length; i++) {
         this.delarr.push({
@@ -773,12 +797,19 @@ export default {
       var storage = window.localStorage;
       this.addOrdertobeshippedForm.deliveryMan = storage.getItem("username");
     },
-    async showEditOrdertobeshipped(deliveryCode, xian, zhi) {
+    async showEditOrdertobeshipped(deliveryCode, xian, zhi,) {
       if (zhi == 0) {
         this.xianshi = xian;
       } else if (zhi == 1) {
         this.xianshi = !xian;
       }
+      // this.xianshi=xian;
+      // if(zhi==0){
+      //    this.xianshi1=!xian;
+         
+      // }else if(zhi==1){
+      //   this.xianshi1=xian;
+      // }
       let param = new URLSearchParams();
       param.append("deliveryCode", deliveryCode);
       const { data: res } = await this.$http.post(

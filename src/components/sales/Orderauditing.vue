@@ -117,7 +117,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-      :title=" '审批销售订单' "
+      :title="xianshi1? '审批销售订单':'查看审批销售订单'"
       :visible.sync="editOrdermanagementVisible"
       width="70%"
       :before-close="handleClose"
@@ -168,7 +168,7 @@
     style="width: 100%" border class="tb" default-expand-all @selection-change="handleSelectionChange"
     :data="editOrdermanagementForm.commodityListDOs" >
     <!-- default-expand-all -->
-    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column type="selection" width="35" align="center" v-if="!xianshi"></el-table-column>
     <el-table-column type="expand"  label="展开"  width="50" >
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -236,19 +236,19 @@
     <el-form-item label="备注：" prop="sorderRemark0">
       <el-input class="w400" :disabled="xianshi" v-model="editOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
-    <div class="fenge1" v-if="xianshi1">审核信息</div>
-    <el-form-item label="审核人：" v-if="xianshi1" prop="sorderChushen">
+    <div class="fenge1" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3">审核信息</div>
+    <el-form-item label="审核人：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderChushen">
       <el-input v-model="editOrdermanagementForm.sorderChushen" :disabled="true"></el-input>
     </el-form-item>
-     <el-form-item label="审核结果：" v-if="xianshi1" prop="sorderStatus">
-      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='3' @change="guoqudangqianshijian">通过</el-radio>
-      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='2' @change="guoqudangqianshijian">驳回</el-radio>
+     <el-form-item label="审核结果：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderStatus">
+      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='3' @change="guoqudangqianshijian" :disabled="!xianshi1">通过</el-radio>
+      <el-radio v-model="editOrdermanagementForm.sorderStatus" label='2' @change="guoqudangqianshijian" :disabled="!xianshi1">驳回</el-radio>
     </el-form-item>
-    <el-form-item label="审核时间：" v-if="xianshi1" prop="sorderChushentime">
-      <el-input v-model="editOrdermanagementForm.sorderChushentime"></el-input>
+    <el-form-item label="审核时间：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderChushentime">
+      <el-input v-model="editOrdermanagementForm.sorderChushentime" :disabled="!xianshi1"></el-input>
     </el-form-item> 
-    <el-form-item label="审核描述：" v-if="xianshi1" prop="sorderChushendesc">
-      <el-input class="w400" v-model="editOrdermanagementForm.sorderChushendesc"></el-input>
+    <el-form-item label="审核描述：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderChushendesc">
+      <el-input class="w400" v-model="editOrdermanagementForm.sorderChushendesc" :disabled="!xianshi1"></el-input>
     </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
@@ -399,6 +399,7 @@ export default {
       },
       kehu:[],
       shengchanlist:[],
+      huobileixing:[],
       // chaigoulist:[],
     };
   },
@@ -427,6 +428,8 @@ export default {
     },
     async list(){
       const { data: res } = await this.$http.post("jc/customer/selectcustom1");
+      const { data: res1 } = await this.$http.post("jc/Basic/selectpaymode");
+      this.huobileixing=res1;
       this.kehu = res;
     },
    async shengchanshangping(){

@@ -239,10 +239,10 @@
       <el-input class="w400" :disabled="xianshi" v-model="editOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
     <br>
-    <el-form-item label="预收款单号：" prop="advancereceivedAdvanceorderno" v-if="xianshi1">
-      <el-input v-model="editOrdermanagementForm.advancereceivedAdvanceorderno" :disabled="xianshi"></el-input>
+    <el-form-item label="预收款单号：" prop="advanceorderno" v-if="xianshi1">
+      <el-input v-model="editOrdermanagementForm.advanceorderno" :disabled="xianshi"></el-input>
     </el-form-item>
-    <el-button type="primary" @click="addOrdermanagementVisible5=true" v-if="xianshi1">新增预收款单</el-button>
+    <el-button type="primary" @click="yufukuanshuju" v-if="xianshi1">新增预收款单</el-button>
     <div class="fenge1" >初审信息</div>
     <el-form-item label="审核人：" prop="sorderChushen" >
       <el-input v-model="editOrdermanagementForm.sorderChushen" :disabled="xianshi"></el-input>
@@ -277,58 +277,90 @@
         <el-button type="primary" @click="editOrdermanagement" v-if="xianshi1">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog :title=" '新增预收款单' " :visible.sync="addOrdermanagementVisible5" width="55%" :before-close="handleClose">
+    <el-dialog :title=" '新增预收款单' " :visible.sync="addOrdermanagementVisible5" width="55%" :before-close="handleClose">
       <div class="fenge">预收款信息</div>
-        <el-form ref="form" label-width="110px" :inline="true">
+        <el-form ref="form" label-width="110px" :inline="true" :model="yufukuan" :rules="addOrdermanagementRules">
           <el-form-item label="收款制单人：">
-            <el-input ></el-input>
+            <el-input v-model="yufukuan.payexamine" disabled></el-input>
           </el-form-item>
           <el-form-item label="客户名称：">
-            <el-input ></el-input>
+            <el-select v-model="yufukuan.cusName" disabled class="sel" placeholder="请选择" >
+            <el-option
+              v-for="item in kehu"
+              :key="item.customerId"
+              :label="item.cusName"
+              :value="item.customerId">
+            </el-option>
+          </el-select>
+            <!-- <el-input v-model="yufukuan.cusName"></el-input> -->
           </el-form-item>
           <el-form-item label="销售单号：">
-            <el-input ></el-input>
+            <el-input v-model="yufukuan.sorderCode" disabled></el-input>
           </el-form-item>
           <el-form-item label="销售数量：">
-            <el-input ></el-input>
+            <el-input v-model="yufukuan.sorderAllnumber" disabled></el-input>
           </el-form-item>
           <el-form-item label="销售金额：">
-            <el-input ></el-input>
+            <el-input v-model="yufukuan.porderTotalmoney" disabled></el-input>
           </el-form-item>
           <el-form-item label="预收款金额：">
-            <el-input ></el-input>
+            <el-input v-model="yufukuan.sorderPayamount" disabled></el-input>
           </el-form-item>
           <el-form-item label="资金账户：">
-            <el-input ></el-input>
+            <el-select v-model="yufukuan.assetaccount"  class="sel" placeholder="请选择" >
+            <el-option
+              v-for="item in zijinzhanghu"
+              :key="item.basicId"
+              :label="item.basicRetainone"
+              :value="item.basicId">
+            </el-option>
+          </el-select>
+            <!-- <el-input v-model="yufukuan.assetaccount"></el-input> -->
           </el-form-item>
           <el-form-item label="收支类型：">
-            <el-input ></el-input>
+            <el-select v-model="yufukuan.raetypes"  class="sel" placeholder="请选择" >
+            <el-option
+              v-for="item in shouruleixing"
+              :key="item.basicId"
+              :label="item.basicRetainone"
+              :value="item.basicId">
+            </el-option>
+          </el-select>
+            <!-- <el-input v-model="yufukuan.raetypes"></el-input> -->
           </el-form-item>
           <el-form-item label="付款状态：">
-            <el-input ></el-input>
+            <el-select v-model="yufukuan.paymentstatus"  class="sel" placeholder="请选择" >
+            <el-option
+              v-for="item in fukuanzhuangtai"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+            <!-- <el-input v-model="yufukuan.paymentstatus"></el-input> -->
           </el-form-item>
           <el-form-item label="备注：">
-            <el-input class="w400"></el-input>
+            <el-input class="w400" v-model="yufukuan.remarks"></el-input>
           </el-form-item>
           <div class="fenge1">收款凭证</div>
           <el-form-item>
-             <el-upload
+             <!-- <el-upload
               action="https://jsonplaceholder.typicode.com/posts/"
               list-type="picture-card"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
-            </el-upload>
-             <el-dialog :visible.sync="dialogVisible">
+            </el-upload> -->
+             <!-- <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog> 
+            </el-dialog>  -->
           </el-form-item>
         </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrdermanagementVisible5 = false">取 消</el-button>
-        <el-button type="primary" @click="addOrder">确 定</el-button>
+        <el-button type="primary" @click="addyushoukuan">确 定</el-button>
       </span>
-    </el-dialog> --> 
+    </el-dialog> 
     <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
       <div class="del-dialog-cnt">此操作将批量启用, 是否继续？</div>
       <span slot="footer" class="dialog-footer">
@@ -442,6 +474,7 @@ export default {
         commodityListDOs:[],
       },
       editOrdermanagementForm: {
+        sorderCode:'',
         customerId: '',
         sorderAddress: '',
         sorderWarehouse:'',
@@ -466,8 +499,19 @@ export default {
         sorderFushen:'',
         sorderFushentime:'',
         sorderFushendesc:'',
-        advancereceivedAdvanceorderno:'',
-        
+        advanceorderno:'',
+      },
+      yufukuan:{
+        payexamine:'',
+        cusName:'',
+        sorderCode:'',
+        sorderAllnumber:'',
+        porderTotalmoney:'',
+        sorderPayamount:'',
+        assetaccount:'',
+        raetypes:'',
+        paymentstatus:'',
+        remarks:'',
       },
       radio:'3',
       shenpiren:'',
@@ -479,6 +523,18 @@ export default {
       huobileixing:[],
       kehu:[],
       shengchanlist:[],
+      shouruleixing:[],
+      zijinzhanghu:[],
+      fukuanzhuangtai: [{
+          value: '0',
+          label: '待收款'
+        }, {
+          value: '1',
+          label: '未收款'
+        }, {
+          value: '3',
+          label: '已收款'
+        }],
       // chaigoulist:[],
     };
   },
@@ -488,6 +544,16 @@ export default {
     this.getCookie();
   },
   methods: {
+    yufukuanshuju(){
+      
+      this.yufukuan.payexamine=this.shenpiren;
+      this.yufukuan.cusName=this.editOrdermanagementForm.customerId;
+      this.yufukuan.sorderCode=this.editOrdermanagementForm.sorderCode;
+      this.yufukuan.sorderAllnumber=this.editOrdermanagementForm.sorderAllnumber;
+      this.yufukuan.porderTotalmoney=this.editOrdermanagementForm.sorderTotal;
+      this.yufukuan.sorderPayamount=this.editOrdermanagementForm.sorderPayamount;
+      this.addOrdermanagementVisible5=true;
+    },
      //读取cookie
     getCookie: function() {
       var storage=window.localStorage;
@@ -517,6 +583,10 @@ export default {
     async list(){
       const { data: res } = await this.$http.post("jc/customer/selectcustom1");
       const { data: res1 } = await this.$http.post("jc/Basic/selectpaymode");
+      const { data: res2 } = await this.$http.post("jc/Basic/selectinpaymode");
+      const { data: res3 } = await this.$http.post("jc/Basic/selectzijin");
+      this.zijinzhanghu=res3;
+      this.shouruleixing=res2;
       this.huobileixing=res1;
       this.kehu = res;
     },
@@ -532,9 +602,29 @@ export default {
     //   this.chaigoulist = res.body.rows;
     //   this.addOrdermanagementVisible2=true;
     // },
+    addyushoukuan() {
+      this.$refs.form.validate(async valid => {
+        if (!valid) return;
+        const { data: res } = await this.$http.post(
+          "advancereceivable/addAdvancereceivable",
+          this.yufukuan
+        );
+        this.editOrdermanagementForm.advanceorderno=res.body.result.advanceorderno;
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
+        this.addOrdermanagementVisible5 = false;
+      });
+    },
     addOrdermanagement() {
-      console.log(this.addOrdermanagementForm);
-      
       this.$refs.addOrdermanagementRef.validate(async valid => {
         if (!valid) return;
         const { data: res } = await this.$http.post(

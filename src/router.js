@@ -12,10 +12,10 @@ import Product from './components/basics/Product.vue'
 import Merchandise from './components/basics/Merchandise.vue'
 import Duty from './components/system/Duty.vue'
 import Department from './components/system/Department.vue'
-import Cate from './components/goods/Cate.vue'
-import Params from './components/goods/Params.vue'
-import Goods from './components/goods/Goods.vue'
-import Add from './components/goods/Add.vue'
+import Align from './components/manufacture/Align.vue'
+import Audit from './components/manufacture/Audit.vue'
+import Manage from './components/manufacture/Manage.vue'
+import Material from './components/manufacture/Material.vue'
 import User from './components/system/User.vue'
 import Menu from './components/system/Menu.vue'
 import Journal from './components/system/Journal.vue'
@@ -97,6 +97,10 @@ const router = new Router({
                 { path: '/secondCheckDL', component: SecondCheckDL },
                 { path: '/detail', component: Detail },
                 { path: '/firstCheckDL', component: FirstCheckDL },
+                { path: '/align', component: Align },
+                { path: '/audit', component: Audit },
+                { path: '/manage', component: Manage },
+                { path: '/material', component: Material },
 
             ]
         }

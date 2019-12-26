@@ -495,7 +495,7 @@
       </span>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
-      <div class="del-dialog-cnt">此操作将批量启用, 是否继续？</div>
+      <div class="del-dialog-cnt">此操作将批量提审, 是否继续？</div>
       <span slot="footer" class="dialog-footer">
           <el-button @click="delVisibleqi = false">取 消</el-button>
           <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
@@ -742,39 +742,52 @@ export default {
         this.addOrdermanagementVisible = false;
       });
     },
+    
     fukong(){
+      if(this.addOrdermanagementVisible==true){
        if(this.addOrdermanagementForm.sorderExpressfee=='0'){
         this.addOrdermanagementForm.sorderExpressfee=''
       }
+      }else if(this.editOrdermanagementVisible==true){
+        if(this.editOrdermanagementForm.sorderExpressfee=='0'){
+        this.editOrdermanagementForm.sorderExpressfee=''
+      }
+      }
     },
     fukong1(){
+      if(this.addOrdermanagementVisible==true){
        if(this.addOrdermanagementForm.sorderFreigh=='0'){
         this.addOrdermanagementForm.sorderFreigh=''
       }
+      }else if(this.editOrdermanagementVisible==true){
+        if(this.editOrdermanagementForm.sorderFreigh=='0'){
+        this.editOrdermanagementForm.sorderFreigh=''
+      }
+      }
     },
     fukong2(){
+      if(this.addOrdermanagementVisible==true){
        if(this.addOrdermanagementForm.sorderEditionfee=='0'){
         this.addOrdermanagementForm.sorderEditionfee=''
       }
+      }else if(this.editOrdermanagementVisible==true){
+        if(this.editOrdermanagementForm.sorderEditionfee=='0'){
+        this.editOrdermanagementForm.sorderEditionfee=''
+      }
+      }
     },
     fukong3(){
+      if(this.addOrdermanagementVisible==true){
        if(this.addOrdermanagementForm.sorderSinglefee=='0'){
         this.addOrdermanagementForm.sorderSinglefee=''
       }
+      }else if(this.editOrdermanagementVisible==true){
+        if(this.editOrdermanagementForm.sorderSinglefee=='0'){
+        this.editOrdermanagementForm.sorderSinglefee=''
+      }
+      }
     },
     jisuan() {
-      // if(addOrdermanagementForm.sorderExpressfee=='0'){
-      //   addOrdermanagementForm.sorderExpressfee==''
-      // }
-      // if(addOrdermanagementForm.sorderFreigh=='0'){
-      //   addOrdermanagementForm.sorderFreigh==''
-      // }
-      // if(addOrdermanagementForm.sorderEditionfee=='0'){
-      //   addOrdermanagementForm.sorderEditionfee==''
-      // }
-      // if(addOrdermanagementForm.sorderSinglefee=='0'){
-      //   addOrdermanagementForm.sorderSinglefee==''
-      // }
       this.addOrdermanagementForm.sorderAllnumber=0;
       this.addOrdermanagementForm.sorderTotal=0;
       if(this.addOrdermanagementVisible==true){
@@ -805,12 +818,6 @@ export default {
       if(this.addOrdermanagementForm.sorderSinglefee==''){
         this.addOrdermanagementForm.sorderSinglefee=0
       }
-      
-      // this.addOrdermanagementForm.sorderExpressfee== '' ? 0      :this.addOrdermanagementForm.sorderExpressfee
-      // this.addOrdermanagementForm.sorderFreigh==''?0:this.addOrdermanagementForm.sorderFreigh
-      // this.addOrdermanagementForm.sorderEditionfee==''?0:this.addOrdermanagementForm.sorderEditionfee
-      // this.addOrdermanagementForm.sorderSinglefee==''?0:this.addOrdermanagementForm.sorderSinglefee
-      
        this.addOrdermanagementForm.sorderTotal=parseFloat(this.addOrdermanagementForm.sorderTotal)+parseFloat(this.addOrdermanagementForm.sorderExpressfee)+parseFloat(this.addOrdermanagementForm.sorderFreigh)+parseFloat(this.addOrdermanagementForm.sorderEditionfee)+parseFloat(this.addOrdermanagementForm.sorderSinglefee);
 
       }else if(this.editOrdermanagementVisible==true){
@@ -830,6 +837,18 @@ export default {
           parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
           console.log(this.editOrdermanagementForm.sorderTotal);
           var tatal=this.editOrdermanagementForm.sorderTotal
+      }
+      if(this.editOrdermanagementForm.sorderExpressfee==''){
+        this.editOrdermanagementForm.sorderExpressfee=0
+      }
+      if(this.editOrdermanagementForm.sorderFreigh==''){
+        this.editOrdermanagementForm.sorderFreigh=0
+      }
+      if(this.editOrdermanagementForm.sorderEditionfee==''){
+        this.editOrdermanagementForm.sorderEditionfee=0
+      }
+      if(this.editOrdermanagementForm.sorderSinglefee==''){
+        this.editOrdermanagementForm.sorderSinglefee=0
       }
        this.editOrdermanagementForm.sorderTotal=parseFloat(this.editOrdermanagementForm.sorderTotal)+parseFloat(this.editOrdermanagementForm.sorderExpressfee)+parseFloat(this.editOrdermanagementForm.sorderFreigh)+parseFloat(this.editOrdermanagementForm.sorderEditionfee)+parseFloat(this.editOrdermanagementForm.sorderSinglefee);
 

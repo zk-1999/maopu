@@ -106,6 +106,7 @@ export default {
                 '14':'iconfont icon-user',
                 '12':'iconfont icon-tijikongjian',
                 '41':'iconfont icon-shangpin',
+                '57':'iconfont icon-shangpin',
                 '48':'iconfont icon-danju',
                 '34':'iconfont icon-baobiao',
                 '28':'iconfont icon-baobiao'

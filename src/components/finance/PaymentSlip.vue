@@ -7,464 +7,382 @@
       <el-breadcrumb-item>付款单</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <!-- <el-row :gutter="20"> -->
-      <!-- ref作用？？ -->
-      <!-- ref="salesOrdermanagementForm" -->
-      <el-form :inline="true" class="demo-form-inline" :model="salesOrdermanagementForm">
-        <!-- 供应商名称 -->
-        <el-form-item label="供应商名称">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-        <!-- 付款制单人 -->
-        <el-form-item class="mar">
-          <el-input
-            placeholder="请输入内容"
-            v-model="salesOrdermanagementForm.orderNum"
-            style="width:220px;"
-          >
-            <el-select
-              v-model="salesOrdermanagementForm.select"
-              slot="prepend"
-              style="width:110px;"
-            >
-              <el-option label="付款制单人" value="1"></el-option>
-              <el-option label="子订单号" value="2"></el-option>
-            </el-select>
-            <!-- <el-button slot="append" icon="el-icon-search"></el-button> -->
-          </el-input>
-        </el-form-item>
-        <!-- 付款单日期 -->
-        <el-form-item label="付款单日期" class="mar">
-          <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item>
-
-        <!-- 备注 -->
-        <el-form-item label="备注" class="mar">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <br />
-
-        <!-- 供应商编码 -->
-        <el-form-item label="供应商编码">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 结算方式 -->
-        <el-form-item label="结算方式" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 付款方式 -->
-        <el-form-item label="付款方式" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 收款类型 -->
-        <el-form-item label="收款类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 审核状态 -->
-        <el-form-item label="审核状态" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 查询按钮 -->
-        <el-form-item>
-          <el-button type="primary" size="small" @click="q" class="mar">查 询</el-button>
-        </el-form-item>
-      </el-form>
-      <!-- </el-row> -->
-      <!-- 4个按钮 -->
-      <el-button type="primary" size="small" @click="stateOfAdd = true">新 增</el-button>
-      <el-button type="primary" size="small" @click="stateOfEdit = true">编 辑</el-button>
-      <el-button type="danger" size="small">删 除</el-button>
-      <el-button type="info" size="small">审 核</el-button>
-      <!-- 表格 -->
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        border
-        @selection-change="handleSelectionChange"
+      <el-form
+        :inline="true"
+        class="demo-form-inline search"
+        :model="chaOrderFrom"
+        ref="chaOrderFrom"
+        label-width="70px"
+        label-position="left"
       >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="序号" width="120">
-          <template slot-scope="scope">{{ scope.row.no }}</template>
-        </el-table-column>
+        <el-row :gutter="20" class="row">
+          <el-col :span="24">
+            <el-form-item label="付款单号" prop="paymentorderno">
+              <el-input class="_small" v-model="chaOrderFrom.paymentorderno"></el-input>
+            </el-form-item>
+            <el-form-item label="制单人员" prop="payexamine">
+              <el-input class="_small" v-model="chaOrderFrom.payexamine"></el-input>
+            </el-form-item>
 
-        <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-        <el-table-column prop label="付款编号"></el-table-column>
-        <el-table-column prop label="付款供应商编码"></el-table-column>
-        <el-table-column prop label="付款供应商名称"></el-table-column>
-        <el-table-column prop label="付款方式"></el-table-column>
-        <el-table-column prop label="付款制单人"></el-table-column>
-        <el-table-column prop label="结算总额"></el-table-column>
-        <el-table-column prop label="付款类型"></el-table-column>
-        <el-table-column prop label="制单时间"></el-table-column>
-        <el-table-column prop label="审核状态"></el-table-column>
-        <el-table-column prop label="备注"></el-table-column>
+            <el-form-item label="资金账户" prop="assetaccount">
+              <el-input class="_small" v-model="chaOrderFrom.assetaccount"></el-input>
+            </el-form-item>
+
+            <el-form-item label="支出类型" prop="raetypes">
+              <el-select
+                v-model="chaOrderFrom.raetypes"
+                placeholder="请选择"
+                class="_small"
+              >
+                <el-option
+                  v-for="item in paymode"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  :disabled="lookUpState"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="付款类别" prop="typeOfPayment">
+              <el-select
+                v-model="chaOrderFrom.typeOfPayment"
+                placeholder="请选择"
+                class="_small"
+                @change="changeTypeOfPayment($event)"
+              >
+                <el-option value="0" label="预付款"></el-option>
+                <el-option value="1" label="应付款"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="制单日期" prop="rectimeRange">
+              <el-date-picker
+                v-model="chaOrderFrom.rectimeRange"
+                type="daterange"
+                value-format="yyyy-MM-dd"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="getList(1)">查 询</el-button>
+              <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
+              <!-- <el-button type="primary" @click="lookUpState = false;editPaymentVisible = true">付 款</el-button> -->
+              <!-- <el-button type="primary" @click="lookUpState = true;editPaymentVisible = true">查 看</el-button> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <el-button type="primary" @click="addAdvancePaymentFormVisible = true">新增预付款单</el-button>
+      <!-- @selection-change="handleSelectionChange2" -->
+      <el-table border :data="orderList">
+        <!-- <el-table-column type="selection" width="50px"></el-table-column> -->
+        <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
+        <el-table-column
+          prop="paymentorderno"
+          :label="chaOrder.typeOfPayment == 0?'预付款单号':'应付款单号'"
+          width="180px"
+          align="center"
+        ></el-table-column>
+        <el-table-column prop="payexamine" label="付款制单人" width="100px"></el-table-column>
+        <el-table-column prop="rectime" label="制单时间" width="200px" align="center"></el-table-column>
+        <el-table-column prop="raetypes" label="支出类型"></el-table-column>
+        <el-table-column prop="purchaseorderno" label="关联单号" width="200px" align="center"></el-table-column>
+        <el-table-column prop="amount" label="付款金额"></el-table-column>
+        <el-table-column prop="assetaccount" label="资金账户"></el-table-column>
+        <el-table-column prop="paymentstatus" label="付款状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.paymentstatus == 0">未付款</span>
+            <span v-if="scope.row.paymentstatus == 1">已付款</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column prop="porderBuyer" label="采购人"></el-table-column> -->
+        <!-- <el-table-column prop="porderCompletenum" label="已采购数量"></el-table-column> -->
+        <!-- <el-table-column prop="porderStarttime" label="采购周期" width="200" align="center">
+          <template slot-scope="scope">{{scope.row.porderStarttime+"-"+scope.row.porderStoptime}}</template>
+        </el-table-column>-->
+        <el-table-column prop="paymenttime" label="付款时间" width="200px" align="center"></el-table-column>
+        <el-table-column prop="remarks" label="备注" width="200" align="center"></el-table-column>
+        <!-- <el-table-column prop="porderState" label="操作" width="105px" align="center">
+          <template slot-scope="scope">
+            <el-button type="success" @click="pay(scope.row.paymentorderno)">付款</el-button>
+            <el-button type="primary">查看</el-button>
+          </template>
+        </el-table-column>-->
+        <!-- width="270px" -->
+        <!-- ,operationFlag2?operationWidth2:'',operationFlag1?operationWidth1:'' -->
+        <!-- :width="[operationFlag3?'270px':(operationFlag2?'180px':(operationFlag1?'90px':'0'))]" -->
+        <el-table-column label="操作" width="180px" align="center" fixed="right">
+          <template slot-scope="scope">
+            <el-button
+              type="success"
+              icon="el-icon-edit"
+              size="mini"
+              @click="lookUpState = true;showEditOrder(scope.row.paymentorderno)"
+            >查看</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              :disabled="!(scope.row.paymentstatus == 0)"
+              @click="lookUpState = false;showEditOrder(scope.row.paymentorderno)"
+            >付款</el-button>
+
+            <!-- <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                :disabled="!(scope.row.porderState==0||scope.row.porderState==2||scope.row.porderState==4)"
+                @click="deletebumen(scope.row.porderCode)"
+            >删除</el-button>-->
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[3, 5, 10, 15]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
+        :current-page.sync="chaOrder.pageCode"
+        :page-size="10"
+        layout="total, prev,pager, next"
         :total="total"
       ></el-pagination>
     </el-card>
 
-    <el-dialog 
-      :title=" '新增付款单' "
-      :visible.sync="stateOfAdd"
-      width="60%"
+
+
+    <el-dialog
+      title="新增预付款单"
+      :visible.sync="addAdvancePaymentFormVisible"
+      width="40%"
       :before-close="handleClose"
+      @closed="dialogClosed('addAdvancePaymentForm')"
     >
-      <el-form inline="true">
-        <hr />
-        <div>付款信息</div>
-        <el-form-item label="付款单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+      <el-form
+        label-position="right"
+        label-width="90px"
+        :model="addAdvancePaymentForm"
+        ref="addAdvancePaymentForm"
+        :rules="addAdvancePaymentFormRules"
+        :inline="true"
+      >
+        <el-form-item label="采购订单号" prop="purchaseorderno">
+          <el-input class="_small" v-model="addAdvancePaymentForm.purchaseorderno"></el-input>
         </el-form-item>
 
-        <el-form-item label="付款制单人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        <el-form-item label="预付款金额" prop="amount">
+          <el-input class="_small" v-model="addAdvancePaymentForm.amount"></el-input>
         </el-form-item>
 
-        <!-- 制单时间 -->
-        <el-form-item label="制单时间" class="mar">
-          <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
+        <el-form-item label="资金账户" prop="assetaccount">
+          <el-input class="_small" v-model="addAdvancePaymentForm.assetaccount"></el-input>
+          <!-- <el-select v-model="assetaccount" placeholder="请选择" class="_small">
+            <el-option value label="全部"></el-option>
+            <el-option value="0" label="未到货"></el-option>
+            <el-option value="1" label="部分到货"></el-option>
+            <el-option value="2" label="全部到货"></el-option>
+          </el-select>-->
         </el-form-item>
 
-        <el-form-item label="付款类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
+        <el-form-item label="支出类型" prop="raetypes">
+          <el-select v-model="addAdvancePaymentForm.raetypes" placeholder="请选择" class="_small">
             <el-option
-              v-for="item in warehouseOptions"
+              v-for="item in paymode"
               :key="item.value"
               :label="item.label"
               :value="item.value"
+              :disabled="item.disabled"
             ></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="供应商" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
+        <el-form-item label="付款状态" prop="paymentstatus">
+          <el-select v-model="addAdvancePaymentForm.paymentstatus" placeholder="请选择" class="_small">
+            <el-option value="0" label="未付款"></el-option>
+            <el-option value="1" label="已付款"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="付款方式">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="本次结算总额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="结算方式" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <br />
-
-        <el-form-item label="备注" class="mar">
+        <el-form-item label="备注" prop="remarks">
           <el-input
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
-            v-model="textarea2"
+            v-model="addAdvancePaymentForm.remarks"
+            style="width: 600px"
+          ></el-input>
+        </el-form-item>
+        <hr />
+        <!-- ！！！ -->
+        <!-- <el-form-item class="tupian">
+                    <el-upload
+                      ref="upload"
+                      :action="ip"
+                      name="picture"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-exceed="onExceed"
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreview"
+                      :on-success="handleSuccess"
+                      :on-remove="handleRemove">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+        </el-form-item>-->
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addAdvancePaymentFormVisible=false">取消</el-button>
+        <el-button @click="addAdvancePayment()" type="primary">保存</el-button>
+      </span>
+    </el-dialog>
+
+            <el-dialog
+      :title="lookUpState?'查看付款单':'付款'"
+      :visible.sync="editPaymentVisible"
+      width="50%"
+      :before-close="handleClose"
+      @closed="dialogClosed('editPaymentForm')"
+    >
+      <el-form
+        label-position="right"
+        label-width="90px"
+        :model="editPaymentForm"
+        ref="editPaymentForm"
+        :rules="editPaymentRules"
+        :inline="true"
+      >
+        <el-form-item label="付款制单人" prop="payexamine">
+          <el-input class="_small" v-model="editPaymentForm.payexamine" disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="供应商名称" prop="supName">
+          <el-input class="_small" v-model="editPaymentForm.supName" disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="供应商编码" prop="supId">
+          <el-input class="_small" v-model="editPaymentForm.supId" disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="采购订单号" prop="porderCode">
+          <el-input class="_small" v-model="editPaymentForm.porderCode" disabled="true"></el-input>
+        </el-form-item>
+        <br />
+        <el-form-item label="采购数量" prop="porderTotalnum">
+          <el-input class="_small" v-model="editPaymentForm.porderTotalnum" disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="采购金额" prop="porderTotalmoney">
+          <el-input class="_small" v-model="editPaymentForm.porderTotalmoney" disabled="true"></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="结算方式" prop="settlemethod">
+          <el-input class="_small" v-model="editPaymentForm.settlemethod" disabled="true"></el-input>
+        </el-form-item> -->
+        <el-form-item label="预付款金额" prop="amount">
+          <el-input class="_small" v-model="editPaymentForm.amount" disabled="true"></el-input>
+        </el-form-item>
+        <br />
+        <el-form-item label="资金账户" prop="assetaccount">
+          <el-input class="_small" v-model="editPaymentForm.assetaccount" :disabled="lookUpState"></el-input>
+        </el-form-item>
+        <el-form-item label="支出类型" prop="raetypes">
+          <el-select
+            v-model="editPaymentForm.raetypes"
+            placeholder="请选择"
+            class="_small"
+            :disabled="lookUpState"
+          >
+            <el-option
+              v-for="item in paymode"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="预付款状态" prop="paymentstatus">
+          <el-select
+            v-model="editPaymentForm.paymentstatus"
+            placeholder="请选择"
+            class="_small"
+            :disabled="lookUpState"
+          >
+            <el-option value="0" label="未付款"></el-option>
+            <el-option value="1" label="已付款"></el-option>
+          </el-select>
+        </el-form-item>
+        <br />
+        <el-form-item label="备注" prop="remarks">
+          <el-input
+            type="textarea"
+            class="_small"
+            v-model="editPaymentForm.remarks"
+            style="width: 600px"
+            :disabled="lookUpState"
           ></el-input>
         </el-form-item>
 
         <hr />
-        <div>关联采购订单</div>
-        <el-form-item label="供应商编码">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="供应商名称">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="创建发票时间">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="采购金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="预付款金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <br />采购订单明细：
-        <br />
-
-        <el-table :data="goodsData" style="width: 100%">
-          <el-table-column prop label="商品名称"></el-table-column>
-          <el-table-column prop label="商品编码"></el-table-column>
-          <el-table-column prop label="克重"></el-table-column>
-          <el-table-column prop label="采购价"></el-table-column>
-          <el-table-column prop label="当前库存（kg）"></el-table-column>
-          <el-table-column prop label="预计采购数量（kg）"></el-table-column>
-          <el-table-column prop label="金额"></el-table-column>
-        </el-table>
-
-        <hr />
-        <div>关联入库订单</div>
-
-        <!-- 两个按钮 -->
-        <el-form-item>
-          <el-button type="primary" size="small">选择出库单</el-button>
-          <el-button type="danger" size="small">删 除</el-button>
-        </el-form-item>
-
-        <el-table :data="goodsData" style="width: 100%">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="入库单号" width="120">
-            <template slot-scope="scope">{{ scope.row.no }}</template>
-          </el-table-column>
-
-          <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-          <el-table-column prop label="产品名称"></el-table-column>
-          <el-table-column prop label="产品编码"></el-table-column>
-          <el-table-column prop label="入库数量（kg）"></el-table-column>
-          <el-table-column prop label="结算单价"></el-table-column>
-          <el-table-column prop label="未结算数量（kg）"></el-table-column>
-          <el-table-column prop label="未结算金额"></el-table-column>
-          <el-table-column prop label="已结算金额"></el-table-column>
-          <el-table-column prop label="当前结算数量（kg）"></el-table-column>
-          <el-table-column prop label="当前结算金额"></el-table-column>
-        </el-table>
-
-        <hr />
-        <div>付款凭证</div>
-        <!-- 两个按钮 -->
-        <el-form-item>
-          <el-upload
-            class="upload-demo"
-            drag
-            action="https://jsonplaceholder.typicode.com/posts/"
-            multiple
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将文件拖到此处，或
-              <em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-          </el-upload>
-        </el-form-item>
-
-        <br>
-        <!-- 两个按钮 -->
-        <el-form-item style="margin-left:750px;">
-          <el-button type="primary" size="small">确 定</el-button>
-          <el-button type="primary" size="small">取 消</el-button>
-        </el-form-item>
       </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editPaymentVisible = false">取 消</el-button>
+        <el-button @click="addSave()" type="primary" v-if="!lookUpState">确 认</el-button>
+      </span>
     </el-dialog>
-
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
-      // v:false,
-      labelPosition: "right",
-      addbumenDialogVisible: false,
-      editbumenDialogVisible: false,
-      delVisible: false,
-      currentPage: 0,
-      total: 0,
-      delarr: "",
-      selectedList: [],
-      departmentList: [],
-      chaDepartmentForm: {
-        name: "",
-        pageCode: 1, //当前页
-        pageSize: 3 //每页显示的记录数
-      },
-      addDepartmentForm: {
-        name: "",
-        orderNum: ""
-      },
-      editDepartmentForm: {
-        name: "",
-        orderNum: ""
-      },
-      addDepartmentRules: {
-        name: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
-        ]
-      },
+      // 查询表单数据
+      chaOrderFrom: {
+        paymentorderno:"",//付款单号
+        payexamine: "", // 付款制单人
+        assetaccount: "", //资金账户
+        raetypes: "", //收支类型
+        typeOfPayment: "0", //付款类别
+        rectimeRange: [], // 制单日期范围
 
-      //   自己做的部分
-      salesOrdermanagementForm: {
-        // 要发送的真实字段
-        orderNum: "", //订单号
-        select: "1", //订单号类型选择
-        warehouse: "", //仓库
-        pageCode: 1, //当前页
-        pageSize: 3, //每页显示的记录数
-        state: "",
-        phoneNumber: "",
-        name: "",
-        province: ""
+        pageCode: 1,
+        pageSize: 10
       },
-      // 仓库列表
-      warehouseOptions: [
-        {
-          value: 0,
-          label: "默认仓库"
-        },
-        {
-          value: 1,
-          label: "黄金糕"
-        }
-      ],
-      //订单状态列表（不完全）
-      orderStateOptions: [
-        {
-          value: 0,
-          label: "初始化"
-        },
-        {
-          value: 1,
-          label: "已付款"
-        },
-        {
-          value: 1,
-          label: "已完成"
-        }
-      ],
-      //分页相关数据
-      //currentPage:0,
+      // 查询实际数据
+      chaOrder: {},
+      // 付款单list
+      orderList: [],
+      // 分页总数
       total: 0,
-      // 页面表单数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-          no: 1,
-          orderNum: 99999,
-          username: "小明",
-          goodsInfo: "纸杯",
-          overbookingTime: "2016-05-02",
-          money1: 3000,
-          money2: 300,
-          payTime: "2016-05-02",
-          address: "上海市普陀区金沙江路 1518 弄",
-          createTime: "2016-05-02",
-          lastModifyTime: "2016-05-02",
-          orderState: "未完成",
-          orderNote: "0000"
-        }
-      ],
-      addOrder: false,
-      editOrder: false,
-      addGoods: false,
-      addOrderForm: {
-        activeName: "first"
+      // 是否为查看状态
+      lookUpState: false,
+      // 编辑付款单
+      editPaymentVisible: false,
+      // 点击付款后弹出页面
+      editPaymentForm: {},
+
+      // 收支类型数组
+      paymode: [],
+
+      // 新增付款单显示
+      payVisible: false,
+
+      // 新增预付款单
+      addAdvancePaymentForm: {
+        payexamine: "", //付款制单人
+        purchaseorderno: "", //采购订单号
+        amount: "", //金额
+        assetaccount: "", //资金账户
+        raetypes: "", //收支类型
+        paymentstatus: "", //应付款状态
+        remarks: "" //备注
       },
-      goodsData: [
-        {
-          productName: "娃哈哈",
-          productNum: "12121212",
-          productType: "饮料",
-          unitPrice: 3,
-          salesQuantity: 7,
-          sumMoney: 21,
-          note: "哈哈哈哈哈",
-          opetate: ""
-        },
-        {
-          productName: "王老吉",
-          productNum: "12121212",
-          productType: "饮料",
-          unitPrice: 3,
-          salesQuantity: 8,
-          sumMoney: 21,
-          note: "大吉大利",
-          operate: ""
-        }
-      ],
-      title: "",
-      receiptType: [
-        {
-          label: "采购退货收款",
-          value: "0"
-        },
-        {
-          label: "销售订单收款",
-          value: "1"
-        }
-      ],
-      // 新增状态
-      stateOfAdd:false,
-      // 编辑状态
-      stateOfEdit:false,
+      // 新增预付款单显示
+      addAdvancePaymentFormVisible: false
     };
   },
   created() {
     //自己写的方法
     this.getWarehouseOptions();
+    // this.chaOrder = JSON.parse(JSON.stringify(this.chaOrderFrom));
+    this.getList(1);
+    this.selectoutpaymode();
+    this.getCookie();
   },
   methods: {
     addDepartment() {
@@ -602,16 +520,16 @@ export default {
     },
 
     //分页相关函数
-    handleSizeChange(val) {
-      this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
-      this.queryOrderList();
-    },
+    // handleSizeChange(val) {
+    //   this.salesOrdermanagementForm.pageSize = val;
+    //   console.log(`每页 ${val} 条`);
+    //   this.queryOrderList();
+    // },
     handleCurrentChange(val) {
-      this.salesOrdermanagementForm.pageCode = val;
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      this.queryOrderList();
+      // this.chaOrder.pageCode = val;
+      // console.log(`当前页: ${val}`);
+      this.chaOrder.pageCode = val;
+      this.getList();
     },
     chooseReceiptType() {
       if (this.rType === "0") {
@@ -623,7 +541,181 @@ export default {
       } else {
         handleClose();
       }
+    },
+
+    // 查询
+    async getList(val) {
+      // const { data: res1 } = await this.$http.post("jh/purchase/dtjresultMap");
+      // this.chaOrderFrom.pageCode = 1;
+      if (val) {
+        // 重新点击时，需要重置查询页数
+        this.chaOrderFrom.pageCode = 1;
+        // 深拷贝
+        this.chaOrder = JSON.parse(JSON.stringify(this.chaOrderFrom));
+      }
+
+      let res = "";
+      if (this.chaOrder.typeOfPayment == 0) {
+        // 预付款
+        const { data: res1 } = await this.$http.post(
+          "/payment/selectAdvancepayment",
+          this.chaOrder
+        );
+        res = res1;
+      } else if (this.chaOrder.typeOfPayment == 1) {
+        // 应付款
+        const { data: res2 } = await this.$http.post(
+          "/payable/selectAccountpayable",
+          this.chaOrder
+        );
+        res = res2;
+      }
+      // const { data: res } = await this.$http.post(
+      //   "/cw/payment/selectAccountpayable",
+      //   this.chaOrder
+      // );
+
+      console.log(res);
+
+      this.orderList = res.body.rows;
+
+
+      // 循环遍历，raetypes变为名字
+      for(let i = 0;i<this.orderList.length;i++){
+        for(let j = 0;j<this.paymode.length;j++){
+          if(this.orderList[i].raetypes == this.paymode[j].value){
+            console.log(this.paymode[j].label)
+            this.orderList[i].raetypes = this.paymode[j].label
+          }
+        }
+      }
+      this.total = res.body.total;
+
+      console.log(this.orderList);
+      console.log(this.total);
+    },
+    // 表单重置
+    ResetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    // 获取支出类型
+    async selectoutpaymode() {
+      const { data: res } = await this.$http.post("jc/Basic/selectoutpaymode");
+      res.forEach((item, index, array) => {
+        let x = {
+          label: item.basicRetainone,
+          value: item.basicId
+        };
+        this.paymode.push(x);
+      });
+      console.log("支出类型");
+      console.log(this.paymode);
+    },
+
+    // 获取收入类型
+    async selectinpaymode() {
+      const { data: res } = await this.$http.post("jc/Basic/selectinpaymode");
+      res.forEach((item, index, array) => {
+        let x = {
+          label: item.basicRetainone,
+          value: item.basicId
+        };
+        this.paymode.push(x);
+      });
+      console.log("收入类型");
+      console.log(this.paymode);
+    },
+    dialogClosed(val) {
+      this.$refs[val].resetFields();
+    },
+    // 新增预付款单 应付款
+    async addAdvancePayment() {
+      let res = "";
+      if (this.chaOrder.typeOfPayment == 0) {
+        const { data: res1 } = await this.$http.post(
+          "/payment/addAdvancepayment",
+          this.addAdvancePaymentForm
+        );
+        res = res1;
+      } else if (this.chaOrder.typeOfPayment == 1) {
+        const { data: res2 } = await this.$http.post(
+          "/payable/addAccountpayable",
+          this.addAdvancePaymentForm
+        );
+        res = res2;
+      }
+
+      console.log(res);
+
+      this.addAdvancePaymentFormVisible = false;
+      this.getList();
+    },
+
+    // 编辑付款单
+    async showEditOrder(val) {
+      let res = "";
+      if (this.chaOrder.typeOfPayment == 0) {
+        const { data: res1 } = await this.$http.post("/payment/selectMassage", {
+          paymentorderno: val
+        });
+        res = res1;
+      } else if (this.chaOrder.typeOfPayment == 1) {
+        const { data: res2 } = await this.$http.post("/payable/selectMassage", {
+          paymentorderno: val
+        });
+        res = res2;
+      }
+
+      console.log(res.body.result);
+
+      this.editPaymentForm = res.body.result;
+
+      console.log(this.paymode);
+      this.editPaymentForm.paymentstatus =
+        this.editPaymentForm.paymentstatus + "";
+      this.editPaymentForm.paymentorderno = val;
+      //  this.editPaymentForm.raetypes = this.editPaymentForm.raetypes + ''
+
+      this.editPaymentVisible = true;
+    },
+
+    // 付款结果保存
+    async addSave() {
+      let res = "";
+      if (this.chaOrder.typeOfPayment == 0) {
+        const { data: res1 } = await this.$http.put(
+          "/payment/updateAdvancepayment",
+          this.editPaymentForm
+        );
+        res = res1;
+      } else if (this.chaOrder.typeOfPayment == 1) {
+        const { data: res2 } = await this.$http.put(
+          "/payable/updateAccountpayable",
+          this.editPaymentForm
+        );
+        res = res2;
+      }
+
+      console.log(res.body.result);
+
+      this.editPaymentVisible = false;
+
+      this.getList();
+    },
+
+    getCookie: function() {
+      var storage = window.localStorage;
+      this.addAdvancePaymentForm.payexamine = storage.getItem("username");
     }
+
+    // changeTypeOfPayment(val){
+    //   // console.log(val)
+    //   let res = '';
+    //   if(val == 0){//预付款
+    //     this.selectoutpaymode()
+    //   }else if(val == 1){//应付款
+    //     this.selectinpaymode()
+    // }
   }
 };
 </script>

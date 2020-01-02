@@ -215,7 +215,7 @@
     </el-table-column>
     <el-table-column label="总计" >
       <template scope="scope">
-        {{scope.row.commodityNumber*scope.row.commodityPrice}}</template>
+        {{((scope.row.commodityNumber*1000)*(scope.row.commodityPrice*1000))/1000000}}</template>
     </el-table-column>
   </el-table>
   <div class="fenge1">合计信息</div>
@@ -797,13 +797,12 @@ export default {
           continue;
         }
         this.addOrdermanagementForm.sorderAllnumber += parseFloat(
-          this.addOrdermanagementForm.commodityListDOs[index].commodityNumber
+          this.addOrdermanagementForm.commodityListDOs[index].commodityNumber*10000000
         );
-
         this.addOrdermanagementForm.sorderTotal +=
-          parseFloat(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *
-          parseFloat(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber);
-          console.log(this.addOrdermanagementForm.sorderTotal);
+          ((parseFloat(this.addOrdermanagementForm.commodityListDOs[index].commodityPrice) *10000000)*
+          (parseFloat(this.addOrdermanagementForm.commodityListDOs[index].commodityNumber)*10000000))/100000000000000;
+          // console.log(this.addOrdermanagementForm.sorderTotal);
           var tatal=this.addOrdermanagementForm.sorderTotal
       }
       if(this.addOrdermanagementForm.sorderExpressfee==''){
@@ -818,7 +817,9 @@ export default {
       if(this.addOrdermanagementForm.sorderSinglefee==''){
         this.addOrdermanagementForm.sorderSinglefee=0
       }
-       this.addOrdermanagementForm.sorderTotal=parseFloat(this.addOrdermanagementForm.sorderTotal)+parseFloat(this.addOrdermanagementForm.sorderExpressfee)+parseFloat(this.addOrdermanagementForm.sorderFreigh)+parseFloat(this.addOrdermanagementForm.sorderEditionfee)+parseFloat(this.addOrdermanagementForm.sorderSinglefee);
+       this.addOrdermanagementForm.sorderTotal=((parseFloat(this.addOrdermanagementForm.sorderTotal)*10000000)+(parseFloat(this.addOrdermanagementForm.sorderExpressfee)*10000000)+(parseFloat(this.addOrdermanagementForm.sorderFreigh)*10000000)+(parseFloat(this.addOrdermanagementForm.sorderEditionfee)*10000000)+(parseFloat(this.addOrdermanagementForm.sorderSinglefee)*10000000))/10000000;
+        this.addOrdermanagementForm.sorderAllnumber=this.addOrdermanagementForm.sorderAllnumber/10000000;
+       
 
       }else if(this.editOrdermanagementVisible==true){
         this.editOrdermanagementForm.sorderTotal=0;
@@ -829,12 +830,12 @@ export default {
           continue;
         }
         this.editOrdermanagementForm.sorderAllnumber += parseFloat(
-          this.editOrdermanagementForm.commodityListDOs[index].commodityNumber
+          this.editOrdermanagementForm.commodityListDOs[index].commodityNumber*10000000
         );
 
         this.editOrdermanagementForm.sorderTotal +=
-          parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *
-          parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber);
+          ((parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityPrice) *10000000)*
+          (parseFloat(this.editOrdermanagementForm.commodityListDOs[index].commodityNumber)*10000000))/100000000000000;
           console.log(this.editOrdermanagementForm.sorderTotal);
           var tatal=this.editOrdermanagementForm.sorderTotal
       }
@@ -850,8 +851,9 @@ export default {
       if(this.editOrdermanagementForm.sorderSinglefee==''){
         this.editOrdermanagementForm.sorderSinglefee=0
       }
-       this.editOrdermanagementForm.sorderTotal=parseFloat(this.editOrdermanagementForm.sorderTotal)+parseFloat(this.editOrdermanagementForm.sorderExpressfee)+parseFloat(this.editOrdermanagementForm.sorderFreigh)+parseFloat(this.editOrdermanagementForm.sorderEditionfee)+parseFloat(this.editOrdermanagementForm.sorderSinglefee);
-
+       this.editOrdermanagementForm.sorderTotal=((parseFloat(this.editOrdermanagementForm.sorderTotal)*10000000)+(parseFloat(this.editOrdermanagementForm.sorderExpressfee)*10000000)+(parseFloat(this.editOrdermanagementForm.sorderFreigh)*10000000)+parseFloat((this.editOrdermanagementForm.sorderEditionfee)*10000000)+(parseFloat(this.editOrdermanagementForm.sorderSinglefee)*10000000))/10000000;
+        this.editOrdermanagementForm.sorderAllnumber=this.editOrdermanagementForm.sorderAllnumber/10000000;
+      
       }
       
     },

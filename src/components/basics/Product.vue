@@ -436,7 +436,6 @@ export default {
     a(url){
       this.tupainfangdadialogVisible=true;
       this.tupainfangda=url;
-      
     },
    async list(){
      const { data: res1 } = await this.$http.post("jc/Basic/selectbox");

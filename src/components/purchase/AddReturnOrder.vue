@@ -12,25 +12,25 @@
         class="demo-form-inline search"
         :model="chaOrderFrom"
         ref="chaOrderFrom"
-        label-width="80px"
+        label-width="90px"
         label-position="left"
       >
         <el-row :gutter="20" class="row">
           <el-col :span="24">
-            <el-form-item label="订单编号" prop="porderCode">
+            <el-form-item label="订单编号：" prop="porderCode">
               <el-input placeholder="请输入订单编号" class="_small" v-model="chaOrderFrom.porderCode"></el-input>
             </el-form-item>
-            <el-form-item label="制单人员" prop="porderProducer">
+            <el-form-item label="制单人员：" prop="porderProducer">
               <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="_small"></el-input>
             </el-form-item>
-            <el-form-item label="到货情况" prop="porderArrivalstatus">
+            <el-form-item label="到货情况：" prop="porderArrivalstatus">
               <el-select v-model="chaOrderFrom.porderArrivalstatus" placeholder="请选择" class="hu">
                 <el-option value="3" label="全部"></el-option>
                 <el-option value="1" label="部分到货"></el-option>
                 <el-option value="2" label="全部到货"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="制单时间" prop="time">
+            <el-form-item label="制单时间：" prop="time">
               <el-date-picker
                 v-model="chaOrderFrom.time"
                 type="daterange"
@@ -43,6 +43,8 @@
             <el-form-item>
               <el-button @click="getList(1)">查 询</el-button>
               <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
+              <router-link to="cancel" tag="el-button">返回</router-link>
+              <!-- <el-button type="primary" @click="createReturnVisible = true">重 置</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,7 +66,7 @@
         <el-table-column prop="porderPalnmoney" label="预付款金额" width="100px"></el-table-column>
         <el-table-column prop="porderTotalmoney" label="总金额"></el-table-column>
         <el-table-column prop="porderTotalnum" label="总数量"></el-table-column>
-        <el-table-column prop label="到货数量"></el-table-column>
+        <el-table-column prop="porderArrivalnumber" label="到货数量"></el-table-column>
         <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column>
         <el-table-column prop="supplierDO.supName" label="供应商" width="120px" align="center"></el-table-column>
         <el-table-column prop="porderArrivalstatus" label="到货情况">
@@ -104,7 +106,7 @@
             <el-button
               type="primary"
               size="mini"
-              v-if="scope.row.porderArrivalstatus==1||scope.row.porderArrivalstatus==2"
+              :disabled="!(scope.row.porderState==5||scope.row.porderState==8)"
               @click="returnOrder(scope.row.porderCode,scope.row.supplierId)"
             >退货</el-button>
           </template>
@@ -119,7 +121,7 @@
         :total="total"
       ></el-pagination>
     </el-card>
-        <el-dialog
+    <el-dialog
       title="生成退货单"
       :visible.sync="createReturnVisible"
       width="60%"
@@ -127,13 +129,14 @@
       @closed="dialogClosed('createReturnFrom')"
     >
       <el-form
-        label-position="left"
+        label-position="right"
         label-width="100px"
         :inline="true"
         class="demo-form-inline search"
         :model="createReturnFrom"
         ref="createReturnFrom"
       >
+      <div class="fenge">退货商品信息</div>
         <el-table :data="createReturnFrom.pcommodityDos" style="width: 100%">
           <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
           <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
@@ -141,12 +144,16 @@
           <el-table-column prop="pcommodityPrice" label="单价"></el-table-column>
           <el-table-column prop="pcommodityPalnnum" label="数量"></el-table-column>
           <el-table-column prop="xxx" label="金额">
-            <template slot-scope="scope">{{scope.row.pcommodityPrice * scope.row.pcommodityPalnnum}}</template>
+            <template slot-scope="scope">{{multiple(scope.row.pcommodityPrice , scope.row.pcommodityPalnnum)}}</template>
           </el-table-column>
           <el-table-column prop="productDhnumber" label="已到货数量"></el-table-column>
           <el-table-column prop="productThnumber" label="退货数量">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.productThnumber" @blur="calculate(createReturnFrom)"></el-input>
+              <el-input
+                v-model="scope.row.productThnumber"
+                @blur="calculate(createReturnFrom)"
+                type="number"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
@@ -161,13 +168,13 @@
           </el-table-column>
         </el-table>
         <br />
-        <el-form-item label="退货总数量" prop="preturnAlltotal">
+        <el-form-item label="退货总数量：" prop="preturnAlltotal">
           <el-input class="hu" v-model="createReturnFrom.preturnAlltotal" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="退货总金额" prop="preturnAmount">
+        <el-form-item label="退货总金额：" prop="preturnAmount">
           <el-input class="hu" v-model="createReturnFrom.preturnAmount" :disabled="true"></el-input>
         </el-form-item>
-        <hr />
+        <div class="fenge1">供应商信息</div>
 
         <el-table :data="createReturnFromGongyingshang" style="width: 100%">
           <el-table-column prop="supName" label="供应商名称"></el-table-column>
@@ -177,7 +184,7 @@
           <el-table-column prop="supPhone" label="手机"></el-table-column>
         </el-table>
 
-        <hr />
+        <div class="fenge1">退货描述</div>
 
         <!-- <el-form-item label="出库仓库" prop="preturnOutwarehouse">
           <el-select
@@ -192,25 +199,25 @@
               :value="item.basicId"
             ></el-option>
           </el-select>
-        </el-form-item> -->
-        <el-form-item label="制单人员" prop="preturnProducer">
+        </el-form-item>-->
+        <el-form-item label="制单人员：" prop="preturnProducer">
           <el-input class="hu" v-model="createReturnFrom.preturnProducer" :disabled="true"></el-input>
         </el-form-item>
         <br />
-        <el-form-item label="备注" prop="preturnDesc">
+        <el-form-item label="备注：" prop="preturnDesc">
           <el-input type="textarea" v-model="createReturnFrom.preturnDesc" style="width: 600px"></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge1">退货地址</div>
 
-        <el-form-item label="收货人" prop="preturnAddressee">
+        <el-form-item label="收货人：" prop="preturnAddressee">
           <el-input class="hu" v-model="createReturnFrom.preturnAddressee"></el-input>
         </el-form-item>
-        <el-form-item label="手机" prop="preturnTel">
+        <el-form-item label="手机：" prop="preturnTel">
           <el-input class="hu" v-model="createReturnFrom.preturnTel"></el-input>
         </el-form-item>
         <br />
-        <el-form-item label="收货地址" prop="preturnAddress">
+        <el-form-item label="收货地址：" prop="preturnAddress">
           <el-input type="textarea" v-model="createReturnFrom.preturnAddress" style="width: 600px"></el-input>
         </el-form-item>
       </el-form>
@@ -219,7 +226,6 @@
         <el-button type="primary" @click="createReturnOrder()">保 存</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 <script>
@@ -385,8 +391,8 @@ export default {
       },
       editReturnFromGongyingshang: [], //编辑form供应商
       editReturnVisible: false, //编辑表单可见标识
-      createReturnVisible:false,
-      createReturnFromGongyingshang:[],
+      createReturnVisible: false,
+      createReturnFromGongyingshang: []
     };
   },
   created() {
@@ -399,18 +405,20 @@ export default {
   methods: {
     //读取cookie
     getCookie: function() {
-      if (document.cookie.length > 0) {
-        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
-        for (var i = 0; i < arr.length; i++) {
-          var arr2 = arr[i].split("="); //再次切割
-          //判断查找相对应的值
-          if (arr2[0] == "userName") {
-            //  console.log(arr2[1])
-            this.addOrderForm.porderProducer = arr2[1]; //保存到保存数据的地方
-          }
-        }
-        this.checked = true;
-      }
+      // if (document.cookie.length > 0) {
+      //   var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+      //   for (var i = 0; i < arr.length; i++) {
+      //     var arr2 = arr[i].split("="); //再次切割
+      //     //判断查找相对应的值
+      //     if (arr2[0] == "userName") {
+      //       //  console.log(arr2[1])
+      //       this.createReturnFrom.preturnProducer = arr2[1]; //保存到保存数据的地方
+      //     }
+      //   }
+      //   this.checked = true;
+      // }
+      var storage = window.localStorage;
+      this.createReturnFrom.preturnProducer = storage.getItem("username");
     },
     ResetForm(formName) {
       this.$refs[formName].resetFields();
@@ -443,7 +451,7 @@ export default {
     // orderList 批量提审
     handleSelectionChange2(val) {
       this.orderListCheckOrders = val;
-      console.log( this.orderListCheckOrders);
+      console.log(this.orderListCheckOrders);
     },
     // 批量提审
     async checkOrderList() {
@@ -453,7 +461,6 @@ export default {
       this.orderListCheckOrders.forEach((item, index, arr) => {
         porderCodes.push(item.porderCode);
         if (item.porderState != 0) {
-          
           flag = true;
           return false;
         }
@@ -461,9 +468,9 @@ export default {
 
       if (flag) {
         this.$message({
-            type: "info",
-            message: "存在非初始化状态订单，请重新选择！"
-          });
+          type: "info",
+          message: "存在非初始化状态订单，请重新选择！"
+        });
         return;
       }
 
@@ -478,14 +485,13 @@ export default {
           message: "批量提审成功！"
         });
         this.getList();
-        this.orderListCheckOrders = []
+        this.orderListCheckOrders = [];
       } else {
         this.$message({
           type: "danger",
           message: "批量提审失败！"
         });
       }
-
     },
     // 批量终止
     async stopOrderList() {
@@ -495,7 +501,6 @@ export default {
       this.orderListCheckOrders.forEach((item, index, arr) => {
         porderCodes.push(item.porderCode);
         if (item.porderState != 5) {
-          
           flag = true;
           return false;
         }
@@ -503,9 +508,9 @@ export default {
 
       if (flag) {
         this.$message({
-            type: "info",
-            message: "存在非采购中状态订单，请重新选择！"
-          });
+          type: "info",
+          message: "存在非采购中状态订单，请重新选择！"
+        });
         return;
       }
 
@@ -520,7 +525,7 @@ export default {
           message: "批量终止成功！"
         });
         this.getList();
-        this.orderListCheckOrders = []
+        this.orderListCheckOrders = [];
       } else {
         this.$message({
           type: "danger",
@@ -666,12 +671,12 @@ export default {
           // 将已选择的商品table重新赋值
           if (flag == 1) {
             this.addOrderForm.pcommodityDos = array;
-            this.addCalculate(this.addOrderForm)
+            this.addCalculate(this.addOrderForm);
           }
 
           if (flag == 2) {
             this.editOrderForm.pcommodityDos = array;
-            this.addCalculate(this.editOrderForm)
+            this.addCalculate(this.editOrderForm);
           }
 
           // this.jisuan();
@@ -715,7 +720,6 @@ export default {
       });
     },
     async showEditOrder(porderCode) {
-
       // let param = new URLSearchParams();
       // param.append("porderCode", porderCode);
       console.log(porderCode);
@@ -740,28 +744,43 @@ export default {
       this.delarr = [];
       // console.log(res);
 
-      for (let index = 0; index < res.body.result[0].pcommodityDos.length; index++) {
+      for (
+        let index = 0;
+        index < res.body.result[0].pcommodityDos.length;
+        index++
+      ) {
         for (let i = 0; i < res1.length; i++) {
           if (
             res.body.result[0].pcommodityDos[index].suppliergoolsId ==
             res1[i].suppliergoolsId
           ) {
-            res.body.result[0].pcommodityDos[index].supgoolCoated = res1[i].supgoolCoated;
-            res.body.result[0].pcommodityDos[index].supgoolsBradth = res1[i].supgoolsBradth;
-            res.body.result[0].pcommodityDos[index].supgoolsBrand = res1[i].supgoolsBrand;
-            res.body.result[0].pcommodityDos[index].supgoolsColor = res1[i].supgoolsColor;
-            res.body.result[0].pcommodityDos[index].supgoolsHeight = res1[i].supgoolsHeight;
-            res.body.result[0].pcommodityDos[index].supgoolsLength = res1[i].supgoolsLength;
-            res.body.result[0].pcommodityDos[index].supgoolsWeight = res1[i].supgoolsWeight;
-            res.body.result[0].pcommodityDos[index].supgoolsWidth1 = res1[i].supgoolsWidth1;
-            res.body.result[0].pcommodityDos[index].supgoolsWidths = res1[i].supgoolsWidths;
+            res.body.result[0].pcommodityDos[index].supgoolCoated =
+              res1[i].supgoolCoated;
+            res.body.result[0].pcommodityDos[index].supgoolsBradth =
+              res1[i].supgoolsBradth;
+            res.body.result[0].pcommodityDos[index].supgoolsBrand =
+              res1[i].supgoolsBrand;
+            res.body.result[0].pcommodityDos[index].supgoolsColor =
+              res1[i].supgoolsColor;
+            res.body.result[0].pcommodityDos[index].supgoolsHeight =
+              res1[i].supgoolsHeight;
+            res.body.result[0].pcommodityDos[index].supgoolsLength =
+              res1[i].supgoolsLength;
+            res.body.result[0].pcommodityDos[index].supgoolsWeight =
+              res1[i].supgoolsWeight;
+            res.body.result[0].pcommodityDos[index].supgoolsWidth1 =
+              res1[i].supgoolsWidth1;
+            res.body.result[0].pcommodityDos[index].supgoolsWidths =
+              res1[i].supgoolsWidths;
             res.body.result[0].pcommodityDos[index].supName = res1[i].supName;
-            res.body.result[0].pcommodityDos[index].porderBuyer = res1[i].porderBuyer;
+            res.body.result[0].pcommodityDos[index].porderBuyer =
+              res1[i].porderBuyer;
             res.body.result[0].pcommodityDos[index].supgoolsBigType =
               res1[i].supgoolsBigType;
             res.body.result[0].pcommodityDos[index].supgoolssmallType =
               res1[i].supgoolssmallType;
-            res.body.result[0].pcommodityDos[index].supgoolsId = res1[i].supgoolsId;
+            res.body.result[0].pcommodityDos[index].supgoolsId =
+              res1[i].supgoolsId;
             res.body.result[0].pcommodityDos[index].supgoolsSplicing =
               res1[i].supgoolsSplicing;
           }
@@ -788,20 +807,28 @@ export default {
       this.editOrderForm.porderOrdertime = res.body.result[0].porderOrdertime;
       // 初复审信息
       this.editOrderForm.porderReviewman = res.body.result[0].porderReviewman;
-      this.editOrderForm.porderReviewexplain = res.body.result[0].porderReviewexplain;
-      this.editOrderForm.porderReviewedman = res.body.result[0].porderReviewedman;
-      this.editOrderForm.porderReviewedexplain = res.body.result[0].porderReviewedexplain;
+      this.editOrderForm.porderReviewexplain =
+        res.body.result[0].porderReviewexplain;
+      this.editOrderForm.porderReviewedman =
+        res.body.result[0].porderReviewedman;
+      this.editOrderForm.porderReviewedexplain =
+        res.body.result[0].porderReviewedexplain;
       // 订单状态
       this.editOrderForm.porderState = res.body.result[0].porderState;
 
-      if (res.body.result[0].supplierId != '' && !isNaN(res.body.result[0].supplierId)) {
+      if (
+        res.body.result[0].supplierId != "" &&
+        !isNaN(res.body.result[0].supplierId)
+      ) {
         this.editOrderForm.supplierId = Number(res.body.result[0].supplierId);
       } else {
-        this.editOrderForm.supplierId = ''
+        this.editOrderForm.supplierId = "";
       }
-      
 
-      let time = [res.body.result[0].porderStarttime, res.body.result[0].porderStoptime];
+      let time = [
+        res.body.result[0].porderStarttime,
+        res.body.result[0].porderStoptime
+      ];
       this.editOrderForm.time = time;
 
       this.gongyingshangOfForm = [];
@@ -1056,7 +1083,7 @@ export default {
           quantity += Number(item.pcommodityPalnnum);
         }
         //  else {
-          // 如果该行数量不是数字，置空
+        // 如果该行数量不是数字，置空
         //   item.pcommodityPalnnum = '';
         // }
       });
@@ -1067,21 +1094,21 @@ export default {
       val.pcommodityDos.forEach((item, index, arr) => {
         if (!isNaN(item.pcommodityPalnnum * item.pcommodityPrice)) {
           money += Number(item.pcommodityPalnnum * item.pcommodityPrice);
-        } 
+        }
       });
       val.porderTotalmoney = money;
     },
     // 新增采购订单
-    addPurchareOrder(){
-      this.addOrderForm.pcommodityDos = []
-      this.gongyingshangOfForm = []
-      this.editOrde  = false;
+    addPurchareOrder() {
+      this.addOrderForm.pcommodityDos = [];
+      this.gongyingshangOfForm = [];
+      this.editOrde = false;
       this.addOrEdit = 1;
       this.addOrderVisible = true;
     },
-        // 生成退货单
+    // 生成退货单
     async returnOrder(porderCode, supplierId) {
-      this.createReturnFromGongyingshang = []
+      this.createReturnFromGongyingshang = [];
       this.createReturnFrom.porderCode = porderCode;
       this.createReturnFrom.supplierId = supplierId;
 
@@ -1170,7 +1197,7 @@ export default {
       ///this.createReturnFrom.pcommodityDos赋值
       //制单人员反显
       // this.preturnProducer = ?
-      
+
       this.createReturnVisible = true;
     },
     // 计算数量以及总金额
@@ -1180,16 +1207,16 @@ export default {
       let quantity = 0;
       val.pcommodityDos.forEach((item, index, arr) => {
         if (!isNaN(Number(item.productThnumber))) {
-          quantity += Number(item.productThnumber);
+          quantity = this.add(Number(item.productThnumber),quantity);
         }
       });
-      val.preturnAlltotal = quantity;
+      val.preturnAlltotal = quantity.toFixed(2);
 
       // 计算总价格
       let money = 0;
       val.pcommodityDos.forEach((item, index, arr) => {
-        if (!isNaN(Number(item.productThnumber * item.pcommodityPrice))) {
-          money += Number(item.productThnumber * item.pcommodityPrice);
+        if (!isNaN(this.multiple(item.productThnumber,item.pcommodityPrice))) {
+          money = this.add(this.multiple(item.productThnumber,item.pcommodityPrice),money);
         }
       });
       val.preturnAmount = money;
@@ -1205,6 +1232,7 @@ export default {
           this.createReturnFrom.pcommodityDos.splice(i, 1);
         }
       }
+      this.calculate(this.createReturnFrom)
     },
     // 创建采购退货单
     async createReturnOrder() {
@@ -1251,9 +1279,21 @@ export default {
       this.createReturnVisible = false;
       this.createReturnFrom.pcommodityDos = [];
       this.createReturnFromGongyingshang = [];
-    //   this.getPurchaseList()
+      //   this.getPurchaseList()
       this.getList();
     },
+    // 相加
+    add(arg1, arg2) {
+      return (Math.round(arg1 * 100) + Math.round(arg2 * 100)) / 100;
+    },
+
+    //  subtract(arg1, arg2) {
+    //   return this.add(arg1, -arg2);
+    // },
+    // 相乘
+    multiple(arg1, arg2) {
+      return (Math.round(arg1 * 100) * Math.round(arg2 * 100)) / 10000;
+    }
   }
 };
 </script>

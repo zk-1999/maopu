@@ -7,115 +7,183 @@
       <el-breadcrumb-item>初期库存-盘点</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <!-- <el-row :gutter="20"> -->
-      <!-- ref作用？？ -->
-      <!-- ref="salesOrdermanagementForm" -->
-      <el-form :inline="true" class="demo-form-inline" :model="salesOrdermanagementForm">
-        <!-- 盘点单号 -->
-        <el-form-item label="盘点单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="采购商品" name="first">
+          <el-form
+            :inline="true"
+            class="demo-form-inline search"
+            :model="chaOrderFrom"
+            ref="chaOrderFrom"
+            label-width="90px"
+            label-position="left"
+          >
+            <el-row :gutter="20" class="row">
+              <el-col :span="24">
+                <el-form-item label="盘点单号：" prop="inboundReceipt">
+                  <el-input class="_small" v-model="chaOrderFrom.inboundReceipt"></el-input>
+                </el-form-item>
+                <el-form-item label="制单人：" prop="porderCode">
+                  <el-input v-model="chaOrderFrom.porderCode" class="_small"></el-input>
+                </el-form-item>
+                <el-form-item label="选择仓库：" prop="inboundType">
+                  <el-select v-model="chaOrderFrom.inboundType" placeholder="请选择" class="_small">
+                    <el-option value="0" label="退货出库"></el-option>
+                    <el-option value="1" label="生产出库"></el-option>
+                    <el-option value="3" label="销售出库"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="盘点时间：" prop="inboundStatus">
+                  <el-date-picker
+                    v-model="chaOrderFrom.inboundTime"
+                    type="date"
+                    value-format="yyyy-MM-dd"
+                    placeholder="选择日期"
+                    class="_small"
+                  ></el-date-picker>
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="getList(1)">查 询</el-button>
+                  <el-button type="primary" @click="ResetForm('chaInOrderFrom')">重 置</el-button>
+                  <el-button type="primary" @click="editOrder = true">重 置</el-button>
+                  <!-- <el-button type="primary" @click="addOrderVisible = true">重 置</el-button> -->
+                  <!-- <el-button type="primary" @click="editOrderVisible = true">重 置</el-button> -->
+                  <!-- <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button> -->
+                </el-form-item>
+              </el-col>
+            </el-row>
 
-        <!-- 审核人 -->
-        <el-form-item label="审核人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
+          </el-form>
+          <el-button type="primary">新 增</el-button>
+          <el-table border :data="orderList" @selection-change="handleSelectionChange">
+              <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
+              <el-table-column prop="" label="盘点单号"></el-table-column>
+              <el-table-column prop="" label="商品名称"></el-table-column>
+              <el-table-column prop="" label="盘点仓库"></el-table-column>
+              <el-table-column prop="" label="制单人"></el-table-column>
+              <el-table-column prop="" label="盘点时间"></el-table-column>
+              <el-table-column prop="" label="盘点前库存"></el-table-column>
+              <el-table-column prop="" label="盘点后库存"></el-table-column>
+              <el-table-column prop="" label="单位"></el-table-column>
+              <el-table-column prop="" label="备注  "></el-table-column>
+              
+              <el-table-column label="操作" width="270px" align="center" fixed="right">
+                <template slot-scope="scope">
+                  <el-button
+                    type="success"
+                    size="mini"
+                    @click="lookUpState = true;showEditOrder(scope.row.inboundReceipt)"
+                  >查看</el-button>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
+                    @click="lookUpState = false;showEditOrder(scope.row.inboundReceipt)"
+                  >编辑</el-button>
+                  <el-button
+                    type="danger"
+                    size="mini"
+                    :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
+                    @click="deleteInputOrder(scope.row.inboundReceipt)"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="10"
+            layout="total, prev, pager, next"
+            :total="total"
+          ></el-pagination>
+        </el-tab-pane>
+        <el-tab-pane label="生产商品" name="second">
+          <el-form
+            :inline="true"
+            class="demo-form-inline search"
+            :model="chaOrderFrom"
+            ref="chaOrderFrom"
+            label-width="90px"
+            label-position="left"
+          >
+            <el-row :gutter="20" class="row">
+              <el-col :span="24">
+                <el-form-item label="盘点单号：" prop="inboundReceipt">
+                  <el-input class="_small" v-model="chaOrderFrom.inboundReceipt"></el-input>
+                </el-form-item>
+                <el-form-item label="制单人：" prop="porderCode">
+                  <el-input v-model="chaOrderFrom.porderCode" class="_small"></el-input>
+                </el-form-item>
+                <el-form-item label="选择仓库：" prop="inboundType">
+                  <el-select v-model="chaOrderFrom.inboundType" placeholder="请选择" class="_small">
+                    <el-option value="0" label="退货出库"></el-option>
+                    <el-option value="1" label="生产出库"></el-option>
+                    <el-option value="3" label="销售出库"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="盘点时间：" prop="inboundStatus">
+                  <el-date-picker
+                    v-model="chaOrderFrom.inboundTime"
+                    type="date"
+                    value-format="yyyy-MM-dd"
+                    placeholder="选择日期"
+                    class="_small"
+                  ></el-date-picker>
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="getList(1)">查 询</el-button>
+                  <el-button type="primary" @click="ResetForm('chaInOrderFrom')">重 置</el-button>
+                  <!-- <el-button type="primary" @click="addOrderVisible = true">重 置</el-button> -->
+                  <!-- <el-button type="primary" @click="editOrderVisible = true">重 置</el-button> -->
+                  <!-- <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button> -->
+                </el-form-item>
+              </el-col>
+            </el-row>
 
-        <!-- 制单人 -->
-        <el-form-item label="制单人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <br />
-
-        <!-- 选择仓库 -->
-        <el-form-item label="选择仓库">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 仓库锁盘 -->
-        <el-form-item label="仓库锁盘" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 盘点时间 -->
-        <el-form-item label="盘点时间" class="mar">
-          <el-date-picker
-            v-model="value1"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-        </el-form-item>
-
-        <!-- 重置按钮 -->
-        <el-form-item class="mar">
-          <el-button type="primary" size="small" @click="q">重 置</el-button>
-        </el-form-item>
-        <!-- 查询按钮 -->
-        <el-form-item>
-          <el-button type="primary" size="small" @click="q">查 询</el-button>
-        </el-form-item>
-      </el-form>
-      <!-- </el-row> -->
-      <!-- 7个按钮 -->
-      <el-button type="primary" size="small" @click="addOrder = true">新 增</el-button>
-      <el-button type="primary" size="small" @click="editOrder = true">编 辑</el-button>
-      <el-button type="danger" size="small">删 除</el-button>
-      <el-button type="info" size="small">审 核</el-button>
-      <el-button type="info" size="small">作 废</el-button>
-      <el-button type="info" size="small">excel导入数据</el-button>
-      <el-button type="info" size="small">excel导出数据</el-button>
-      <!-- 表格 -->
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        border
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="盘点单号" width="120">
-          <template slot-scope="scope">{{ scope.row.no }}</template>
-        </el-table-column>
-
-        <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-        <el-table-column prop label="盘点仓库"></el-table-column>
-        <el-table-column prop label="制单人"></el-table-column>
-        <el-table-column prop label="盘点时间"></el-table-column>
-        <el-table-column prop label="审核状态"></el-table-column>
-        <el-table-column prop label="是否导入盘点结果"></el-table-column>
-        <el-table-column prop label="审核人"></el-table-column>
-        <el-table-column prop label="审核时间"></el-table-column>
-        <el-table-column prop label="仓库锁盘"></el-table-column>
-        <el-table-column prop label="备注"></el-table-column>
-      </el-table>
-
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[3, 5, 10, 15]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      ></el-pagination>
+          </el-form>
+          <el-button type="primary">新 增</el-button>
+          <el-table border :data="orderList" @selection-change="handleSelectionChange">
+              <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
+              <el-table-column prop="" label="盘点单号"></el-table-column>
+              <el-table-column prop="" label="商品名称"></el-table-column>
+              <el-table-column prop="" label="盘点仓库"></el-table-column>
+              <el-table-column prop="" label="制单人"></el-table-column>
+              <el-table-column prop="" label="盘点时间"></el-table-column>
+              <el-table-column prop="" label="盘点前库存"></el-table-column>
+              <el-table-column prop="" label="盘点后库存"></el-table-column>
+              <el-table-column prop="" label="单位"></el-table-column>
+              <el-table-column prop="" label="备注  "></el-table-column>
+              
+              <el-table-column label="操作" width="270px" align="center" fixed="right">
+                <template slot-scope="scope">
+                  <el-button
+                    type="success"
+                    size="mini"
+                    @click="lookUpState = true;showEditOrder(scope.row.inboundReceipt)"
+                  >查看</el-button>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
+                    @click="lookUpState = false;showEditOrder(scope.row.inboundReceipt)"
+                  >编辑</el-button>
+                  <el-button
+                    type="danger"
+                    size="mini"
+                    :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
+                    @click="deleteInputOrder(scope.row.inboundReceipt)"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="10"
+            layout="total, prev, pager, next"
+            :total="total"
+          ></el-pagination>
+        </el-tab-pane>
+      </el-tabs>
     </el-card>
     <!-- 新增盘点单 -->
     <!-- :title="addOrder?"新增销售订单":"编辑销售订单""  :visible.sync="addOrder || editOrder"-->
@@ -151,7 +219,7 @@
             v-model="textarea2"
           ></el-input>
         </el-form-item>
-        
+
         <br />
         <!-- 3个按钮 -->
         <el-form-item>
@@ -188,9 +256,7 @@
         ></el-pagination>
         <hr />
         <!-- 盘点总实存 -->
-        <el-form-item label="盘点总实存">
-          0
-        </el-form-item>
+        <el-form-item label="盘点总实存">0</el-form-item>
 
         <!-- 2个按钮 -->
         <el-form-item label class="mar" style="margin-left:500px;">
@@ -201,7 +267,12 @@
     </el-dialog>
 
     <!-- 已盘点单详情 -->
-    <el-dialog :title=" '已盘点单详情' " :visible.sync="editOrder" width="60%" :before-close="handleClose">
+    <el-dialog
+      :title=" '已盘点单详情' "
+      :visible.sync="editOrder"
+      width="60%"
+      :before-close="handleClose"
+    >
       <!-- 新增出库单表格 -->
       <el-form title="订单" inline="true">
         <!-- 盘点编号 -->
@@ -211,7 +282,7 @@
         <!-- 盘点时间 不需要？？？-->
         <!-- <el-form-item label="盘点时间">
           <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item> -->
+        </el-form-item>-->
         <!-- 盘点仓库 -->
         <el-form-item label="盘点仓库" class="mar">
           <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
@@ -223,18 +294,22 @@
             ></el-option>
           </el-select>
         </el-form-item>
+         <el-form-item label="制单人" class="mar">
+          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+        </el-form-item>
         <!-- 备注 -->
         <br />
-        <el-form-item label="备注">
+        <el-form-item label="备注：" prop="inboundRemark">
           <el-input
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
-            v-model="textarea2"
+            v-model="salesOrdermanagementForm.inboundRemark"
+            style="width:600px"
+            :disabled="lookUpState"
           ></el-input>
         </el-form-item>
 
-        <hr/>
+        <hr />
 
         <!-- 需要放在一张表单里面吗？？？ -->
         <!-- 商品名称 -->
@@ -245,7 +320,7 @@
         <el-form-item label="商品编码">
           <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
         </el-form-item>
-        
+
         <!-- 1个按钮 -->
         <el-form-item>
           <el-button type="primary" size="small">查 询</el-button>
@@ -254,7 +329,7 @@
         <hr />
         <!-- 盘点结果 -->
         <el-form-item label="盘点结果">
-            <!-- 使用插值直接取计算所得的结果值 -->
+          <!-- 使用插值直接取计算所得的结果值 -->
         </el-form-item>
 
         <hr />
@@ -275,14 +350,12 @@
           <el-table-column prop label="成本及成本差异"></el-table-column>
         </el-table>
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[3, 5, 10, 15]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        ></el-pagination>
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="10"
+            layout="total, prev, pager, next"
+            :total="total"
+          ></el-pagination>
         <hr />
 
         <!-- 2个按钮 -->
@@ -419,7 +492,14 @@ export default {
           operate: ""
         }
       ],
-      title: ""
+      title: "",
+
+      // 12.26
+      activeName: "first", //默认标签页
+      // 采购商品页
+      chaOrderFrom: {}
+
+      // 生产商品页
     };
   },
   created() {

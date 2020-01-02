@@ -7,127 +7,216 @@
       <el-breadcrumb-item>库存查询</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <!-- <el-row :gutter="20"> -->
-      <!-- ref作用？？ -->
-      <!-- ref="salesOrdermanagementForm" -->
-      <el-form :inline="true" class="demo-form-inline" :model="salesOrdermanagementForm">
-        <!-- 商品编码 -->
-        <el-form-item label="商品编码">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="采购商品" name="first">
+          <el-form
+            :inline="true"
+            class="demo-form-inline search"
+            :model="chaOrderFrom"
+            ref="chaOrderFrom"
+            label-width="90px"
+            label-position="left"
+          >
+            <el-row :gutter="20" class="row">
+              <el-col :span="24">
+                <el-form-item label="商品小类型" prop="porderProducer">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="商品名称" prop="porderArrivalstatus">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <!-- <el-form-item label="所在仓库" prop="porderState">
+                  <el-select v-model="chaOrderFrom" placeholder="请选择" class="_small">
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="初始化"></el-option>
+                    <el-option value="1" label="待初审"></el-option>
+                    <el-option value="2" label="初审未通过"></el-option>
+                  </el-select>
+                </el-form-item> -->
+                
+                <el-form-item>
+                  <el-button @click="getList(1)">查 询</el-button>
+                  <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
 
-        <!-- 所在仓库 -->
-        <el-form-item label="所在仓库" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
 
-        <!-- 库存类型 -->
-        <el-form-item label="库存类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
 
-        <!-- 商品名称 -->
-        <el-form-item label="商品名称" class="mar">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
+          <el-table border :data="addOrderForm.pcommodityDos" @selection-change="addSelectionChange">
+          <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
+          <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
+          <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
+          <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+          <el-table-column prop="supgoolsId" label="商品描述"></el-table-column>
+          <el-table-column prop="supgoolsSplicing" label="商品库存" width="270px" align="center"></el-table-column>
+          <el-table-column prop="xxx" label="单位"></el-table-column>
+          <!-- <el-table-column prop="xxx" label="仓库名称"></el-table-column> -->
+    
+          </el-table>
 
-        <!-- 品牌 -->
-        <el-form-item label="品牌" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
 
-        <!-- 重置按钮 -->
-        <el-form-item class="mar">
-          <el-button type="primary" size="small" @click="q">重 置</el-button>
-        </el-form-item>
-        <!-- 查询按钮 -->
-        <el-form-item>
-          <el-button type="primary" size="small" @click="q">查 询</el-button>
-        </el-form-item>
-      </el-form>
-      <!-- 2个按钮 -->
-      <el-button type="info" size="small" @click="addOrder = true">商品库存设置</el-button>
-      <el-button type="info" size="small">导 出</el-button>
-      <!-- 表格 -->
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        border
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="商品编码" width="120">
-          <template slot-scope="scope">{{ scope.row.no }}</template>
-        </el-table-column>
-        <el-table-column prop label="商品名称"></el-table-column>
-        <el-table-column prop label="商品库存"></el-table-column>
-        <el-table-column prop label="规格名称"></el-table-column>
-        <el-table-column prop label="规格库存"></el-table-column>
-        <el-table-column prop label="单位"></el-table-column>
-        <el-table-column prop label="仓库名称1"></el-table-column>
-        <el-table-column prop label="仓库名称2"></el-table-column>
-      </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="生产商品" name="second"> 
+          <el-form
+            :inline="true"
+            class="demo-form-inline search"
+            :model="chaOrderFrom"
+            ref="chaOrderFrom"
+            label-width="90px"
+            label-position="left"
+          >
+            <el-row :gutter="20" class="row">
+              <el-col :span="24">
+                <el-form-item label="商品名称：" prop="porderArrivalstatus">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="产品名称：" prop="porderProducer">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="产品类型：" prop="porderArrivalstatus">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="产品规格：" prop="porderArrivalstatus">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <!-- <el-form-item label="所在仓库：" prop="porderState">
+                  <el-select v-model="chaOrderFrom" placeholder="请选择" class="_small">
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="初始化"></el-option>
+                    <el-option value="1" label="待初审"></el-option>
+                    <el-option value="2" label="初审未通过"></el-option>
+                  </el-select>
+                </el-form-item> -->
+                
+                <el-form-item>
+                  <el-button @click="getList(1)">查 询</el-button>
+                  <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
 
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[3, 5, 10, 15]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-      ></el-pagination>
+
+
+          <el-table border :data="addOrderForm.pcommodityDos" @selection-change="addSelectionChange">
+          <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
+          <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
+          <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
+          <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+          <el-table-column prop="supgoolsId" label="商品描述"></el-table-column>
+          <el-table-column prop="supgoolsSplicing" label="商品库存" width="270px" align="center"></el-table-column>
+          <el-table-column prop="xxx" label="单位"></el-table-column>
+          <!-- <el-table-column prop="xxx" label="仓库名称"></el-table-column> -->
+    
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
     </el-card>
     <!-- 新增出库单 -->
     <!-- :title="addOrder?"新增销售订单":"编辑销售订单""  :visible.sync="addOrder || editOrder"-->
-    <el-dialog :title=" '商品库存手动设置' " :visible.sync="addOrder" width="60%" :before-close="handleClose">
+    <el-dialog
+      :title=" '商品库存手动设置' "
+      :visible.sync="addOrder"
+      width="60%"
+      :before-close="handleClose"
+    >
       <!-- 修改库存表单 -->
       <el-form title="库存" inline="true">
-        <!-- 批量改库存 -->
-        <el-form-item label="批量改库存">
-          <el-input
-            placeholder="请输入内容"
-            v-model="salesOrdermanagementForm.orderNum"
-            style="width:220px;"
-          >
-            <el-select
-              v-model="salesOrdermanagementForm.select"
-              slot="prepend"
-              style="width:90px;"
-              value="1"
-            >
-              <el-option label="仓库1" value="1"></el-option>
-              <el-option label="仓库2" value="2"></el-option>
-            </el-select>
-            <!-- <el-button slot="append" icon="el-icon-search"></el-button> -->
-          </el-input>
-        </el-form-item>
+        <el-form-item label="商品大类型" prop="porderCode">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="商品小类型" prop="porderProducer">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="商品名称" prop="porderArrivalstatus">
+                  <el-select
+                    v-model="chaOrderFrom"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>
         <!-- 3个按钮 -->
         <el-form-item>
-          <el-button type="primary" size="small" class="mar">确 定</el-button>
+          <el-button type="primary" size="small" class="mar">查 询</el-button>
         </el-form-item>
         <hr />
 
@@ -140,32 +229,29 @@
 
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop label="商品名称"></el-table-column>
-          <el-table-column prop label="规格名称"></el-table-column>
           <el-table-column prop label="商品库存"></el-table-column>
-          <el-table-column prop label="入库编号"></el-table-column>
           <el-table-column prop label="单位"></el-table-column>
-          <el-table-column prop label="规格库存"></el-table-column>
-          <el-table-column prop label="仓库1"></el-table-column>
-          <el-table-column prop label="上下架">
-              <el-button type="primary" size="small">上下架</el-button>
+          <el-table-column prop label="仓库"></el-table-column>
+          <el-table-column prop label="修改数量">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.pcommodityPrice" @blur="addCalculate(addOrderForm)"></el-input>
+            </template>
           </el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[3, 5, 10, 15]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
+          :page-size="10"
+          layout="total,  prev, pager, next"
           :total="total"
         ></el-pagination>
-        <hr />
-        <!-- 2个按钮 -->
-        <el-form-item label style="margin-left:750px;">
-          <el-button type="info" size="small">保 存</el-button>
-          <el-button type="info" size="small">取 消</el-button>
-        </el-form-item>
+        
       </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addCancel()">取 消</el-button>
+        <el-button @click="addSave" type="primary">确 认</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -294,7 +380,10 @@ export default {
           operate: ""
         }
       ],
-      title: ""
+      title: "",
+
+      activeName: "first", //默认标签页
+      chaOrderFrom:{},//查询表单
     };
   },
   created() {
@@ -484,5 +573,10 @@ hr {
 }
 .a {
   text-align: right;
+}
+.el-form-item {
+  ._small {
+    width: 150px;
+  }
 }
 </style>  

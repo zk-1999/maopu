@@ -102,6 +102,7 @@
       :visible.sync="addbumenDialogVisible"
       width="50%"
       :before-close="handleClose"
+       @closed="dialogClosed"
     >
     <div class="fenge">报销人员信息</div>
       <el-form :inline="true" class="demo-form-inline" :model="addDispatchListForm" ref="addDispatchListFormRef" :rules="addDispatchListRules">
@@ -111,6 +112,7 @@
         <el-form-item label="报销类型：" prop="reimbursementType">
           <el-input v-model="addDispatchListForm.reimbursementType" ></el-input>
         </el-form-item>
+        <br>
         <el-form-item label="备注信息：" prop="reimbursementBxremark">
           <el-input
             type="textarea"
@@ -118,10 +120,10 @@
             placeholder="请输入内容"
             v-model="addDispatchListForm.reimbursementBxremark"
           ></el-input>
-        </el-form-item>
+        </el-form-item >
 <div class="fenge1">报销凭证上传/查看</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item label="" prop="reimbursementVoucher">
           <el-upload
             ref="upload"
             :action="ip"
@@ -136,9 +138,10 @@
               <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
+  
 <div class="fenge1">付款凭证</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item label="" prop="reimbursementMessage">
           <el-upload
             ref="upload"
             :action="ip"
@@ -173,6 +176,7 @@
         <el-form-item label="报销类型：" prop="reimbursementType">
           <el-input v-model="editDispatchListForm.reimbursementType" :disabled="xianshi"></el-input>
         </el-form-item>
+        <br>
         <el-form-item label="备注信息：" prop="reimbursementBxremark">
           <el-input
           :disabled="xianshi"
@@ -184,7 +188,8 @@
         </el-form-item>
 <div class="fenge1">报销凭证上传/查看</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item v-if="editDispatchListForm.reimbursementVoucher">
+        <img width="20%" :src="ip1 +editDispatchListForm.reimbursementVoucher" alt="" @click="a(editDispatchListForm.reimbursementVoucher)">
           <el-upload
           :disabled="xianshi"
             ref="upload"
@@ -202,7 +207,9 @@
         </el-form-item>
 <div class="fenge1">付款凭证</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item v-if="editDispatchListForm.reimbursementMessage">
+        <img width="20%" :src="ip1+editDispatchListForm.reimbursementMessage" alt="" @click="a(editDispatchListForm.reimbursementMessage)">
+       
           <el-upload
           :disabled="xianshi"
             ref="upload"
@@ -262,12 +269,23 @@
           <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
       </span>
     </el-dialog>
+     <el-dialog
+      title=""
+      :visible.sync="tupainfangdadialogVisible"
+      width="45%"
+      :before-close="handleClose" class="fanggda">
+      <img :src="tupainfangda" alt="" width="100%">
+      <span slot="footer" class="dialog-footer">
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
+      tupainfangda:'',
+      tupainfangdadialogVisible:false,
       delVisibleqi:false,
       dialogVisible: false,
       dialogImageUrl: '',
@@ -281,6 +299,7 @@ export default {
       total: 0,
       delarr: "",
       ip:'',
+      ip1:'',
       selectedList: [],
       departmentList: [],
       chaDispatchListForm: {
@@ -293,13 +312,13 @@ export default {
         reimbursementStatus:'',
       },
       addDispatchListForm: {
-        reimbursementBxnumbers: '',
-        reimbursementBxproducer: '',
-        reimbursementBxtime: '',
-        reimbursementType: '',
-        reimbursementVoucher: '',
-        reimbursementBxremark: '',
-        reimbursementMessage: '',
+        reimbursementBxnumbers:'',
+        reimbursementBxproducer:'',
+        reimbursementBxtime:'',
+        reimbursementType:'',
+        reimbursementVoucher:'',
+        reimbursementBxremark:'',
+        reimbursementMessage:'',
       },
       editDispatchListForm: {
         reimbursementBxnumbers: '',
@@ -387,7 +406,12 @@ export default {
     this.getCookie();
   },
   methods: {
+    a(url){
+      this.tupainfangdadialogVisible=true;
+      this.tupainfangda=this.ip1+url;
+    },
     async getDispatchListList(){
+      this.ip1=this.ips;
       this.ip=this.ips+'upload';
       const { data: res } = await this.$http.post("reimbursement/selectReimbursement", this.chaDispatchListForm);
       this.dispatchListList=res.body.rows;
@@ -416,10 +440,8 @@ export default {
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-                console.log('reimbursementVoucher');
-                
-                this.addProductForm.reimbursementVoucher=file.response.message;
-                this.editProductForm.reimbursementVoucher=file.response.message;
+                this.addDispatchListForm.reimbursementVoucher=file.response.message;
+                this.editDispatchListForm.reimbursementVoucher=file.response.message;
 
                 // this.productList.picture=file.response.message;
                 
@@ -433,10 +455,9 @@ export default {
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-                console.log('reimbursementMessage');
                 
-                this.addProductForm.reimbursementMessage=file.response.message;
-                this.editProductForm.reimbursementMessage=file.response.message;
+                this.addDispatchListForm.reimbursementMessage=file.response.message;
+                this.editDispatchListForm.reimbursementMessage=file.response.message;
 
                 // this.productList.picture=file.response.message;
                 
@@ -624,6 +645,9 @@ export default {
       console.log(val);
       this.selectedList = val;
     },
+    dialogClosed(){
+        this.$refs.addDispatchListFormRef.resetFields();
+      },
     // 解决弹出框title
     handleTitle() {
       if (this.addOrder == true) {

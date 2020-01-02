@@ -12,15 +12,15 @@
         class="demo-form-inline search"
         :model="chaOrderFrom"
         ref="chaOrderFrom"
-        label-width="80px"
+        label-width="90px"
         label-position="left"
       >
         <el-row :gutter="20" class="row">
           <el-col :span="24">
-            <el-form-item label="订单编号" prop="porderCode">
+            <el-form-item label="订单编号：" prop="porderCode">
               <el-input placeholder="请输入订单编号" class="_small" v-model="chaOrderFrom.porderCode"></el-input>
             </el-form-item>
-            <el-form-item label="制单人员" prop="porderProducer">
+            <el-form-item label="制单人员：" prop="porderProducer">
               <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="_small"></el-input>
             </el-form-item>
             
@@ -36,7 +36,7 @@
                 <el-option value="2" label="全部到货"></el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="订单状态" prop="porderState">
+            <el-form-item label="订单状态：" prop="porderState">
               <el-select v-model="chaOrderFrom.porderState" placeholder="请选择" class="_small">
                 <el-option value='10' label="全部"></el-option>
                 <!-- <el-option value="0" label="初始化"></el-option> -->
@@ -54,7 +54,7 @@
                 <!-- <el-option value="9" label="结束"></el-option> -->
               </el-select>
             </el-form-item>
-            <el-form-item label="制单时间" prop="time">
+            <el-form-item label="制单时间：" prop="time">
               <el-date-picker
                 v-model="chaOrderFrom.time"
                 type="daterange"
@@ -92,7 +92,7 @@
         </el-table-column> -->
         <!-- <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column> -->
         <!-- <el-table-column prop="basicDO.basicRetainone" label="入库仓库"></el-table-column> -->
-        <el-table-column prop="supplierDO.supName" label="供应商" width="120px" align="center"></el-table-column>
+        <el-table-column prop="supplierDO.supName" label="供应商" width="250px" align="center"></el-table-column>
         <!-- <el-table-column prop="porderArrivalstatus" label="到货情况"></el-table-column> -->
         <el-table-column prop="porderProducer" label="制单人员"></el-table-column>
         <!-- <el-table-column prop="porderBuyer" label="采购员"></el-table-column> -->
@@ -123,13 +123,11 @@
           <template slot-scope="scope">
             <el-button
               type="success"
-              icon="el-icon-edit"
               size="mini"
               @click="lookUpState = true;checkOrder(scope.row.porderCode)"
             >查看</el-button>
             <el-button
               type="primary"
-              icon="el-icon-edit"
               size="mini"
               @click="lookUpState = false;checkOrder(scope.row.porderCode)"
               :disabled="scope.row.porderState!=1"
@@ -148,7 +146,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-      title="审核"
+      :title="lookUpState?'查看订单':'审核'"
       :visible.sync="checkOrderVisible"
       width="75%"
       :before-close="handleClose"
@@ -156,29 +154,59 @@
     >
       <el-form
         :label-position="labelPosition"
+        label-width="100px"
         :model="checkOrderForm"
         ref="checkOrderForm"
-        :rules="checkOrderFormRules"
         :inline="true"
       >
+      <div class="fenge">商品信息</div>
         <el-table
           border
           :data="checkOrderForm.pcommodityDos"
           @selection-change="addSelectionChange"
         >
+        
           <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
           <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
           <el-table-column prop="supgoolssmallType" label="商品名称"></el-table-column>
           <el-table-column prop="supgoolsId" label="商品编码"></el-table-column>
           <el-table-column prop="supgoolsSplicing" label="商品描述" width="270px" align="center"></el-table-column>
-          <el-table-column prop label="库存"></el-table-column>
-          <el-table-column prop label="单位"></el-table-column>
-          <el-table-column prop label="单价（元）"></el-table-column>
+          <el-table-column label="单位">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.pcommodityUnit" placeholder="请选择" class="_small" :disabled="true">
+                <el-option
+                  v-for="item in unit"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="入库仓库">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.basicId" placeholder="请选择" class="_small" :disabled="true">
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pcommodityPrice" label="单价（元）"></el-table-column>
           <el-table-column prop="pcommodityPalnnum" label="数量"></el-table-column>
-          <el-table-column prop="pcommodityPrice" label="金额"></el-table-column>
+          <el-table-column prop="pcommodityPrice" label="金额">
+            <template slot-scope="scope">
+              <span
+                v-if="(!isNaN(scope.row.pcommodityPrice))&&(!isNaN(scope.row.pcommodityPalnnum))"
+              >{{multiple(scope.row.pcommodityPrice ,scope.row.pcommodityPalnnum).toFixed(2)}}</span>
+            </template>
+          </el-table-column>
         </el-table>
 
-        <hr />
+        <div class="fenge1">供应商信息</div>
 
         <el-table border :data="gongyingshangOfForm">
           <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
@@ -189,18 +217,18 @@
           <el-table-column prop="supPhone" label="手机"></el-table-column>
         </el-table>
 
-        <hr />
-        <el-form-item label="总数量" prop="porderTotalnum">
+        <div class="fenge1">付款信息</div>
+        <el-form-item label="总数量：" prop="porderTotalnum">
           <el-input v-model="checkOrderForm.porderTotalnum" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="总金额" prop="porderTotalmoney">
+        <el-form-item label="总金额：" prop="porderTotalmoney">
           <el-input v-model="checkOrderForm.porderTotalmoney" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="需预付金额" prop="porderPalnmoney">
+        <el-form-item label="需预付金额：" prop="porderPalnmoney">
           <el-input v-model="checkOrderForm.porderPalnmoney" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付说明" prop="porderExplain">
+        <el-form-item label="预付说明：" prop="porderExplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -210,13 +238,13 @@
           ></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge1">采购描述</div>
 
-        <el-form-item label="制单人员" prop="porderProducer">
+        <el-form-item label="制单人员：" prop="porderProducer">
           <el-input v-model="checkOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
         </el-form-item>
 
-        <el-form-item label="采购人员" prop="porderBuyer">
+        <el-form-item label="采购人员：" prop="porderBuyer">
           <el-input v-model="checkOrderForm.porderBuyer" :disabled="true" class="_small"></el-input>
         </el-form-item>
 
@@ -231,7 +259,7 @@
           </el-select>
         </el-form-item> -->
 
-        <el-form-item label="下单时间" prop="porderOrdertime">
+        <el-form-item label="下单时间：" prop="porderOrdertime">
           <el-date-picker
             v-model="checkOrderForm.porderOrdertime"
             type="date"
@@ -243,7 +271,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="采购周期" prop="time">
+        <el-form-item label="采购周期：" prop="time">
           <el-date-picker
             v-model="checkOrderForm.time"
             type="daterange"
@@ -256,7 +284,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="备注" prop="porderBuyexplain">
+        <el-form-item label="备注：" prop="porderBuyexplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -268,18 +296,18 @@
 
         <!-- 查看状态 -->
         <div v-if="lookUpState && checkOrderForm.porderState != 1">
-        <hr />
+        <div class="fenge1">采购审核（初审）</div>
 
-        <el-form-item label="审核人" prop="porderReviewman">
+        <el-form-item label="审核人：" prop="porderReviewman">
           <el-input v-model="checkOrderForm.porderReviewman" :disabled="true"></el-input>
         </el-form-item>
         &nbsp;    &nbsp;    
-        <el-form-item label="审核结果" prop="porderPalnmoney">
+        <el-form-item label="审核结果：" prop="porderPalnmoney">
           <el-radio v-model="checkOrderForm.porderState" label="3" :disabled="true">通过</el-radio>
           <el-radio v-model="checkOrderForm.porderState" label="2" :disabled="true">驳回</el-radio>
         </el-form-item>
         <br>
-        <el-form-item label="备注" prop="porderReviewexplain" >
+        <el-form-item label="备注：" prop="porderReviewexplain" >
           <el-input
             type="textarea"
             v-model="checkOrderForm.porderReviewexplain"
@@ -290,18 +318,17 @@
         </div>
         <!-- 编辑状态 -->
         <div v-if="!lookUpState">
-        <hr />
-
-        <el-form-item label="审核人" prop="porderReviewman">
+        <div class="fenge1">采购审核（初审）</div>
+        <el-form-item label="审核人：" prop="porderReviewman">
           <el-input v-model="checkOrderForm.porderReviewman" :disabled="true"></el-input>
         </el-form-item>
         &nbsp;    &nbsp;    
-        <el-form-item label="审核结果" prop="porderPalnmoney" >
+        <el-form-item label="审核结果：" prop="porderPalnmoney" >
           <el-radio v-model="radio" label="0">通过</el-radio>
           <el-radio v-model="radio" label="1">驳回</el-radio>
         </el-form-item>
         <br>
-        <el-form-item label="备注" prop="porderReviewexplain">
+        <el-form-item label="备注：" prop="porderReviewexplain">
           <el-input
             type="textarea"
             v-model="checkOrderForm.porderReviewexplain"
@@ -327,8 +354,8 @@
         </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="checkOrderVisible=false">取消</el-button>
-        <el-button @click="editPurOrderState()" type="primary" v-if="!lookUpState">保存</el-button>
+        <el-button @click="checkOrderVisible=false">取 消</el-button>
+        <el-button @click="editPurOrderState()" type="primary" v-if="!lookUpState">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -473,23 +500,27 @@ export default {
     this.chaCopy();
     this.getList();
     this.getCha();
+    this.getWarehouseOptions();
+    this.queryUnit();
     // this.getCookie();
   },
   methods: {
     //读取cookie
     getCookie: function() {
-      if (document.cookie.length > 0) {
-        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
-        for (var i = 0; i < arr.length; i++) {
-          var arr2 = arr[i].split("="); //再次切割
-          //判断查找相对应的值
-          if (arr2[0] == "userName") {
-            //  console.log(arr2[1])
-            this.checkOrderForm.porderReviewman = arr2[1]; //保存到保存数据的地方
-          }
-        }
-        this.checked = true;
-      }
+      // if (document.cookie.length > 0) {
+      //   var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+      //   for (var i = 0; i < arr.length; i++) {
+      //     var arr2 = arr[i].split("="); //再次切割
+      //     //判断查找相对应的值
+      //     if (arr2[0] == "userName") {
+      //       //  console.log(arr2[1])
+      //       this.checkOrderForm.porderReviewman = arr2[1]; //保存到保存数据的地方
+      //     }
+      //   }
+      //   this.checked = true;
+      // }
+      var storage=window.localStorage;
+      this.checkOrderForm.porderReviewman = storage.getItem("username")
     },
     ResetForm(formName) {
       this.$refs[formName].resetFields();
@@ -513,13 +544,27 @@ export default {
       this.orderList = res.body.rows;
       this.total = res.body.total;
     },
+    // 获取仓库列表
+    async getWarehouseOptions() {
+      const { data: res } = await this.$http.post("jc/Basic/selectwarehousing");
+      // console.log('仓库')
+      // console.log(res)
+      this.warehouseOptions = res; //如何取
+    },
+    // 查询库存单位
+    async queryUnit() {
+      const { data: res } = await this.$http.post("jc/Basic/selectstorenum");
+      // console.log('单位')
+      // console.log(res)
+      this.unit = res;
+    },
     handleSizeChange(val) {
       this.chaOrderFrom.pageSize = val;
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.getList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.chaOrder.pageCode = val;
       this.chaOrderFrom.pageCode = val;
       this.currentPage = val;
@@ -538,18 +583,18 @@ export default {
 
     addSelectionChange(val) {
       this.addSelectedList = val;
-      console.log(val);
+      // console.log(val);
     },
     // 审核订单
     async checkOrder(porderCode) {
 
-      console.log(porderCode);
+      // console.log(porderCode);
       this.checkOrderForm.porderCode = porderCode;
 
       const { data: res } = await this.$http.post("jh/purchase/dtjresultMap", {
         porderCode: porderCode
       });
-      console.log(res);
+      // console.log(res);
 
       for (let i = 0; i < res.body.result[0].pcommodityDos.length; i++) {
         this.delarr.push(res.body.result[0].pcommodityDos[i].suppliergoolsId);
@@ -606,6 +651,9 @@ export default {
       this.checkOrderForm.porderBuyer = res.body.result[0].porderBuyer;
       // this.addOrderForm.lab = res[0].
       this.checkOrderForm.pcommodityDos = res.body.result[0].pcommodityDos;
+      this.checkOrderForm.pcommodityDos.forEach((item,index,array)=>{
+        item.pcommodityUnit = Number(item.pcommodityUnit);
+      })
 
       this.checkOrderForm.supplierId = Number(res.body.result[0].supplierId);
 
@@ -675,7 +723,7 @@ export default {
         "jc/suppliergoods/selectSuppliergoolslist",
         { params: { lab: this.chooseGoodsForm.goodsBigType } }
       );
-      console.log(res);
+      // console.log(res);
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -803,8 +851,8 @@ export default {
       this.chooseGoodsForm.goodsChoosed = [];
     },
     changeGongyingshang(val) {
-      console.log("供应商变化");
-      console.log(val);
+      // console.log("供应商变化");
+      // console.log(val);
 
       this.gongyingshangOfForm = [];
       this.gongyinshang.forEach((item, index, arr) => {
@@ -812,7 +860,7 @@ export default {
           this.gongyingshangOfForm.push(item);
         }
       });
-      console.log(this.gongyingshangOfForm);
+      // console.log(this.gongyingshangOfForm);
     },
     // 供应商删除按钮
     deleteGongyingshang() {
@@ -832,11 +880,15 @@ export default {
         "jc/Basic/selectwarehousing"
       );
       this.gongyinshang = res.body.rows;
-      console.log("供应商---");
-      console.log(this.gongyinshang);
+      // console.log("供应商---");
+      // console.log(this.gongyinshang);
       this.cangku = res1;
-      console.log("仓库");
-      console.log(this.cangku);
+      // console.log("仓库");
+      // console.log(this.cangku);
+    },
+
+    multiple(arg1, arg2) {
+      return (Math.round(arg1 * 100) * Math.round(arg2 * 100)) / 10000;
     }
   }
 };
@@ -879,5 +931,23 @@ hr {
   float: right;
   margin-right: 50px;
   margin-top: 15px;
+}
+.fenge {
+  position: absolute;
+  top: 34px;
+  left: 0px;
+  height: 25px;
+  width: 98.5%;
+  line-height: 25px;
+  padding-left: 15px;
+  background-color: #dcdfe6;
+}
+.fenge1 {
+  height: 25px;
+  width: 98.5%;
+  line-height: 25px;
+  padding-left: 15px;
+  background-color: #dcdfe6;
+  margin-bottom: 20px;
 }
 </style>

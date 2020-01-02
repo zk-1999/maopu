@@ -49,12 +49,12 @@
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
         <el-table-column prop="cusName" label="客户名称">
           <template slot-scope="scope">
-            {{scope.row.cusName == null ? '自生产' : scope.row.cusName}}
+            {{scope.row.saleOrderDO == null ? '自生产' : scope.row.cusName==null? '没有客户名称' : scope.row.saleOrderDO.cusName}}
           </template>
         </el-table-column>
         <el-table-column prop="sorderWarehouse" label="合同号">
           <template slot-scope="scope">
-            {{scope.row.sorderWarehouse == null ? '自生产' : scope.row.sorderWarehouse}}
+            {{scope.row.saleOrderDO == null ? '自生产' : scope.row.sorderWarehouse == null ? '没有合同号' : scope.row.sorderWarehouse}}
           </template>
         </el-table-column>
         <el-table-column prop="saleOrderDO.sorderAddress" label="交货地点">
@@ -368,7 +368,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="商品名称：" prop="productgoodsId">
-          <el-select v-model="editManageForm.producinggoodsDO.productgoodsId" class="sel" placeholder="请选择" @change="guoqushangpinmingcheng">
+          <el-select v-model="editManageForm.producinggoodsDO.productgoodsId" class="sel" placeholder="请选择" @change="guoqushangpinmingcheng" :disabled="editManageForm.saleOrderDO">
             <el-option
               v-for="item in shangpinmingcheng"
               :key="item.productgoodsId"
@@ -601,7 +601,7 @@
     
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addManage">确 定</el-button>
+        <el-button type="primary" @click="editManage">确 定</el-button>
     </span>
     </el-dialog>
 
@@ -768,23 +768,7 @@ export default {
        this.ManageList();
        this.addManageVisible=false;
     },
-    async showManage(prolistCode,xian,sorderStatus) {
-      // if(xian=='0'){
-      //   this.xianshi=true;
-      //   if(sorderStatus=='0' || sorderStatus=='1'){
-      //     this.xianshi1=false;
-      //     this.xianshi2=false;
-      //   }else if(sorderStatus=='2' || sorderStatus=='3'){
-      //     this.xianshi1=true;
-      //   }else{
-      //     this.xianshi1=true;
-      //     this.xianshi2=true;
-      //   }
-      // }else if(xian=='1'){
-      //   this.xianshi=false;
-      //  this.xianshi1=false;
-      //   this.xianshi2=false;
-      // }
+    async showManage(prolistCode,xian,sorderStatus) { 
       this.guoqushangpin();
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
@@ -792,20 +776,18 @@ export default {
       this.editManageForm=res.body.SCProductionDO;
       this.editManageVisible = true;
     },
+    async editManage(){
+      const { data: res } = await this.$http.post("sc/Production/updateProduction", this.editManageForm);
+      console.log(res);
+      this.ManageList();
+      this.editManageVisible = false;
+    },
     async list(){
       const { data: res } = await this.$http.post("jc/Basic/selectparameters");
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
-
-    //   const { data: res1 } = await this.$http.post("jc/Basic/selectpaymode");
-    //   const { data: res2 } = await this.$http.post("jc/Basic/selectinpaymode");
-    //   const { data: res3 } = await this.$http.post("jc/Basic/selectzijin");
-    //   this.zijinzhanghu=res3;
-    //   this.shouruleixing=res2;
-    //   this.huobileixing=res1;
       this.yinshuafangshi = res;
     },
-
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {

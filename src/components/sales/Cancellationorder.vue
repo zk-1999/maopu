@@ -344,14 +344,27 @@
           </el-form-item>
           <div class="fenge1">收款凭证</div>
           <el-form-item>
+            <el-upload
+                      ref="upload"
+                      :action="ip"
+                      name="picture"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-exceed="onExceed"
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreview"
+                      :on-success="handleSuccess"
+                      :on-remove="handleRemove">
+                <i class="el-icon-plus"></i>
+            </el-upload>
              <!-- <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="ip"
               list-type="picture-card"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
-            </el-upload> -->
-             <!-- <el-dialog :visible.sync="dialogVisible">
+            </el-upload>
+             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>  -->
           </el-form-item>
@@ -512,6 +525,7 @@ export default {
         raetypes:'',
         paymentstatus:'',
         remarks:'',
+        voucher:'',
       },
       radio:'3',
       shenpiren:'',
@@ -520,6 +534,7 @@ export default {
           { min: 1, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
+      ip:'',
       huobileixing:[],
       kehu:[],
       shengchanlist:[],
@@ -544,6 +559,61 @@ export default {
     this.getCookie();
   },
   methods: {
+     //文件上传成功的钩子函数
+        handleSuccess(res, file) {
+            this.$message({
+                type: 'info',
+                message: '图片上传成功',
+                duration: 6000
+            });
+            if (file.response.success) {
+                // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+                
+                this.yufukuan.voucher=file.response.message;
+                // this.editProductForm.voucher=file.response.message;
+
+                // this.productList.picture=file.response.message;
+                
+            }
+        },
+        //删除文件之前的钩子函数
+        handleRemove(file, fileList) {
+            this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+            });
+        },
+        //点击列表中已上传的文件事的钩子函数
+        handlePreview(file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+        //上传的文件个数超出设定时触发的函数
+        onExceed(files, fileList) {
+            this.$message({
+                type: 'info',
+                message: '最多只能上传一个图片',
+                duration: 6000
+            });
+        },
+        //文件上传前的前的钩子函数
+        //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+        beforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isGIF = file.type === 'image/gif';
+            const isPNG = file.type === 'image/png';
+            const isBMP = file.type === 'image/bmp';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG && !isGIF && !isPNG && !isBMP) {
+                this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+        },     
     yufukuanshuju(){
       
       this.yufukuan.payexamine=this.shenpiren;
@@ -572,6 +642,7 @@ export default {
     },
      // 查询订单列表
    async OrdermanagementList() {
+     this.ip=this.ips+'upload';
      if (this.chaOrdermanagementForm.sorderCode!=''||this.chaOrdermanagementForm.sorderTotalsum!=''||this.chaOrdermanagementForm.sorderStatus!=''||this.chaOrdermanagementForm.sorderWarehouse!='') {
        this.chaOrdermanagementForm.pageCode=1;
        this.chaOrdermanagementForm.pageSize=10;

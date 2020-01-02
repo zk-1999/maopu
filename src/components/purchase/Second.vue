@@ -12,15 +12,15 @@
         class="demo-form-inline search"
         :model="chaOrderFrom"
         ref="chaOrderFrom"
-        label-width="80px"
+        label-width="90px"
         label-position="left"
       >
         <el-row :gutter="20" class="row">
           <el-col :span="24">
-            <el-form-item label="订单编号" prop="porderCode">
+            <el-form-item label="订单编号：" prop="porderCode">
               <el-input placeholder="请输入订单编号" class="_small" v-model="chaOrderFrom.porderCode"></el-input>
             </el-form-item>
-            <el-form-item label="制单人员" prop="porderProducer">
+            <el-form-item label="制单人员：" prop="porderProducer">
               <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="_small"></el-input>
             </el-form-item>
             
@@ -36,7 +36,7 @@
                 <el-option value="2" label="全部到货"></el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="订单状态" prop="porderState">
+            <el-form-item label="订单状态：" prop="porderState">
               <el-select v-model="chaOrderFrom.porderState" placeholder="请选择" class="_small">
                 <el-option value="11" label="全部"></el-option>
                 <!-- 待复审 -->
@@ -47,7 +47,7 @@
                 <el-option value="5" label="已通过"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="制单时间" prop="time">
+            <el-form-item label="制单时间：" prop="time">
               <el-date-picker
                 v-model="chaOrderFrom.time"
                 type="daterange"
@@ -60,7 +60,7 @@
             <el-form-item>
               <el-button @click="getList(1)">查 询</el-button>
               <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
-              <!-- <el-button type="primary" @click="prePayVisible = true">重 置</el-button> -->
+              <!-- <el-button type="primary" @click="lookUpState = true;checkOrderVisible = true">重 置</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -79,19 +79,9 @@
         <el-table-column prop="porderPalnmoney" label="预付款金额"></el-table-column>
         <el-table-column prop="porderTotalmoney" label="总金额"></el-table-column>
         <el-table-column prop="porderTotalnum" label="总数量"></el-table-column>
-        <!-- <el-table-column prop="porderDiffernumber" label="到货数量"></el-table-column> -->
-        <!-- <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column> -->
-        <!-- <el-table-column prop="basicDO.basicRetainone" label="入库仓库"></el-table-column> -->
-        <el-table-column prop="supplierDO.supName" label="供应商" width="120px" align="center"></el-table-column>
-        <!-- <el-table-column prop="porderArrivalstatus" label="到货情况"></el-table-column> -->
+        <el-table-column prop="supplierDO.supName" label="供应商" width="250px" align="center"></el-table-column>
         <el-table-column prop="porderProducer" label="制单人员"></el-table-column>
-        <!-- <el-table-column prop="porderBuyer" label="采购员"></el-table-column> -->
-        <!-- <el-table-column prop="porderCompletenum" label="已采购数量"></el-table-column> -->
-        <!-- <el-table-column prop="porderStarttime" label="采购周期" width="200">
-          <template slot-scope="scope">{{scope.row.porderStarttime+"-"+scope.row.porderStoptime}}</template>
-        </el-table-column>-->
         <el-table-column prop="porderTime" label="制单时间" width="200" align="center"></el-table-column>
-        <!-- <el-table-column prop="porderReviewedtime" label="审批时间" width="200" align="center"></el-table-column> -->
         <el-table-column prop="porderState" label="订单状态" width="105px" align="center">
           <template slot-scope="scope">
             <!-- <el-tag type="danger" v-if="scope.row.porderState==0">初始化</el-tag> -->
@@ -113,13 +103,11 @@
           <template slot-scope="scope">
             <el-button
               type="success"
-              icon="el-icon-edit"
               size="mini"
               @click="lookUpState = true;checkOrder(scope.row.porderCode)"
             >查看</el-button>
             <el-button
               type="primary"
-              icon="el-icon-edit"
               size="mini"
               @click="lookUpState = false;checkOrder(scope.row.porderCode)"
               :disabled="scope.row.porderState!=3"
@@ -138,7 +126,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-      title="审核"
+      :title="lookUpState?'查看订单':'审核'"
       :visible.sync="checkOrderVisible"
       width="75%"
       :before-close="handleClose"
@@ -146,11 +134,12 @@
     >
       <el-form
         :label-position="labelPosition"
+        label-width="100px"
         :model="checkOrderForm"
         ref="checkOrderForm"
-        :rules="checkOrderFormRules"
         :inline="true"
       >
+      <div class="fenge">商品信息</div>
         <el-table
           border
           :data="checkOrderForm.pcommodityDos"
@@ -161,14 +150,42 @@
           <el-table-column prop="supgoolssmallType" label="商品名称"></el-table-column>
           <el-table-column prop="supgoolsId" label="商品编码"></el-table-column>
           <el-table-column prop="supgoolsSplicing" label="商品描述" width="270px" align="center"></el-table-column>
-          <el-table-column prop label="库存"></el-table-column>
-          <el-table-column prop label="单位"></el-table-column>
-          <el-table-column prop label="单价（元）"></el-table-column>
+          <el-table-column label="单位">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.pcommodityUnit" placeholder="请选择" class="_small" :disabled="true">
+                <el-option
+                  v-for="item in unit"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="入库仓库">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.basicId" placeholder="请选择" class="_small" :disabled="true">
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pcommodityPrice" label="单价（元）"></el-table-column>
           <el-table-column prop="pcommodityPalnnum" label="数量"></el-table-column>
-          <el-table-column prop="pcommodityPrice" label="金额"></el-table-column>
+          <el-table-column label="金额">
+             <template slot-scope="scope">
+              <span
+                v-if="(!isNaN(scope.row.pcommodityPrice))&&(!isNaN(scope.row.pcommodityPalnnum))"
+              >{{multiple(scope.row.pcommodityPrice ,scope.row.pcommodityPalnnum).toFixed(2)}}</span>
+            </template>
+          </el-table-column>
         </el-table>
 
-        <hr />
+        <div class="fenge1">供应商信息</div>
 
         <el-table border :data="gongyingshangOfForm">
           <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
@@ -179,18 +196,18 @@
           <el-table-column prop="supPhone" label="手机"></el-table-column>
         </el-table>
 
-        <hr />
-        <el-form-item label="总数量" prop="porderTotalnum">
+        <div class="fenge1">退货描述</div>
+        <el-form-item label="总数量：" prop="porderTotalnum">
           <el-input v-model="checkOrderForm.porderTotalnum" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="总金额" prop="porderTotalmoney">
+        <el-form-item label="总金额：" prop="porderTotalmoney">
           <el-input v-model="checkOrderForm.porderTotalmoney" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="需预付金额" prop="porderPalnmoney">
+        <el-form-item label="需预付金额：" prop="porderPalnmoney">
           <el-input v-model="checkOrderForm.porderPalnmoney" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付说明" prop="porderExplain">
+        <el-form-item label="预付说明：" prop="porderExplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -200,13 +217,13 @@
           ></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge">采购描述</div>
 
-        <el-form-item label="制单人员" prop="porderProducer">
+        <el-form-item label="制单人员：" prop="porderProducer">
           <el-input v-model="checkOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
         </el-form-item>
 
-        <el-form-item label="采购人员" prop="porderBuyer">
+        <el-form-item label="采购人员：" prop="porderBuyer">
           <el-input v-model="checkOrderForm.porderBuyer" :disabled="true" class="_small"></el-input>
         </el-form-item>
 
@@ -226,7 +243,7 @@
           </el-select>
         </el-form-item> -->
 
-        <el-form-item label="下单时间" prop="porderOrdertime">
+        <el-form-item label="下单时间：" prop="porderOrdertime">
           <el-date-picker
             v-model="checkOrderForm.porderOrdertime"
             type="date"
@@ -238,7 +255,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="采购周期" prop="time">
+        <el-form-item label="采购周期：" prop="time">
           <el-date-picker
             v-model="checkOrderForm.time"
             type="daterange"
@@ -251,7 +268,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="备注" prop="porderBuyexplain">
+        <el-form-item label="备注：" prop="porderBuyexplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -261,9 +278,9 @@
           ></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge1">采购审核（初审）</div>
 
-        <el-form-item label="审核人" prop="porderReviewman">
+        <el-form-item label="审核人：" prop="porderReviewman">
           <el-input v-model="checkOrderForm.porderReviewman" :disabled="true"></el-input>
         </el-form-item>
         <!-- &nbsp;    &nbsp;    
@@ -272,7 +289,7 @@
           <el-radio v-model="radio" label="1">驳回</el-radio>
         </el-form-item>-->
         <br />
-        <el-form-item label="备注" prop="porderReviewexplain">
+        <el-form-item label="备注：" prop="porderReviewexplain">
           <el-input
             type="textarea"
             v-model="checkOrderForm.porderReviewexplain"
@@ -283,17 +300,17 @@
 
         <div v-if="lookUpState && checkOrderForm.porderState != 3">
 
-        <hr />
+        <div class="fenge1">财务审核（复审）</div>
 
-        <el-form-item label="审核人" prop="porderReviewedman">
+        <el-form-item label="审核人：" prop="porderReviewedman">
           <el-input v-model="checkOrderForm.porderReviewedman" :disabled="true"></el-input>
         </el-form-item>&nbsp;&nbsp;
-        <el-form-item label="审核结果">
+        <el-form-item label="审核结果：">
           <el-radio v-model="checkOrderForm.porderState" label="5" :disabled="true">通过</el-radio>
           <el-radio v-model="checkOrderForm.porderState" label="4" :disabled="true">驳回</el-radio>
         </el-form-item>
         <br />
-        <el-form-item label="备注" prop="porderReviewedexplain">
+        <el-form-item label="备注：" prop="porderReviewedexplain">
           <el-input
             type="textarea"
             v-model="checkOrderForm.porderReviewedexplain"
@@ -305,17 +322,17 @@
 
         <div v-if="!lookUpState">
 
-        <hr />
+        <div class="fenge1">财务审核（复审）</div>
 
-        <el-form-item label="审核人" prop="porderReviewedman">
+        <el-form-item label="审核人：" prop="porderReviewedman">
           <el-input v-model="checkOrderForm.porderReviewedman" :disabled="true"></el-input>
         </el-form-item>&nbsp;&nbsp;
-        <el-form-item label="审核结果">
+        <el-form-item label="审核结果：">
           <el-radio v-model="radio" label="0">通过</el-radio>
           <el-radio v-model="radio" label="1">驳回</el-radio>
         </el-form-item>
         <br />
-        <el-form-item label="备注" prop="porderReviewedexplain">
+        <el-form-item label="备注：" prop="porderReviewedexplain">
           <el-input
             type="textarea"
             v-model="checkOrderForm.porderReviewedexplain"
@@ -325,77 +342,93 @@
         </div>
       </el-form>
 
-      <hr v-if="!lookUpState">
-      <el-button type="primary" @click="prePayVisible=true" v-if="!lookUpState">新增预付款单</el-button>
+      <!-- <hr v-if="!lookUpState"> -->
+      <el-button type="primary" @click="addAdvancePaymentFormVisible=true;addAdvancePaymentForm.purchaseorderno = checkOrderForm.porderCode" v-if="!lookUpState">新增预付款单</el-button>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="checkOrderVisible=false">取消</el-button>
-        <el-button @click="editPurOrderState()" type="primary" v-if="!lookUpState">保存</el-button>
+        <el-button @click="checkOrderVisible=false">取 消</el-button>
+        <el-button @click="editPurOrderState()" type="primary" v-if="!lookUpState">保 存</el-button>
       </span>
     </el-dialog>
     <el-dialog
       title="新增预付款单"
-      :visible.sync="prePayVisible"
-      width="58%"
+      :visible.sync="addAdvancePaymentFormVisible"
+      width="40%"
       :before-close="handleClose"
-      @closed="dialogClosed('prePayForm')"
+      @closed="dialogClosed2('addAdvancePaymentForm')"
     >
+    <div class="fenge">付款信息</div>
       <el-form
-        label-position="left"
+        label-position="right"
         label-width="90px"
-        :model="prePayForm"
-        ref="prePayForm"
-        :rules="prePayFormRules"
+        :model="addAdvancePaymentForm"
+        ref="addAdvancePaymentForm"
+        :inline="true"
       >
-        <el-form-item label="采购订单号" prop="xxx">
-          <el-input placeholder="请输入订单编号" class="_small" v-model="xxx"></el-input>
+        <el-form-item label="采购订单号" prop="purchaseorderno">
+          <el-input class="_small" v-model="addAdvancePaymentForm.purchaseorderno" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付款金额" prop="xxx">
-          <el-input placeholder="请输入订单编号" class="_small" v-model="xxx"></el-input>
+        <el-form-item label="预付款金额" prop="amount">
+          <el-input class="_small" v-model="addAdvancePaymentForm.amount"></el-input>
         </el-form-item>
 
-        <el-form-item label="资金账户" prop="xxx">
-          <el-select v-model="xxx" placeholder="请选择" class="_small">
+        <el-form-item label="资金账户" prop="assetaccount">
+          <el-input class="_small" v-model="addAdvancePaymentForm.assetaccount"></el-input>
+          <!-- <el-select v-model="assetaccount" placeholder="请选择" class="_small">
             <el-option value label="全部"></el-option>
             <el-option value="0" label="未到货"></el-option>
             <el-option value="1" label="部分到货"></el-option>
             <el-option value="2" label="全部到货"></el-option>
+          </el-select>-->
+        </el-form-item>
+
+        <el-form-item label="支出类型" prop="raetypes">
+          <el-select v-model="addAdvancePaymentForm.raetypes" placeholder="请选择" class="_small">
+            <el-option
+              v-for="item in paymode"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled"
+            ></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="收支类型" prop="xxx">
-          <el-select v-model="xxx" placeholder="请选择" class="_small">
-            <el-option value label="全部"></el-option>
-            <el-option value="0" label="未到货"></el-option>
-            <el-option value="1" label="部分到货"></el-option>
-            <el-option value="2" label="全部到货"></el-option>
+        <el-form-item label="付款状态" prop="paymentstatus">
+          <el-select v-model="addAdvancePaymentForm.paymentstatus" placeholder="请选择" class="_small">
+            <el-option value="0" label="未付款"></el-option>
+            <el-option value="1" label="已付款"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="付款状态" prop="xxx">
-          <el-select v-model="xxx" placeholder="请选择" class="_small">
-            <el-option value label="全部"></el-option>
-            <el-option value="0" label="未到货"></el-option>
-            <el-option value="1" label="部分到货"></el-option>
-            <el-option value="2" label="全部到货"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="备注" prop="xxx">
+        <el-form-item label="备注" prop="remarks">
           <el-input
             type="textarea"
             placeholder="请输入内容"
-            v-model="xxx"
+            v-model="addAdvancePaymentForm.remarks"
             style="width: 600px"
           ></el-input>
         </el-form-item>
-        <hr />
-        <!-- ！！！ -->
-        付款凭证上传
+        <div class="fenge1">付款凭证</div>
+        <el-form-item>
+          <el-upload
+                      ref="upload"
+                      :action="ip"
+                      name="picture"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-exceed="onExceed"
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreview"
+                      :on-success="handleSuccess"
+                      :on-remove="handleRemove">
+                <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="prePayVisible=false">取消</el-button>
-        <el-button @click="prePayVisible=false" type="primary">保存</el-button>
+        <el-button @click="addAdvancePaymentFormVisible=false">取消</el-button>
+        <el-button @click="addAdvancePayment()" type="primary">保存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -404,7 +437,7 @@
 export default {
   data() {
     return {
-      orderList: [],
+      ip:'',
       selectedList: [],
       currentPage: 0,
       editOrde: false,
@@ -538,7 +571,18 @@ export default {
       },
 
       // 新增预付款单相关
-      prePayVisible: false
+      addAdvancePaymentFormVisible: false,
+      addAdvancePaymentForm: {
+        payexamine: "", //付款制单人
+        purchaseorderno: "", //采购订单号
+        amount: "", //金额
+        assetaccount: "", //资金账户
+        raetypes: "", //收支类型
+        paymentstatus: "", //应付款状态
+        remarks: "", //备注
+        voucher:'',//图片路径
+      },
+      paymode:[],//支出类型
     };
   },
   created() {
@@ -546,22 +590,82 @@ export default {
     this.getList();
     this.getCha();
     // this.getCookie();
+    this.getWarehouseOptions();
+    this.queryUnit();
+    this.selectoutpaymode();
   },
   methods: {
+    //文件上传成功的钩子函数
+        handleSuccess(res, file) {
+            this.$message({
+                type: 'info',
+                message: '图片上传成功',
+                duration: 6000
+            });
+            if (file.response.success) {
+                // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+                
+                this.addAdvancePaymentForm.voucher=file.response.message;
+                // this.editProductForm.voucher=file.response.message;
+
+                // this.productList.picture=file.response.message;
+                
+            }
+        },
+        //删除文件之前的钩子函数
+        handleRemove(file, fileList) {
+            this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+            });
+        },
+        //点击列表中已上传的文件事的钩子函数
+        handlePreview(file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+        //上传的文件个数超出设定时触发的函数
+        onExceed(files, fileList) {
+            this.$message({
+                type: 'info',
+                message: '最多只能上传一个图片',
+                duration: 6000
+            });
+        },
+        //文件上传前的前的钩子函数
+        //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+        beforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isGIF = file.type === 'image/gif';
+            const isPNG = file.type === 'image/png';
+            const isBMP = file.type === 'image/bmp';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG && !isGIF && !isPNG && !isBMP) {
+                this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+        },
     //读取cookie
     getCookie: function() {
-      if (document.cookie.length > 0) {
-        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
-        for (var i = 0; i < arr.length; i++) {
-          var arr2 = arr[i].split("="); //再次切割
-          //判断查找相对应的值
-          if (arr2[0] == "userName") {
-            //  console.log(arr2[1])
-            this.checkOrderForm.porderReviewedman = arr2[1]; //保存到保存数据的地方
-          }
-        }
-        this.checked = true;
-      }
+      // if (document.cookie.length > 0) {
+      //   var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+      //   for (var i = 0; i < arr.length; i++) {
+      //     var arr2 = arr[i].split("="); //再次切割
+      //     //判断查找相对应的值
+      //     if (arr2[0] == "userName") {
+      //       //  console.log(arr2[1])
+      //       this.checkOrderForm.porderReviewedman = arr2[1]; //保存到保存数据的地方
+      //     }
+      //   }
+      //   this.checked = true;
+      // }
+      var storage=window.localStorage;
+      this.checkOrderForm.porderReviewedman = storage.getItem("username")
     },
     ResetForm(formName) {
       this.$refs[formName].resetFields();
@@ -585,13 +689,28 @@ export default {
       this.orderList = res.body.rows;
       this.total = res.body.total;
     },
+    // 获取仓库列表
+    async getWarehouseOptions() {
+      this.ip=this.ips+'upload';
+      const { data: res } = await this.$http.post("jc/Basic/selectwarehousing");
+      // console.log('仓库')
+      // console.log(res)
+      this.warehouseOptions = res; //如何取
+    },
+    // 查询库存单位
+    async queryUnit() {
+      const { data: res } = await this.$http.post("jc/Basic/selectstorenum");
+      // console.log('单位')
+      // console.log(res)
+      this.unit = res;
+    },
     handleSizeChange(val) {
       this.chaOrderFrom.pageSize = val;
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.getList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.chaOrder.pageCode = val;
       this.chaOrderFrom.pageCode = val;
       this.currentPage = val;
@@ -607,20 +726,23 @@ export default {
     dialogClosed() {
       this.$refs.checkOrderForm.resetFields();
     },
+    dialogClosed2(val) {
+      this.$refs[val].resetFields();
+    },
 
     addSelectionChange(val) {
       this.addSelectedList = val;
-      console.log(val);
+      // console.log(val);
     },
     // 审核订单
     async checkOrder(porderCode) {
-      console.log(porderCode);
+      // console.log(porderCode);
       this.checkOrderForm.porderCode = porderCode;
 
       const { data: res } = await this.$http.post("jh/purchase/dtjresultMap", {
         porderCode: porderCode
       });
-      console.log(res);
+      // console.log(res);
 
       for (let i = 0; i < res.body.result[0].pcommodityDos.length; i++) {
         this.delarr.push(res.body.result[0].pcommodityDos[i].suppliergoolsId);
@@ -678,6 +800,9 @@ export default {
       this.checkOrderForm.porderBuyer = res.body.result[0].porderBuyer;
       // this.addOrderForm.lab = res[0].
       this.checkOrderForm.pcommodityDos = res.body.result[0].pcommodityDos;
+      this.checkOrderForm.pcommodityDos.forEach((item,index,array)=>{
+        item.pcommodityUnit = Number(item.pcommodityUnit);
+      })
 
       // 初审信息
       this.checkOrderForm.porderReviewman = res.body.result[0].porderReviewman;
@@ -751,7 +876,7 @@ export default {
         "jc/suppliergoods/selectSuppliergoolslist",
         { params: { lab: this.chooseGoodsForm.goodsBigType } }
       );
-      console.log(res);
+      // console.log(res);
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -879,8 +1004,8 @@ export default {
       this.chooseGoodsForm.goodsChoosed = [];
     },
     changeGongyingshang(val) {
-      console.log("供应商变化");
-      console.log(val);
+      // console.log("供应商变化");
+      // console.log(val);
 
       this.gongyingshangOfForm = [];
       this.gongyinshang.forEach((item, index, arr) => {
@@ -888,7 +1013,7 @@ export default {
           this.gongyingshangOfForm.push(item);
         }
       });
-      console.log(this.gongyingshangOfForm);
+      // console.log(this.gongyingshangOfForm);
     },
     // 供应商删除按钮
     deleteGongyingshang() {
@@ -908,12 +1033,51 @@ export default {
         "jc/Basic/selectwarehousing"
       );
       this.gongyinshang = res.body.rows;
-      console.log("供应商---");
-      console.log(this.gongyinshang);
+      // console.log("供应商---");
+      // console.log(this.gongyinshang);
       this.cangku = res1;
-      console.log("仓库");
-      console.log(this.cangku);
-    }
+      // console.log("仓库");
+      // console.log(this.cangku);
+    },
+
+    multiple(arg1, arg2) {
+      return (Math.round(arg1 * 100) * Math.round(arg2 * 100)) / 10000;
+    },
+
+    // 新增预付款单 应付款
+    async addAdvancePayment() {
+      const { data: res } = await this.$http.post(
+          "/payment/addAdvancepayment",
+          this.addAdvancePaymentForm
+        );
+
+        if(res.body.respCode == 200){
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }else{
+          this.$message({
+            type: "info",
+            message: "新增失败！"
+          });
+        }
+      this.addAdvancePaymentFormVisible = false;
+      // this.getList();
+    },
+    // 获取支出类型
+    async selectoutpaymode() {
+      const { data: res } = await this.$http.post("jc/Basic/selectoutpaymode");
+      res.forEach((item, index, array) => {
+        let x = {
+          label: item.basicRetainone,
+          value: item.basicId
+        };
+        this.paymode.push(x);
+      });
+      // console.log("支出类型");
+      // console.log(this.paymode);
+    },
   }
 };
 </script>

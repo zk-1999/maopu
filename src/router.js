@@ -35,12 +35,14 @@ import Ordertobeshipped from './components/sales/Ordertobeshipped.vue'
 import Cancellationorder from './components/sales/Cancellationorder.vue'
 import Shippedorder from './components/sales/Shippedorder.vue'
 import Finishedorder from './components/sales/Finishedorder.vue'
-import Input from './components/stock/Input.vue'
-import Output from './components/stock/Output.vue'
+import Input3 from './components/stock/Input3.vue'
+import InputCheck from './components/stock/InputCheck.vue'
+import Output3 from './components/stock/Output3.vue'
+import OutputCheck from './components/stock/OutputCheck.vue'
+import Stocktaking from './components/stock/Stocktaking.vue'
 import QueryIAndO from './components/stock/QueryIAndO.vue'
 import QueryStock from './components/stock/QueryStock.vue'
 import CheckStock from './components/stock/CheckStock.vue'
-import WarningOfStock from './components/stock/WarningOfStock.vue'
 import Receipt from './components/finance/Receipt.vue'
 import PaymentSlip from './components/finance/PaymentSlip.vue'
 import DispatchList from './components/finance/DispatchList.vue'
@@ -85,12 +87,14 @@ const router = new Router({
                 { path: '/cancellationorder', component: Cancellationorder },
                 { path: '/shippedorder', component: Shippedorder },
                 { path: '/finishedorder', component: Finishedorder },
-                { path: '/input', component: Input },
-                { path: '/output', component: Output },
+                { path: '/input3', component: Input3 },
+                { path: '/inputCheck', component: InputCheck },
+                { path: '/stocktaking', component: Stocktaking },
+                { path: '/output3', component: Output3 },
                 { path: '/queryIAndO', component: QueryIAndO },
                 { path: '/queryStock', component: QueryStock },
                 { path: '/checkStock', component: CheckStock },
-                { path: '/warningOfStock', component: WarningOfStock },
+                { path: '/outputCheck', component: OutputCheck },
                 { path: '/receipt', component: Receipt },
                 { path: '/paymentSlip', component: PaymentSlip },
                 { path: '/dispatchList', component: DispatchList },

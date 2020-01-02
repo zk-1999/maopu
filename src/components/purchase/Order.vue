@@ -12,18 +12,18 @@
         class="demo-form-inline search"
         :model="chaOrderFrom"
         ref="chaOrderFrom"
-        label-width="80px"
+        label-width="90px"
         label-position="left"
       >
         <el-row :gutter="20" class="row">
           <el-col :span="24">
-            <el-form-item label="订单编号" prop="porderCode">
+            <el-form-item label="订单编号：" prop="porderCode">
               <el-input placeholder="请输入订单编号" class="_small" v-model="chaOrderFrom.porderCode"></el-input>
             </el-form-item>
-            <el-form-item label="制单人员" prop="porderProducer">
+            <el-form-item label="制单人员：" prop="porderProducer">
               <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="_small"></el-input>
             </el-form-item>
-            <el-form-item label="到货情况" prop="porderArrivalstatus">
+            <el-form-item label="到货情况：" prop="porderArrivalstatus">
               <el-select
                 v-model="chaOrderFrom.porderArrivalstatus"
                 placeholder="请选择"
@@ -35,7 +35,7 @@
                 <el-option value="2" label="全部到货"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="订单状态" prop="porderState">
+            <el-form-item label="订单状态：" prop="porderState">
               <el-select v-model="chaOrderFrom.porderState" placeholder="请选择" class="_small">
                 <el-option value label="全部"></el-option>
                 <el-option value="0" label="初始化"></el-option>
@@ -50,7 +50,7 @@
                 <!-- <el-option value="9" label="结束"></el-option> -->
               </el-select>
             </el-form-item>
-            <el-form-item label="制单时间" prop="time">
+            <el-form-item label="制单时间：" prop="time">
               <el-date-picker
                 v-model="chaOrderFrom.time"
                 type="daterange"
@@ -63,14 +63,25 @@
             <el-form-item>
               <el-button @click="getList(1)">查 询</el-button>
               <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
+              <!-- <el-button type="primary" @click="addOrderVisible = true">重 置</el-button> -->
+              <!-- <el-button type="primary" @click="editOrderVisible = true">重 置</el-button> -->
+              <!-- <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <!-- addOrderVisible = true;editOrde  = false;addOrEdit = 1; -->
       <el-button type="success" @click="addPurchareOrder()">新 增</el-button>
-      <el-button type="primary" @click="checkOrderList()" :disabled="orderListCheckOrders.length == 0">提 审</el-button>
-      <el-button @click="stopOrderList()" type="danger" :disabled="orderListCheckOrders.length == 0">终 止</el-button>
+      <el-button
+        type="primary"
+        @click="checkOrderList()"
+        :disabled="orderListCheckOrders.length == 0"
+      >提 审</el-button>
+      <el-button
+        @click="stopOrderList()"
+        type="danger"
+        :disabled="orderListCheckOrders.length == 0"
+      >终 止</el-button>
       <!-- <el-button type="danger" @click="stopOrderList()">终 止</el-button>   -->
       <!-- <el-button @click="edit" :disabled="selectedList.length == 0">编辑</el-button>
             <el-button @click="del" :disabled="selectedList.length == 0">删除</el-button>
@@ -84,9 +95,9 @@
         <el-table-column prop="porderPalnmoney" label="预付款金额" width="100px"></el-table-column>
         <el-table-column prop="porderTotalmoney" label="总金额"></el-table-column>
         <el-table-column prop="porderTotalnum" label="总数量"></el-table-column>
-        <el-table-column prop label="到货数量"></el-table-column>
+        <el-table-column prop="porderArrivalnumber" label="到货数量"></el-table-column>
         <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column>
-        <el-table-column prop="supplierDO.supName" label="供应商" width="120px" align="center"></el-table-column>
+        <el-table-column prop="supplierDO.supName" label="供应商" width="250px" align="center"></el-table-column>
         <el-table-column prop="porderArrivalstatus" label="到货情况">
           <template slot-scope="scope">
             <span v-if="scope.row.porderArrivalstatus == 0">未到货</span>
@@ -119,22 +130,11 @@
         <!-- width="270px" -->
         <!-- ,operationFlag2?operationWidth2:'',operationFlag1?operationWidth1:'' -->
         <!-- :width="[operationFlag3?'270px':(operationFlag2?'180px':(operationFlag1?'90px':'0'))]" -->
-        <el-table-column
-          label="操作"
-          width="270px"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column label="操作" width="270px" align="center" fixed="right">
           <template slot-scope="scope">
-            <el-button
-              type="success"
-              icon="el-icon-edit"
-              size="mini"
-              @click="showLookUpOrder(scope.row.porderCode)"
-            >查看</el-button>
+            <el-button type="success" size="mini" @click="showLookUpOrder(scope.row.porderCode)">查看</el-button>
             <el-button
               type="primary"
-              icon="el-icon-edit"
               size="mini"
               :disabled="!(scope.row.porderState==0||scope.row.porderState==2||scope.row.porderState==4)"
               @click="showEditOrder(scope.row.porderCode)"
@@ -147,7 +147,7 @@
               size="mini"
               v-if="scope.row.porderState==0"
               @click="editPurOrderState(scope.row,1)"
-            >提审</el-button> -->
+            >提审</el-button>-->
             <!-- v-if="scope.row.porderState==2||scope.row.porderState==4" -->
             <el-button
               type="danger"
@@ -162,7 +162,7 @@
               size="mini"
               v-if="scope.row.porderState==5"
               @click="editPurOrderState(scope.row,8)"
-            >终止</el-button> -->
+            >终止</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -175,6 +175,7 @@
         :total="total"
       ></el-pagination>
     </el-card>
+
     <el-dialog
       title="新增采购订单"
       :visible.sync="addOrderVisible"
@@ -182,127 +183,79 @@
       :before-close="handleClose"
       @closed="dialogClosed('addOrderRef')"
     >
-    <div class="fenge">基础信息</div>
       <el-form
         :label-position="labelPosition"
+        label-width="100px"
         :model="addOrderForm"
         ref="addOrderRef"
         :rules="addOrderRules"
         :inline="true"
       >
-        <!-- <el-row>
-         
-          <el-form-item label="制单人员" prop="porderProducer">
-            <el-input v-model="addOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
-          </el-form-item>
-          <el-form-item label="采购周期" prop="time">
-            <el-date-picker
-              v-model="addOrderForm.time"
-              type="daterange"
-              value-format="yyyy-MM-dd"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
-          
-          <el-form-item label="选择供应商" prop="supplierId">
-            <el-select v-model="addOrderForm.supplierId" placeholder="请选择" class="_small">
-              <el-option
-                v-for="item in gongyinshang"
-                :key="item.supplierId"
-                :label="item.supName"
-                :value="item.supplierId"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-         
-        </el-row>
-        <hr />-->
         <el-button type="primary" @click="addGoods(1)">添加商品</el-button>
         <el-button
-          type="dange"
+          type="danger"
           :disabled="addSelectedList.length == 0 && addSelectedList_two == 0"
           @click="deleteAddbumen(addOrderForm.pcommodityDos,1)"
         >删除商品</el-button>
-        <!-- <div class="fenge">商品信息</div> -->
+        <div class="fenge">商品信息</div>
         <el-table border :data="addOrderForm.pcommodityDos" @selection-change="addSelectionChange">
           <el-table-column type="selection" width="40" align="center"></el-table-column>
           <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
           <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
           <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
           <el-table-column prop="supgoolsSplicing" label="商品描述" width="270px" align="center"></el-table-column>
-          <el-table-column prop="xxx" label="库存"></el-table-column>
-          <el-table-column prop="xxx" label="单位"></el-table-column>
-          <el-table-column prop="xxx" label="单价（元）">
+          <el-table-column label="单位">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.pcommodityPrice" @blur="addCalculate(addOrderForm)"></el-input>
+              <el-select v-model="scope.row.pcommodityUnit" placeholder="请选择" class="_small">
+                <el-option
+                  v-for="item in unit"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="入库仓库">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.basicId" placeholder="请选择" class="_small">
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="单价（元）">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.pcommodityPrice"
+                @blur="addCalculate(addOrderForm)"
+                type="number"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="pcommodityPalnnum" label="数量">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.pcommodityPalnnum" @blur="addCalculate(addOrderForm)"></el-input>
+              <el-input
+                v-model="scope.row.pcommodityPalnnum"
+                @blur="addCalculate(addOrderForm)"
+                type="number"
+              ></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="pcommodityPrice" label="金额">
+          <el-table-column label="金额">
             <template slot-scope="scope">
               <span
-                v-if="!isNaN(scope.row.pcommodityPrice * scope.row.pcommodityPalnnum)"
-              >{{scope.row.pcommodityPrice * scope.row.pcommodityPalnnum}}</span>
+                v-if="(!isNaN(scope.row.pcommodityPrice))&&(!isNaN(scope.row.pcommodityPalnnum))"
+              >{{multiple(scope.row.pcommodityPrice ,scope.row.pcommodityPalnnum).toFixed(2)}}</span>
             </template>
           </el-table-column>
-
-          <!-- <el-table-column prop="supgoolssmallType" label="商品小类型" v-if="panduan.supgoolssmallType1"></el-table-column>
-          <el-table-column prop="supgoolsBrand" label="品牌" v-if="panduan.supgoolsBrand1"></el-table-column>
-          <el-table-column prop="supgoolsWeight" label="克重" v-if="panduan.supgoolsWeight1"></el-table-column>
-          <el-table-column prop="supgoolsWidths" label="门幅" v-if="panduan.supgoolsWidths1"></el-table-column>
-          <el-table-column prop="supgoolCoated" label="淋膜类型" v-if="panduan.supgoolCoated1"></el-table-column>
-          <el-table-column prop="supgoolsLength" label="尺寸/长" v-if="panduan.supgoolsLength1"></el-table-column>
-          <el-table-column prop="supgoolsWidth" label="尺寸/宽" v-if="panduan.supgoolsWidth1"></el-table-column>
-          <el-table-column prop="supgoolsHeight" label="尺寸/厚" v-if="panduan.supgoolsHeight1"></el-table-column>
-          <el-table-column prop="supgoolsBradth" label="宽度" v-if="panduan.supgoolsBradth1"></el-table-column>
-          <el-table-column prop="supgoolsColor" label="颜色" v-if="panduan.supgoolsColor1"></el-table-column>
-          <el-table-column prop="supName" label="供应商" align="center"></el-table-column>
-
-          <el-table-column prop="pcommodityStock" label="当前库存" align="center">-->
-          <!-- </el-table-column> -->
-          <!-- <el-table-column prop="pcommodityUnit" label="单位" align="center">
-          </el-table-column>
-          <el-table-column prop="pcommodityPrice" label="采购价" align="center">
-            <template scope="scope">
-              <el-input v-model="scope.row.pcommodityPrice" @blur="jisuan"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="pcommodityPalnnum" label="采购数量" align="center">
-            <template scope="scope">
-              <el-input v-model="scope.row.pcommodityPalnnum" @blur="jisuan"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="spmc" label="采购金额" align="center">
-            <template scope="scope">{{scope.row.pcommodityPalnnum*scope.row.pcommodityPrice}}</template>
-          </el-table-column>-->
-          -->
         </el-table>
-        <!-- <div class="jisuan">
-                                   <el-form-item prop="porderTotalnum">
-                                   <span>采购总数量: {{addOrderForm.porderTotalnum}}</span>
-                                  </el-form-item>
-                                 <el-form-item  prop="porderTotalmoney">
-                                <span>总金额: {{addOrderForm.porderTotalmoney}}</span>
-                                </el-form-item></div>
-        <br>-->
-        <!-- <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page.sync="currentPage"
-                :page-sizes="[10]"
-                :page-size="100"
-                layout="total, sizes, prev, pager, next"
-                :total="total"
-        ></el-pagination>-->
-        <div class="fenge1">基础信息</div>
-        <hr />
-        <el-form-item label="选择供应商" prop="supplierId">
+        <div class="fenge1">供应商信息</div>
+        <el-form-item label="选择供应商：" prop="supplierId">
           <el-select
             v-model="addOrderForm.supplierId"
             placeholder="请选择"
@@ -318,11 +271,6 @@
           </el-select>
         </el-form-item>
 
-        <!-- <el-form-item prop="supplierId">
-          <el-button @click="xxx" type="primary" size="small">添加</el-button>
-          <el-button @click="deleteGongyingshang()" type="danger" size="small">删除</el-button>
-        </el-form-item>-->
-
         <br />
 
         <el-table border :data="gongyingshangOfForm">
@@ -333,19 +281,19 @@
           <el-table-column prop="supContacts" label="联系人"></el-table-column>
           <el-table-column prop="supPhone" label="手机"></el-table-column>
         </el-table>
-<div class="fenge1">基础信息</div>
-        <hr />
-        <el-form-item label="总数量" prop="porderTotalnum">
+
+        <div class="fenge1">付款信息</div>
+        <el-form-item label="总数量：" prop="porderTotalnum">
           <el-input v-model="addOrderForm.porderTotalnum" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="总金额" prop="porderTotalmoney">
+        <el-form-item label="总金额：" prop="porderTotalmoney">
           <el-input v-model="addOrderForm.porderTotalmoney" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="需预付金额" prop="porderPalnmoney">
+        <el-form-item label="需预付金额：" prop="porderPalnmoney">
           <el-input v-model="addOrderForm.porderPalnmoney"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付说明" prop="porderExplain">
+        <el-form-item label="预付说明：" prop="porderExplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -353,28 +301,18 @@
             style="width: 600px"
           ></el-input>
         </el-form-item>
- <div class="fenge1">基础信息</div>
-        <hr />
 
-        <el-form-item label="制单人员" prop="porderProducer">
+        <div class="fenge1">采购描述</div>
+
+        <el-form-item label="制单人员：" prop="porderProducer">
           <el-input v-model="addOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
         </el-form-item>
 
-        <el-form-item label="采购人员" prop="porderBuyer">
+        <el-form-item label="采购人员：" prop="porderBuyer">
           <el-input v-model="addOrderForm.porderBuyer" class="_small"></el-input>
         </el-form-item>
 
-        <!-- <el-form-item label="入库仓库" prop="basicId">
-          <el-select v-model="addOrderForm.basicId" placeholder="请选择" class="_small">
-            <el-option
-              v-for="item in cangku"
-              :key="item.basicId"
-              :label="item.basicRetainone"
-              :value="item.basicId"
-            ></el-option>
-          </el-select>
-        </el-form-item> -->
-        <el-form-item label="下单时间" prop="porderOrdertime">
+        <el-form-item label="下单时间：" prop="porderOrdertime">
           <el-date-picker
             v-model="addOrderForm.porderOrdertime"
             type="date"
@@ -385,7 +323,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="采购周期" prop="time">
+        <el-form-item label="采购周期：" prop="time">
           <el-date-picker
             v-model="addOrderForm.time"
             type="daterange"
@@ -398,9 +336,9 @@
           ></el-date-picker>
         </el-form-item>
 
-        <br>
+        <br />
 
-        <el-form-item label="备注" prop="porderBuyexplain">
+        <el-form-item label="备注：" prop="porderBuyexplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -410,8 +348,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addCancel()">取消</el-button>
-        <el-button @click="addSave" type="primary">确认</el-button>
+        <el-button @click="addCancel()">取 消</el-button>
+        <el-button @click="addSave" type="primary">确 认</el-button>
       </span>
     </el-dialog>
     <!--  @closed="dialogClosed" -->
@@ -423,32 +361,57 @@
       @closed="dialogClosed('editOrderRef')"
     >
       <el-form
-        :label-position="labelPosition"
+        label-position="labelPosition"
         :model="editOrderForm"
         ref="editOrderRef"
         :rules="addOrderRules"
         :inline="true"
+        label-width="100px"
       >
-        <el-button type="primary" @click="addGoods(2)" :disabled="lookUpState">添加商品</el-button>
+        <el-button type="primary" @click="addGoods(2)" v-if="!lookUpState">添加商品</el-button>
         <el-button
           type="dange"
-          :disabled="(addSelectedList.length == 0 && addSelectedList_two == 0)||lookUpState"
+          v-if="!lookUpState"
+          :disabled="(addSelectedList.length == 0 && addSelectedList_two == 0)"
           @click="deleteAddbumen(editOrderForm.pcommodityDos,2)"
         >删除商品</el-button>
         <el-table border :data="editOrderForm.pcommodityDos" @selection-change="addSelectionChange">
-          <el-table-column type="selection" width="40" align="center"></el-table-column>
+          <el-table-column type="selection" width="40" align="center" v-if="!lookUpState"></el-table-column>
           <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
           <el-table-column prop="supgoolssmallType" label="商品名称"></el-table-column>
           <el-table-column prop="supgoolsId" label="商品编码"></el-table-column>
           <el-table-column prop="supgoolsSplicing" label="商品描述"></el-table-column>
-          <el-table-column prop label="库存"></el-table-column>
-          <el-table-column prop label="单位"></el-table-column>
+          <el-table-column label="单位">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.pcommodityUnit" placeholder="请选择" class="_small" :disabled="lookUpState">
+                <el-option
+                  v-for="item in unit"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="入库仓库">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.basicId" placeholder="请选择" class="_small" :disabled="lookUpState">
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
           <el-table-column prop label="单价（元）">
             <template slot-scope="scope">
               <el-input
                 v-model="scope.row.pcommodityPrice"
                 @blur="addCalculate(editOrderForm)"
                 :disabled="lookUpState"
+                type="number"
               ></el-input>
             </template>
           </el-table-column>
@@ -458,6 +421,7 @@
                 v-model="scope.row.pcommodityPalnnum"
                 @blur="addCalculate(editOrderForm)"
                 :disabled="lookUpState"
+                type="number"
               ></el-input>
             </template>
           </el-table-column>
@@ -469,8 +433,8 @@
             </template>
           </el-table-column>
         </el-table>
-        <hr />
-        <el-form-item label="选择供应商" prop="supplierId">
+        <dir class="fenge">供应商信息</dir>
+        <el-form-item label="选择供应商：" prop="supplierId">
           <el-select
             v-model="editOrderForm.supplierId"
             placeholder="请选择"
@@ -503,18 +467,18 @@
           <el-table-column prop="supPhone" label="手机"></el-table-column>
         </el-table>
 
-        <hr />
-        <el-form-item label="总数量" prop="porderTotalnum">
+        <div class="fenge1">付款信息</div>
+        <el-form-item label="总数量：" prop="porderTotalnum">
           <el-input v-model="editOrderForm.porderTotalnum" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="总金额" prop="porderTotalmoney">
+        <el-form-item label="总金额：" prop="porderTotalmoney">
           <el-input v-model="editOrderForm.porderTotalmoney" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="需预付金额" prop="porderPalnmoney">
+        <el-form-item label="需预付金额：" prop="porderPalnmoney">
           <el-input v-model="editOrderForm.porderPalnmoney" :disabled="lookUpState"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付说明" prop="porderExplain">
+        <el-form-item label="预付说明：" prop="porderExplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -524,13 +488,13 @@
           ></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge1">采购描述</div>
 
-        <el-form-item label="制单人员" prop="porderProducer">
+        <el-form-item label="制单人员：" prop="porderProducer">
           <el-input v-model="editOrderForm.porderProducer" :disabled="true" class="_small"></el-input>
         </el-form-item>
 
-        <el-form-item label="采购人员" prop="porderBuyer">
+        <el-form-item label="采购人员：" prop="porderBuyer">
           <el-input v-model="editOrderForm.porderBuyer" class="_small" :disabled="lookUpState"></el-input>
         </el-form-item>
 
@@ -548,9 +512,9 @@
               :value="item.basicId"
             ></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>-->
 
-        <el-form-item label="下单时间" prop="porderOrdertime">
+        <el-form-item label="下单时间：" prop="porderOrdertime">
           <el-date-picker
             v-model="editOrderForm.porderOrdertime"
             type="date"
@@ -562,7 +526,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="采购周期" prop="time">
+        <el-form-item label="采购周期：" prop="time">
           <el-date-picker
             v-model="editOrderForm.time"
             type="daterange"
@@ -575,7 +539,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="备注" prop="porderBuyexplain">
+        <el-form-item label="备注：" prop="porderBuyexplain">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -599,16 +563,16 @@
               :disabled="true"
             ></el-input>
           </el-form-item>
-        </div> -->
+        </div>-->
 
         <div v-if="editOrderForm.porderState != 0 && editOrderForm.porderState != 1">
-          <hr>
+          <div class="fenge1">采购审核（初审）</div>
 
-          <el-form-item label="审核人" prop="porderReviewman">
+          <el-form-item label="审核人：" prop="porderReviewman">
             <el-input v-model="editOrderForm.porderReviewman" :disabled="true"></el-input>
           </el-form-item>
           <br />
-          <el-form-item label="备注" prop="porderReviewexplain">
+          <el-form-item label="备注：" prop="porderReviewexplain">
             <el-input
               type="textarea"
               v-model="editOrderForm.porderReviewexplain"
@@ -616,17 +580,17 @@
               :disabled="true"
             ></el-input>
           </el-form-item>
-
         </div>
-        <div v-if="editOrderForm.porderState == 4 ||editOrderForm.porderState == 5 ||editOrderForm.porderState == 8">
+        <div
+          v-if="editOrderForm.porderState == 4 ||editOrderForm.porderState == 5 ||editOrderForm.porderState == 8"
+        >
+          <div class="fenge1">采购审核（复审）</div>
 
-        <hr>
-
-          <el-form-item label="审核人" prop="porderReviewedman">
+          <el-form-item label="审核人：" prop="porderReviewedman">
             <el-input v-model="editOrderForm.porderReviewedman" :disabled="true"></el-input>
           </el-form-item>
-          <br>
-          <el-form-item label="备注" prop="porderReviewedexplain">
+          <br />
+          <el-form-item label="备注：" prop="porderReviewedexplain">
             <el-input
               type="textarea"
               v-model="editOrderForm.porderReviewedexplain"
@@ -638,13 +602,14 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer" v-show="!lookUpState">
-        <el-button @click="addCancel()">取消</el-button>
-        <el-button @click="editOrder" type="primary">保存</el-button>
+        <el-button @click="addCancel()">取 消</el-button>
+        <el-button @click="editOrder" type="primary">保 存</el-button>
       </span>
       <span slot="footer" class="dialog-footer" v-show="lookUpState">
-        <el-button @click="lookUpState=false;addCancel()" type="primary">确定</el-button>
+        <el-button @click="lookUpState=false;addCancel()">取 消</el-button>
       </span>
     </el-dialog>
+
     <el-dialog
       title="选择商品"
       :visible.sync="visibleOfChooseGoods"
@@ -652,19 +617,13 @@
       :before-close="handleClose"
       @closed="dialogClosed('chooseGoodsForm')"
     >
-      <el-form
-        :model="chooseGoodsForm"
-        ref="chooseGoodsForm"
-        :rules="chooseGoodsFormRules"
-        :inline="true"
-      >
-        <el-form-item label="商品大类型" prop="goodsBigType">
+      <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
+        <el-form-item label="商品大类型：" prop="goodsBigType">
           <el-select
             placeholder="请选择商品"
             v-model="chooseGoodsForm.goodsBigType"
             @change="changeGoodsBigType"
           >
-            <!-- v-if="addOrEdit == 1" -->
             <el-option value="原纸">原纸</el-option>
             <el-option value="纸箱">纸箱</el-option>
             <el-option value="袋子">袋子</el-option>
@@ -672,46 +631,14 @@
             <el-option value="其它">其它</el-option>
           </el-select>
         </el-form-item>
-
-        <!-- <el-button @click="gongyingshangpi" v-if="addOrEdit == 1">查询</el-button> -->
-        <!-- <el-button @click="gongyingshangpi2" v-if="addOrEdit == 2">查询</el-button>
-        <el-button type="primary" @click="ResetFormaddOrderFormGoods">重置</el-button>-->
       </el-form>
-      <hr />
       <el-table border stripe :data="shangpi" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
-        <el-table-column prop="supgoolsId"  label="商品名称"></el-table-column>
+        <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
         <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
-        <!-- <el-table-column prop="supgoolsId" label="商品编码"></el-table-column>
-        <el-table-column prop="supgoolsBrand" label="品牌"></el-table-column>
-        <el-table-column prop="supgoolsWeight" label="克重"></el-table-column>
-        <el-table-column prop="supgoolsWidths" label="门幅"></el-table-column>
-        <el-table-column prop="supgoolCoated" label="淋膜类型"></el-table-column> -->
         <el-table-column prop="supgoolsSplicing" label="商品描述"></el-table-column>
-
-        <!-- <el-table-column prop="supgoolsId" label="商品编码"></el-table-column>
-        <el-table-column prop="supgoolssmallType" label="商品小类型" v-if="panduan.supgoolssmallType1"></el-table-column>
-        <el-table-column prop="supgoolsBrand" label="品牌" v-if="panduan.supgoolsBrand1"></el-table-column>
-        <el-table-column prop="supgoolsWeight" label="克重" v-if="panduan.supgoolsWeight1"></el-table-column>
-        <el-table-column prop="supgoolsWidths" label="门幅" v-if="panduan.supgoolsWidths1"></el-table-column>
-        <el-table-column prop="supgoolCoated" label="淋膜类型" v-if="panduan.supgoolCoated1"></el-table-column>
-        <el-table-column prop="supgoolsLength" label="尺寸/长" v-if="panduan.supgoolsLength1"></el-table-column>
-        <el-table-column prop="supgoolsWidth" label="尺寸/宽" v-if="panduan.supgoolsWidth1"></el-table-column>
-        <el-table-column prop="supgoolsHeight" label="尺寸/厚" v-if="panduan.supgoolsHeight1"></el-table-column>
-        <el-table-column prop="supgoolsBradth" label="宽度" v-if="panduan.supgoolsBradth1"></el-table-column>
-        <el-table-column prop="supgoolsColor" label="颜色" v-if="panduan.supgoolsColor1"></el-table-column>
-        <el-table-column prop="supName" label="供应商"></el-table-column>-->
       </el-table>
-      <!-- <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page.sync="currentPage"
-                :page-sizes="[10]"
-                :page-size="100"
-                layout="total, sizes, prev, pager, next"
-                :total="total"
-      ></el-pagination>-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="chooseGoodsFormCancel()">取 消</el-button>
         <el-button @click="chooseGoodsFormSava()" type="primary">保 存</el-button>
@@ -748,7 +675,9 @@ export default {
         lab: "原纸",
         pageCode: 1, //当前页
         pageSize: 10, //每页显示的记录数
-        porderBuyer: ""
+        porderBuyer: "",
+
+        supgoolsBigtype: "" //商品大类型
       },
       editOrderForm: {
         porderCode: "",
@@ -776,7 +705,9 @@ export default {
         porderReviewedman: "", //订单俯身人
         porderReviewedexplain: "", //订单复审备注
         porderState: "", //订单状态
-        supgoolsSplicing: "" //商品描述
+        supgoolsSplicing: "", //商品描述
+
+        supgoolsBigtype: "" //商品大类型
       },
       lookUpState: false,
       chaOrderFrom: {
@@ -860,7 +791,10 @@ export default {
       // 操作标识
       operationFlag3: false, // 3个按钮
       operationFlag2: false, // 2个按钮
-      operationFlag1: false // 1个按钮
+      operationFlag1: false, // 1个按钮
+
+      warehouseOptions: [], //仓库数组
+      unit: [] //单位数组
     };
   },
   created() {
@@ -869,24 +803,40 @@ export default {
     this.getList();
     this.getCha();
     this.getCookie();
+    this.getWarehouseOptions();
+    this.queryUnit();
   },
   methods: {
     //读取cookie
     getCookie: function() {
-      if (document.cookie.length > 0) {
-        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
-        for (var i = 0; i < arr.length; i++) {
-          var arr2 = arr[i].split("="); //再次切割
-          //判断查找相对应的值
-          if (arr2[0] == "userName") {
-            //  console.log(arr2[1])
-            console.log( arr2[1]);
-            
-            this.addOrderForm.porderProducer = arr2[1]; //保存到保存数据的地方
-          }
-        }
-        this.checked = true;
-      }
+      // if (document.cookie.length > 0) {
+      //   var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+      //   for (var i = 0; i < arr.length; i++) {
+      //     var arr2 = arr[i].split("="); //再次切割
+      //     //判断查找相对应的值
+      //     if (arr2[0] == "userName") {
+      //       //  console.log(arr2[1])
+      //       this.addOrderForm.porderProducer = arr2[1]; //保存到保存数据的地方
+      //     }
+      //   }
+      //   this.checked = true;
+      // }
+      var storage = window.localStorage;
+      this.addOrderForm.porderProducer = storage.getItem("username");
+    },
+    // 获取仓库列表
+    async getWarehouseOptions() {
+      const { data: res } = await this.$http.post("jc/Basic/selectwarehousing");
+      // console.log('仓库')
+      // console.log(res)
+      this.warehouseOptions = res; //如何取
+    },
+    // 查询库存单位
+    async queryUnit() {
+      const { data: res } = await this.$http.post("jc/Basic/selectstorenum");
+      // console.log('单位')
+      // console.log(res)
+      this.unit = res;
     },
     ResetForm(formName) {
       this.$refs[formName].resetFields();
@@ -904,196 +854,22 @@ export default {
         "jc/Basic/selectwarehousing"
       );
       this.gongyinshang = res.body.rows;
-      console.log("供应商---");
-      console.log(this.gongyinshang);
+      // console.log("供应商---");
+      // console.log(this.gongyinshang);
       this.cangku = res1;
-      console.log("仓库");
-      console.log(this.cangku);
+      // console.log("仓库");
+      // console.log(this.cangku);
     },
-    // async gongyingshangpi() {
-    //   //    this.panduan.supgoolCoated1= false
-    //   //    this.panduan.supgoolsBradth1= false
-    //   //    this.panduan.supgoolsBrand1= false
-    //   //    this.panduan.supgoolsColor1=false
-    //   //    this.panduan.supgoolsHeight1= false
-    //   //    this.panduan.supgoolsLength1= false
-    //   //    this.panduan.supgoolsWeight1= false
-    //   //    this.panduan.supgoolsWidth1=false
-    //   //    this.panduan.supgoolsWidths1= false
-    //   //    this.panduan.supgoolssmallType= false
-    //   //   !!!
-    //   console.log("新增订单时编辑商品");
-
-    //   // if (this.addOrderForm.supplierId == "") {
-    //   //   this.$message({
-    //   //     type: "info",
-    //   //     message: "请选择供应商"
-    //   //   });
-    //   // }else
-    //   {
-    //     const { data: res } = await this.$http.post(
-    //       "jc/suppliergoods/selectSuppliergoolslist",
-    //       { params: this.addOrderForm }
-    //     );
-    //     console.log(res);
-    //     for (let index = 0; index < res.body.rows.length; index++) {
-    //       if (res.body.rows[index].supgoolssmallType == "") {
-    //         this.panduan.supgoolssmallType1 = false;
-    //       } else {
-    //         this.panduan.supgoolssmallType1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolCoated == "") {
-    //         this.panduan.supgoolCoated1 = false;
-    //       } else {
-    //         this.panduan.supgoolCoated1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsBrand == "") {
-    //         this.panduan.supgoolsBrand1 = false;
-    //       } else {
-    //         this.panduan.supgoolsBrand1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsWeight == null) {
-    //         this.panduan.supgoolsWeight1 = false;
-    //       } else {
-    //         this.panduan.supgoolsWeight1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsWidths == null) {
-    //         this.panduan.supgoolsWidths1 = false;
-    //       } else {
-    //         this.panduan.supgoolsWidths1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsBradth == null) {
-    //         this.panduan.supgoolsBradth1 = false;
-    //       } else {
-    //         this.panduan.supgoolsBradth1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsLength == null) {
-    //         this.panduan.supgoolsLength1 = false;
-    //       } else {
-    //         this.panduan.supgoolsLength1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsWidth == null) {
-    //         this.panduan.supgoolsWidth1 = false;
-    //       } else {
-    //         this.panduan.supgoolsWidth1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsHeight == null) {
-    //         this.panduan.supgoolsHeight1 = false;
-    //       } else {
-    //         this.panduan.supgoolsHeight1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsColor == "") {
-    //         this.panduan.supgoolsColor1 = false;
-    //       } else {
-    //         this.panduan.supgoolsColor1 = true;
-    //       }
-    //     }
-    //     console.log(this.panduan);
-
-    //     this.shangpi = res.body.rows;
-    //     this.total = res.body.total;
-    //     this.addOrder_addgoods = true;
-    //   }
-    // },
-
-    // 编辑时的添加商品方法
-    // async gongyingshangpi2() {
-    //   //    this.panduan.supgoolCoated1= false
-    //   //    this.panduan.supgoolsBradth1= false
-    //   //    this.panduan.supgoolsBrand1= false
-    //   //    this.panduan.supgoolsColor1=false
-    //   //    this.panduan.supgoolsHeight1= false
-    //   //    this.panduan.supgoolsLength1= false
-    //   //    this.panduan.supgoolsWeight1= false
-    //   //    this.panduan.supgoolsWidth1=false
-    //   //    this.panduan.supgoolsWidths1= false
-    //   //    this.panduan.supgoolssmallType= false
-    //   //   !!!
-
-    //   console.log("添加商品时编辑");
-    //   this.editOrderForm.lab = this.addOrderForm.lab;
-
-    //   // if (this.editOrderForm.supplierId == "") {
-    //   //   this.$message({
-    //   //     type: "info",
-    //   //     message: "请选择供应商"
-    //   //   });
-    //   // }else
-    //   {
-    //     const { data: res } = await this.$http.post(
-    //       "jc/suppliergoods/selectSuppliergoolslist",
-    //       { params: this.editOrderForm }
-    //     );
-    //     console.log(res);
-    //     for (let index = 0; index < res.body.rows.length; index++) {
-    //       if (res.body.rows[index].supgoolssmallType == "") {
-    //         this.panduan.supgoolssmallType1 = false;
-    //       } else {
-    //         this.panduan.supgoolssmallType1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolCoated == "") {
-    //         this.panduan.supgoolCoated1 = false;
-    //       } else {
-    //         this.panduan.supgoolCoated1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsBrand == "") {
-    //         this.panduan.supgoolsBrand1 = false;
-    //       } else {
-    //         this.panduan.supgoolsBrand1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsWeight == null) {
-    //         this.panduan.supgoolsWeight1 = false;
-    //       } else {
-    //         this.panduan.supgoolsWeight1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsWidths == null) {
-    //         this.panduan.supgoolsWidths1 = false;
-    //       } else {
-    //         this.panduan.supgoolsWidths1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsBradth == null) {
-    //         this.panduan.supgoolsBradth1 = false;
-    //       } else {
-    //         this.panduan.supgoolsBradth1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsLength == null) {
-    //         this.panduan.supgoolsLength1 = false;
-    //       } else {
-    //         this.panduan.supgoolsLength1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsWidth == null) {
-    //         this.panduan.supgoolsWidth1 = false;
-    //       } else {
-    //         this.panduan.supgoolsWidth1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsHeight == null) {
-    //         this.panduan.supgoolsHeight1 = false;
-    //       } else {
-    //         this.panduan.supgoolsHeight1 = true;
-    //       }
-    //       if (res.body.rows[index].supgoolsColor == "") {
-    //         this.panduan.supgoolsColor1 = false;
-    //       } else {
-    //         this.panduan.supgoolsColor1 = true;
-    //       }
-    //     }
-    //     console.log(this.panduan);
-
-    //     this.shangpi = res.body.rows;
-    //     this.total = res.body.total;
-    //     this.addOrder_addgoods = true;
-    //   }
-    // },
 
     handleSelectionChange(val) {
       this.chooseGoodsForm.goodsChoosed = val;
       // this.selectedList = val;
-      console.log(val);
+      // console.log(val);
     },
     // orderList 批量提审
     handleSelectionChange2(val) {
       this.orderListCheckOrders = val;
-      console.log( this.orderListCheckOrders);
+      // console.log(this.orderListCheckOrders);
     },
     // 批量提审
     async checkOrderList() {
@@ -1103,7 +879,6 @@ export default {
       this.orderListCheckOrders.forEach((item, index, arr) => {
         porderCodes.push(item.porderCode);
         if (item.porderState != 0) {
-          
           flag = true;
           return false;
         }
@@ -1111,9 +886,9 @@ export default {
 
       if (flag) {
         this.$message({
-            type: "info",
-            message: "存在非初始化状态订单，请重新选择！"
-          });
+          type: "info",
+          message: "存在非初始化状态订单，请重新选择！"
+        });
         return;
       }
 
@@ -1128,14 +903,13 @@ export default {
           message: "批量提审成功！"
         });
         this.getList();
-        this.orderListCheckOrders = []
+        this.orderListCheckOrders = [];
       } else {
         this.$message({
           type: "danger",
           message: "批量提审失败！"
         });
       }
-
     },
     // 批量终止
     async stopOrderList() {
@@ -1145,7 +919,6 @@ export default {
       this.orderListCheckOrders.forEach((item, index, arr) => {
         porderCodes.push(item.porderCode);
         if (item.porderState != 5) {
-          
           flag = true;
           return false;
         }
@@ -1153,9 +926,9 @@ export default {
 
       if (flag) {
         this.$message({
-            type: "info",
-            message: "存在非采购中状态订单，请重新选择！"
-          });
+          type: "info",
+          message: "存在非采购中状态订单，请重新选择！"
+        });
         return;
       }
 
@@ -1170,7 +943,7 @@ export default {
           message: "批量终止成功！"
         });
         this.getList();
-        this.orderListCheckOrders = []
+        this.orderListCheckOrders = [];
       } else {
         this.$message({
           type: "danger",
@@ -1294,7 +1067,7 @@ export default {
         // 重新点击时，需要重置查询页数
         this.chaOrderFrom.pageCode = 1;
         this.chaCopy();
-        console.log(1111);
+        // console.log(1111);
       }
       const { data: res } = await this.$http.post(
         "jh/purchase/selectpurc2",
@@ -1306,29 +1079,29 @@ export default {
       // !!!-----------------------
       // 用订单状态判断应该存在几个按钮
       // 当存在三个operationFlag3为true，其余为false。其他情况相同
-      this.operationFlag3 = res.body.rows.some(function(item, index, array) {
-        return item.porderState == 0;
-      });
-      if (this.operationFlag3) {
-        this.operationFlag2 = this.operationFlag1 = false;
-      } else {
-        this.operationFlag2 = res.body.rows.some(function(item, index, array) {
-          return (
-            item.porderState == 2 ||
-            item.porderState == 4 ||
-            item.porderState == 5
-          );
-        });
-        if (this.operationFlag2) {
-          this.operationFlag1 = false;
-        } else {
-          this.operationFlag1 = true;
-        }
-      }
+      // this.operationFlag3 = res.body.rows.some(function(item, index, array) {
+      //   return item.porderState == 0;
+      // });
+      // if (this.operationFlag3) {
+      //   this.operationFlag2 = this.operationFlag1 = false;
+      // } else {
+      //   this.operationFlag2 = res.body.rows.some(function(item, index, array) {
+      //     return (
+      //       item.porderState == 2 ||
+      //       item.porderState == 4 ||
+      //       item.porderState == 5
+      //     );
+      //   });
+      //   if (this.operationFlag2) {
+      //     this.operationFlag1 = false;
+      //   } else {
+      //     this.operationFlag1 = true;
+      //   }
+      // }
 
-      console.log(this.operationFlag3);
-      console.log(this.operationFlag2);
-      console.log(this.operationFlag1);
+      // console.log(this.operationFlag3);
+      // console.log(this.operationFlag2);
+      // console.log(this.operationFlag1);
       // !!!-----------------------
 
       this.orderList = res.body.rows;
@@ -1377,11 +1150,11 @@ export default {
     },
     handleSizeChange(val) {
       this.chaOrderFrom.pageSize = val;
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.getList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       // 赋值给真实查询条件
       this.chaOrder.pageCode = val;
 
@@ -1406,11 +1179,11 @@ export default {
 
     addSelectionChange(val) {
       this.addSelectedList = val;
-      console.log(this.addSelectedList);
+      // console.log(this.addSelectedList);
     },
     addSelectionChange_two(val) {
       this.addSelectedList_two = val;
-      console.log(val);
+      // console.log(val);
     },
     deleteAddbumen(val, flag) {
       this.$confirm("此操作将移除商品, 是否继续?", "提示", {
@@ -1453,12 +1226,12 @@ export default {
           // 将已选择的商品table重新赋值
           if (flag == 1) {
             this.addOrderForm.pcommodityDos = array;
-            this.addCalculate(this.addOrderForm)
+            this.addCalculate(this.addOrderForm);
           }
 
           if (flag == 2) {
             this.editOrderForm.pcommodityDos = array;
-            this.addCalculate(this.editOrderForm)
+            this.addCalculate(this.editOrderForm);
           }
 
           // this.jisuan();
@@ -1551,6 +1324,17 @@ export default {
           "jh/purchase/createorder",
           this.addOrderForm
         );
+        if (res.body.result) {
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        } else {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          });
+        }
         this.addOrderVisible = false;
         this.getList();
         this.addOrderForm.pcommodityDos = [];
@@ -1558,23 +1342,22 @@ export default {
       });
     },
     async showEditOrder(porderCode) {
-
       // let param = new URLSearchParams();
       // param.append("porderCode", porderCode);
-      console.log(porderCode);
+      // console.log(porderCode);
       this.editOrderForm.porderCode = porderCode;
 
       const { data: res } = await this.$http.post("jh/purchase/dtjresultMap", {
         porderCode: porderCode
       });
-      console.log(res);
+      // console.log(res);
 
       for (let i = 0; i < res.body.result[0].pcommodityDos.length; i++) {
         this.delarr.push(res.body.result[0].pcommodityDos[i].suppliergoolsId);
       }
 
-      console.log("--------------------");
-      console.log(this.delarr);
+      // console.log("--------------------");
+      // console.log(this.delarr);
 
       const { data: res1 } = await this.$http.post(
         "/jc/suppliergoods/selectSuppliergoolslistmore",
@@ -1582,28 +1365,44 @@ export default {
       );
       this.delarr = [];
       // console.log(res);
-      for (let index = 0; index < res.body.result[0].pcommodityDos.length; index++) {
+
+      for (
+        let index = 0;
+        index < res.body.result[0].pcommodityDos.length;
+        index++
+      ) {
         for (let i = 0; i < res1.length; i++) {
           if (
             res.body.result[0].pcommodityDos[index].suppliergoolsId ==
             res1[i].suppliergoolsId
           ) {
-            res.body.result[0].pcommodityDos[index].supgoolCoated = res1[i].supgoolCoated;
-            res.body.result[0].pcommodityDos[index].supgoolsBradth = res1[i].supgoolsBradth;
-            res.body.result[0].pcommodityDos[index].supgoolsBrand = res1[i].supgoolsBrand;
-            res.body.result[0].pcommodityDos[index].supgoolsColor = res1[i].supgoolsColor;
-            res.body.result[0].pcommodityDos[index].supgoolsHeight = res1[i].supgoolsHeight;
-            res.body.result[0].pcommodityDos[index].supgoolsLength = res1[i].supgoolsLength;
-            res.body.result[0].pcommodityDos[index].supgoolsWeight = res1[i].supgoolsWeight;
-            res.body.result[0].pcommodityDos[index].supgoolsWidth1 = res1[i].supgoolsWidth1;
-            res.body.result[0].pcommodityDos[index].supgoolsWidths = res1[i].supgoolsWidths;
+            res.body.result[0].pcommodityDos[index].supgoolCoated =
+              res1[i].supgoolCoated;
+            res.body.result[0].pcommodityDos[index].supgoolsBradth =
+              res1[i].supgoolsBradth;
+            res.body.result[0].pcommodityDos[index].supgoolsBrand =
+              res1[i].supgoolsBrand;
+            res.body.result[0].pcommodityDos[index].supgoolsColor =
+              res1[i].supgoolsColor;
+            res.body.result[0].pcommodityDos[index].supgoolsHeight =
+              res1[i].supgoolsHeight;
+            res.body.result[0].pcommodityDos[index].supgoolsLength =
+              res1[i].supgoolsLength;
+            res.body.result[0].pcommodityDos[index].supgoolsWeight =
+              res1[i].supgoolsWeight;
+            res.body.result[0].pcommodityDos[index].supgoolsWidth1 =
+              res1[i].supgoolsWidth1;
+            res.body.result[0].pcommodityDos[index].supgoolsWidths =
+              res1[i].supgoolsWidths;
             res.body.result[0].pcommodityDos[index].supName = res1[i].supName;
-            res.body.result[0].pcommodityDos[index].porderBuyer = res1[i].porderBuyer;
+            res.body.result[0].pcommodityDos[index].porderBuyer =
+              res1[i].porderBuyer;
             res.body.result[0].pcommodityDos[index].supgoolsBigType =
               res1[i].supgoolsBigType;
             res.body.result[0].pcommodityDos[index].supgoolssmallType =
               res1[i].supgoolssmallType;
-            res.body.result[0].pcommodityDos[index].supgoolsId = res1[i].supgoolsId;
+            res.body.result[0].pcommodityDos[index].supgoolsId =
+              res1[i].supgoolsId;
             res.body.result[0].pcommodityDos[index].supgoolsSplicing =
               res1[i].supgoolsSplicing;
           }
@@ -1626,24 +1425,38 @@ export default {
       this.editOrderForm.porderBuyer = res.body.result[0].porderBuyer;
       // this.addOrderForm.lab = res[0].
       this.editOrderForm.pcommodityDos = res.body.result[0].pcommodityDos;
+      this.editOrderForm.pcommodityDos.forEach((item, index, array) => {
+        item.pcommodityUnit = Number(item.pcommodityUnit);
+      });
       // 下单时间
       this.editOrderForm.porderOrdertime = res.body.result[0].porderOrdertime;
       // 初复审信息
       this.editOrderForm.porderReviewman = res.body.result[0].porderReviewman;
-      this.editOrderForm.porderReviewexplain = res.body.result[0].porderReviewexplain;
-      this.editOrderForm.porderReviewedman = res.body.result[0].porderReviewedman;
-      this.editOrderForm.porderReviewedexplain = res.body.result[0].porderReviewedexplain;
+      this.editOrderForm.porderReviewexplain =
+        res.body.result[0].porderReviewexplain;
+      this.editOrderForm.porderReviewedman =
+        res.body.result[0].porderReviewedman;
+      this.editOrderForm.porderReviewedexplain =
+        res.body.result[0].porderReviewedexplain;
       // 订单状态
       this.editOrderForm.porderState = res.body.result[0].porderState;
 
-      if (res.body.result[0].supplierId != '' && !isNaN(res.body.result[0].supplierId)) {
+      // 商品大类型
+      this.editOrderForm.supgoolsBigtype = res.body.result[0].supgoolsBigtype;
+
+      if (
+        res.body.result[0].supplierId != "" &&
+        !isNaN(res.body.result[0].supplierId)
+      ) {
         this.editOrderForm.supplierId = Number(res.body.result[0].supplierId);
       } else {
-        this.editOrderForm.supplierId = ''
+        this.editOrderForm.supplierId = "";
       }
-      
 
-      let time = [res.body.result[0].porderStarttime, res.body.result[0].porderStoptime];
+      let time = [
+        res.body.result[0].porderStarttime,
+        res.body.result[0].porderStoptime
+      ];
       this.editOrderForm.time = time;
 
       this.gongyingshangOfForm = [];
@@ -1677,7 +1490,7 @@ export default {
           type: "success",
           message: res.body.msg
         });
-        this.getList()
+        this.getList();
       } else {
         this.$message({
           type: "info",
@@ -1715,7 +1528,7 @@ export default {
             "jh/purchase/deleteall",
             param
           );
-          console.log(res);
+          // console.log(res);
 
           this.getList();
 
@@ -1749,7 +1562,7 @@ export default {
         "jc/suppliergoods/selectSuppliergoolslist",
         { params: { lab: this.chooseGoodsForm.goodsBigType } }
       );
-      console.log(res);
+      // console.log(res);
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -1788,8 +1601,22 @@ export default {
     },
     // 选择商品表单保存
     chooseGoodsFormSava() {
+      // this.chooseGoodsForm.goodsChoosed.forEach((item, index, arr) => {
+      //   item.pcommodityPalnnum = '';
+      //   item.pcommodityPrice = '';
+      // })
       let length;
       if (this.chooseGoodsForm.addOrEdit == 1) {
+        // 新增时，如果大类型改变，那么原来新增表单中的商品应该清空，并且改变新增表单大类型
+        // 控制一张采购订单只能新增一种商品大类型商品
+        if (
+          this.addOrderForm.supgoolsBigtype !=
+            this.chooseGoodsForm.goodsBigType &&
+          this.chooseGoodsForm.goodsChoosed.length != 0
+        ) {
+          this.addOrderForm.pcommodityDos = [];
+          this.addOrderForm.supgoolsBigtype = this.chooseGoodsForm.goodsBigType;
+        }
         //添加
         length =
           this.addOrderForm.pcommodityDos.length +
@@ -1821,6 +1648,16 @@ export default {
           }
         }
       } else if (this.chooseGoodsForm.addOrEdit == 2) {
+        // 编辑时，如果大类型改变，那么原来编辑表单中的商品应该清空，并且改变编辑表单大类型
+        if (
+          this.editOrderForm.supgoolsBigtype !=
+            this.chooseGoodsForm.goodsBigType &&
+          this.chooseGoodsForm.goodsChoosed.length != 0
+        ) {
+          this.editOrderForm.pcommodityDos = [];
+          this.editOrderForm.supgoolsBigtype = this.chooseGoodsForm.goodsBigType;
+        }
+
         //编辑
         length =
           this.editOrderForm.pcommodityDos.length +
@@ -1877,8 +1714,8 @@ export default {
       this.chooseGoodsForm.goodsChoosed = [];
     },
     changeGongyingshang(val) {
-      console.log("供应商变化");
-      console.log(val);
+      // console.log("供应商变化");
+      // console.log(val);
 
       this.gongyingshangOfForm = [];
       this.gongyinshang.forEach((item, index, arr) => {
@@ -1886,7 +1723,7 @@ export default {
           this.gongyingshangOfForm.push(item);
         }
       });
-      console.log(this.gongyingshangOfForm);
+      // console.log(this.gongyingshangOfForm);
     },
     // 供应商删除按钮
     deleteGongyingshang() {
@@ -1909,31 +1746,70 @@ export default {
         // }
 
         if (!isNaN(item.pcommodityPalnnum)) {
-          quantity += Number(item.pcommodityPalnnum);
+          // quantity += Number(item.pcommodityPalnnum);
+          quantity = this.add(Number(item.pcommodityPalnnum), quantity);
         }
+        // else {
+        //   arr[index].pcommodityPalnnum = 0
+        // }
         //  else {
-          // 如果该行数量不是数字，置空
+        // // 如果该行数量不是数字，置空
         //   item.pcommodityPalnnum = '';
         // }
       });
-      val.porderTotalnum = quantity;
+      val.porderTotalnum = quantity.toFixed(2);
 
       // 计算总价格
       let money = 0;
       val.pcommodityDos.forEach((item, index, arr) => {
-        if (!isNaN(item.pcommodityPalnnum * item.pcommodityPrice)) {
-          money += Number(item.pcommodityPalnnum * item.pcommodityPrice);
-        } 
+        if (
+          !isNaN(this.multiple(item.pcommodityPalnnum, item.pcommodityPrice))
+        ) {
+          // money += Number(item.pcommodityPalnnum * item.pcommodityPrice);
+          money = this.add(
+            this.multiple(item.pcommodityPalnnum, item.pcommodityPrice),
+            money
+          );
+        }
       });
-      val.porderTotalmoney = money;
+      val.porderTotalmoney = money.toFixed(2);
+
+      // console.log('----------------------')
+
+      // 将所有非数字置空
+      // for (let i = 0; i < val.pcommodityDos.length; i++) {
+      //   if (isNaN(Number(val.pcommodityDos[i].pcommodityPalnnum)) && val.pcommodityDos[i].pcommodityPalnnum != '') {
+      //     console.log(val.pcommodityDos[i].pcommodityPalnnum)
+      //     val.pcommodityDos[i].pcommodityPalnnum = '';
+      //   // 破坏了双向绑定？？？？
+      //   }
+
+      //   if (isNaN(Number(val.pcommodityDos[i].pcommodityPrice)) && val.pcommodityDos[i].pcommodityPrice != '') {
+      //     val.pcommodityDos[i].pcommodityPrice = '';
+      //   }
+      // }
     },
     // 新增采购订单
-    addPurchareOrder(){
-      this.addOrderForm.pcommodityDos = []
-      this.gongyingshangOfForm = []
-      this.editOrde  = false;
+    addPurchareOrder() {
+      this.addOrderForm.pcommodityDos = [];
+      this.addOrderForm.goodsBigType = this.chooseGoodsForm.goodsBigType;
+      this.gongyingshangOfForm = [];
+      this.editOrde = false;
       this.addOrEdit = 1;
       this.addOrderVisible = true;
+    },
+
+    // 相加
+    add(arg1, arg2) {
+      return (Math.round(arg1 * 100) + Math.round(arg2 * 100)) / 100;
+    },
+
+    //  subtract(arg1, arg2) {
+    //   return this.add(arg1, -arg2);
+    // },
+    // 相乘
+    multiple(arg1, arg2) {
+      return (Math.round(arg1 * 100) * Math.round(arg2 * 100)) / 10000;
     }
   }
 };
@@ -1988,23 +1864,23 @@ hr {
 .operationWidth {
   width: 90px;
 }
-.fenge{
-    position: absolute;
-    top: 34px;
-    left: 0px;
-    height: 25px;
-    width: 98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
-    
-    }
-  .fenge1{
-    height: 25px;
-    width:98.5%;
-    line-height: 25px;
-    padding-left:15px ;
-    background-color: #DCDFE6;
-    margin-bottom: 20px;
-    }
+
+.fenge {
+  position: absolute;
+  top: 34px;
+  left: 0px;
+  height: 25px;
+  width: 98.5%;
+  line-height: 25px;
+  padding-left: 15px;
+  background-color: #dcdfe6;
+}
+.fenge1 {
+  height: 25px;
+  width: 98.5%;
+  line-height: 25px;
+  padding-left: 15px;
+  background-color: #dcdfe6;
+  margin-bottom: 20px;
+}
 </style>

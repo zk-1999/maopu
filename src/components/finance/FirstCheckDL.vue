@@ -158,16 +158,18 @@
       width="50%"
       :before-close="handleClose"
     >
-    <div class="fenge">报销人员信息</div>
+      <div class="fenge">报销人员信息</div>
       <el-form :inline="true" class="demo-form-inline" :model="editDispatchListForm" ref="addDispatchListFormRef" :rules="addDispatchListRules">
         <el-form-item label="报销制单人：" prop="reimbursementBxproducer">
           <el-input v-model="editDispatchListForm.reimbursementBxproducer" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="报销类型：" prop="reimbursementType">
-          <el-input v-model="editDispatchListForm.reimbursementType" ></el-input>
+          <el-input v-model="editDispatchListForm.reimbursementType" :disabled="xianshi"></el-input>
         </el-form-item>
+        <br>
         <el-form-item label="备注信息：" prop="reimbursementBxremark">
           <el-input
+          :disabled="xianshi"
             type="textarea"
             :autosize="{ minRows: 1.3, maxRows:3}"
             placeholder="请输入内容"
@@ -176,8 +178,10 @@
         </el-form-item>
 <div class="fenge1">报销凭证上传/查看</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item v-if="editDispatchListForm.reimbursementVoucher">
+        <img width="20%" :src="ip1 +editDispatchListForm.reimbursementVoucher" alt="" @click="ab(editDispatchListForm.reimbursementVoucher)">
           <el-upload
+          :disabled="xianshi"
             ref="upload"
             :action="ip"
             name="picture"
@@ -193,8 +197,11 @@
         </el-form-item>
 <div class="fenge1">付款凭证</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item v-if="editDispatchListForm.reimbursementMessage">
+        <img width="20%" :src="ip1+editDispatchListForm.reimbursementMessage" alt="" @click="ab(editDispatchListForm.reimbursementMessage)">
+       
           <el-upload
+          :disabled="xianshi"
             ref="upload"
             :action="ip"
             name="picture"
@@ -238,6 +245,15 @@
           <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title=""
+      :visible.sync="tupainfangdadialogVisible"
+      width="45%"
+      :before-close="handleClose" class="fanggda">
+      <img :src="tupainfangda" alt="" width="100%">
+      <span slot="footer" class="dialog-footer">
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -256,7 +272,7 @@ export default {
       currentPage: 0,
       total: 0,
       delarr: "",
-      ip:'',
+ 
       selectedList: [],
       departmentList: [],
       chaDispatchListForm: {
@@ -302,6 +318,12 @@ export default {
           { min: 0, max: 1000, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
+      ip:'',
+      ip1:'',
+      tupainfangda:'',
+      tupainfangdadialogVisible:false,
+      dialogImageUrl: '',
+      dialogVisible: false,
       yonghu:'',
       // 仓库列表
       options: [{
@@ -347,7 +369,13 @@ export default {
     this.getCookie();
   },
   methods: {
+    ab(url){
+       console.log(url);
+      this.tupainfangdadialogVisible=true;
+      this.tupainfangda=this.ip1+url;
+    },
     async getDispatchListList(){
+       this.ip1=this.ips;
       this.ip=this.ips+'upload';
       this.chaDispatchListForm.status=1;
       const { data: res } = await this.$http.post("reimbursement/selectReimbursement", this.chaDispatchListForm);
@@ -377,10 +405,8 @@ export default {
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-                console.log('reimbursementVoucher');
-                
-                this.addProductForm.reimbursementVoucher=file.response.message;
-                this.editProductForm.reimbursementVoucher=file.response.message;
+                this.addDispatchListForm.reimbursementVoucher=file.response.message;
+                this.editDispatchListForm.reimbursementVoucher=file.response.message;
 
                 // this.productList.picture=file.response.message;
                 
@@ -394,10 +420,9 @@ export default {
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-                console.log('reimbursementMessage');
                 
-                this.addProductForm.reimbursementMessage=file.response.message;
-                this.editProductForm.reimbursementMessage=file.response.message;
+                this.addDispatchListForm.reimbursementMessage=file.response.message;
+                this.editDispatchListForm.reimbursementMessage=file.response.message;
 
                 // this.productList.picture=file.response.message;
                 
@@ -487,13 +512,17 @@ export default {
       if(res.body.result.reimbursementMana==null || res.body.result.reimbursementMana==''){
         res.body.result.reimbursementMana=this.yonghu;
       }
+     
+      res.body.result.reimbursementStatus=res.body.result.reimbursementStatus+'';
       this.editDispatchListForm = res.body.result;
-      console.log(res);
+      console.log( this.editDispatchListForm);
 
       this.editbumenDialogVisible = true;
     },
     async editDispatchList(Status) {
-      this.editDispatchListForm.reimbursementStatus=Status;
+     this.editDispatchListForm.reimbursementStatus=parseInt(this.editDispatchListForm.reimbursementStatus) ;
+      
+      // this.editDispatchListForm.reimbursementStatus=Status;
       const { data: res } = await this.$http.put(
         "reimbursement/updateReimbursement",
         this.editDispatchListForm
@@ -507,7 +536,7 @@ export default {
       var y = date.getFullYear()
       var mm = date.getMonth() + 1
       var d = date.getDate()
-      this.editOrdermanagementForm.sorderFushentime=`${y}-${mm}-${d}`
+      this.editDispatchListForm.reimbursementTimea=`${y}-${mm}-${d}`
     },
     selectedqi(status){
       this.delarr=[];

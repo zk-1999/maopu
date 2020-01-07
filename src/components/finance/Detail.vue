@@ -7,161 +7,169 @@
       <el-breadcrumb-item>收支明细</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="收支记录" name="first">
-          <!-- 查询表单 -->
-          <el-form :inline="true" class="demo-form-inline" :model="salesOrdermanagementForm">
-            <el-form-item label="收支类型" class="mar">
-              <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-                <el-option
-                  v-for="item in warehouseOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+      <el-tabs >
+        <el-tab-pane label="收支记录">
+         
+          <el-form :inline="true" :model="chaDetailForm" ref="chaDetailFormRef">
+            <el-form-item label="收支类型" prop="budgetBudgettype">
+              <el-select v-model="chaDetailForm.budgetBudgettype" >
+            <el-option
+              v-for="item in shouzhileixing"
+              :key="item.id"
+              :label="item.value"
+              :value="item.value"
+            ></el-option>
+          </el-select>
             </el-form-item>
 
-            <el-form-item label="所属类型" class="mar">
-              <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-                <el-option
-                  v-for="item in warehouseOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+            <el-form-item label="业务类型" prop="budgetBusinesstype">
+             <el-select v-model="chaDetailForm.budgetBusinesstype" >
+            <el-option
+              v-for="item in yewuleixing"
+              :key="item.id"
+              :label="item.value"
+              :value="item.value"
+            ></el-option>
+          </el-select>
             </el-form-item>
 
-            <el-form-item label="所属账户" class="mar">
-              <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-                <el-option
-                  v-for="item in warehouseOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+            <el-form-item label="账户类型" prop="budgetAccounttype">
+              <el-select v-model="chaDetailForm.budgetAccounttype" >
+              <el-option
+                v-for="item in zhanghuleixing"
+                :key="item.basicId"
+                :label="item.basicRetainone"
+                :value="item.basicId"
+              ></el-option>
+          </el-select>
             </el-form-item>
-            <!-- ？？？？ -->
-            <el-form-item label="其它选项" class="mar"></el-form-item>
-            <el-form-item label="时间" class="mar">
-              <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
+            <el-form-item label="交易时间" prop="budgetCompletetime">
+              <el-date-picker v-model="chaDetailForm.budgetCompletetime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="small" @click="q" class="mar">查 询</el-button>
+               <el-button @click="getDetail">查 询</el-button>
+          <el-button type="primary" @click="chaDetailForm1">重 置</el-button>
             </el-form-item>
           </el-form>
-          <el-button type="primary" size="small" @click="stateOfAdd = true">新 增</el-button>
+          <el-button type="primary" @click="addDetailVisible = true">新 增</el-button>
           <el-table
-            ref="multipleTable"
-            :data="tableData"
-            tooltip-effect="dark"
-            style="width: 100%"
+            :data="detailList"
             border
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column label="订单号" width="120">
-              <template slot-scope="scope">{{ scope.row.no }}</template>
-            </el-table-column>
-
-            <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-            <el-table-column prop label="业务类型"></el-table-column>
-            <el-table-column prop label="账户类型"></el-table-column>
-            <el-table-column prop label="所属订单（关联出款、收款单，可为空）"></el-table-column>
-            <el-table-column prop label="描述"></el-table-column>
-            <el-table-column prop label="交易完成时间"></el-table-column>
-            <el-table-column prop label="收支类型"></el-table-column>
-            <el-table-column prop label="收支金额"></el-table-column>
+            <!-- <el-table-column type="selection" width="35"></el-table-column> -->
+            <el-table-column type="index" label="序号" width="55"></el-table-column>
+            <el-table-column prop="budgetOrdernumber" label="订单号" ></el-table-column>
+            <el-table-column prop="budgetBusinesstype" label="业务类型"></el-table-column>
+            <el-table-column prop="budgetAccounttype" label="账户类型"></el-table-column>
+            <el-table-column prop="budgfetBelong" label="所属订单"></el-table-column>
+            <el-table-column prop="budgetDesc" label="描述"></el-table-column>
+            <el-table-column prop="budgetCompletetime" label="交易时间"></el-table-column>
+            <el-table-column prop="budgetBudgettype" label="收支类型"></el-table-column>
+            <el-table-column prop="budgetBudgetamount" label="收支金额"></el-table-column>
           </el-table>
 
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[3, 5, 10, 15]"
-            :page-size="100"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-          ></el-pagination>
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="10"
+        layout="total, prev, pager, next"
+        :total="total"
+      ></el-pagination>
         </el-tab-pane>
-        <el-tab-pane label="账户明细" name="second">账户明细</el-tab-pane>
+        <el-tab-pane label="账户明细" >
+           <el-table
+            :data="detailList"
+            border
+            @selection-change="handleSelectionChange"
+          >
+            <!-- <el-table-column type="selection" width="35"></el-table-column> -->
+            <el-table-column type="index" label="序号" width="55"></el-table-column>
+            <el-table-column prop="budgetOrdernumber" label="订单号" ></el-table-column>
+            <el-table-column prop="budgetBusinesstype" label="业务类型"></el-table-column>
+            <el-table-column prop="budgetAccounttype" label="账户类型"></el-table-column>
+            <el-table-column prop="budgfetBelong" label="所属订单"></el-table-column>
+            <el-table-column prop="budgetDesc" label="描述"></el-table-column>
+            <el-table-column prop="budgetCompletetime" label="交易时间"></el-table-column>
+            <el-table-column prop="budgetBudgettype" label="收支类型"></el-table-column>
+            <el-table-column prop="budgetBudgetamount" label="收支金额"></el-table-column>
+          </el-table>
+
+          <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="10"
+        layout="total, prev, pager, next"
+        :total="total"
+      ></el-pagination>
+        </el-tab-pane>
       </el-tabs>
       <!-- 表格 -->
     </el-card>
 
-    <el-dialog :title=" '新增' " :visible.sync="stateOfAdd" width="60%" :before-close="handleClose">
-      <el-form inline="true">
-        <el-form-item label="订单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="业务类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
+    <el-dialog :title=" '新增' " :visible.sync="addDetailVisible" width="40%" :before-close="handleClose" @closed="dialogClosed">
+      <el-form :inline="true" :model="addDetailForm" :rules="addDetailRules" ref="addDetailFormRef">
+         <el-form-item label="收支类型："  prop="budgetBudgettype">
+          <el-select v-model="addDetailForm.budgetBudgettype" >
             <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
+              v-for="item in shouzhileixing"
+              :key="item.id"
+              :label="item.value"
               :value="item.value"
             ></el-option>
           </el-select>
         </el-form-item>
-
-        <el-form-item label="账户类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
+       
+       
+        <el-form-item label="所属订单：" prop="budgetBelong">
+          <el-input v-model="addDetailForm.budgetBelong"></el-input>
+        </el-form-item>
+         <el-form-item label="业务类型："  prop="budgetBusinesstype">
+          <el-select v-model="addDetailForm.budgetBusinesstype" >
             <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
+              v-for="item in yewuleixing"
+              :key="item.id"
+              :label="item.value"
               :value="item.value"
             ></el-option>
           </el-select>
         </el-form-item>
-
-        <el-form-item label="所属订单">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
+         
+        
+        <el-form-item label="收支金额：" prop="budgetBudgetamount">
+          <el-input v-model="addDetailForm.budgetBudgetamount" ></el-input>
         </el-form-item>
-
-        <br>
-
-        <el-form-item label="描述">
+       <el-form-item label="账户类型：" prop="budgetAccounttype">
+          <el-select v-model="addDetailForm.budgetAccounttype" >
+            <el-option
+              v-for="item in zhanghuleixing"
+              :key="item.basicId"
+              :label="item.basicRetainone"
+              :value="item.basicId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="交易时间：" prop="budgetCompletetime">
+          <el-date-picker v-model="addDetailForm.budgetCompletetime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="描述信息：" prop="budgetDesc">
           <el-input
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
+            :autosize="{ minRows: 1.4, maxRows: 1}"
             placeholder="请输入内容"
-            v-model="textarea2"
+            v-model="addDetailForm.budgetDesc"
             style="width:100%"
           ></el-input>
         </el-form-item>
-
-        <br>
-
-        <el-form-item label="交易完成时间">
-          <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item>
-
-        <el-form-item label="收支类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="收支金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <br />
-        <!-- 两个按钮 -->
-        <el-form-item style="margin-left:800px;">
-          <el-button type="primary" size="small">提 交</el-button>
-        </el-form-item>
+       
       </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="addDetailVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addDetail" >确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -169,165 +177,86 @@
 export default {
   data() {
     return {
-      // v:false,
       labelPosition: "right",
-      addbumenDialogVisible: false,
+      addDetailVisible: false,
       editbumenDialogVisible: false,
       delVisible: false,
       currentPage: 0,
       total: 0,
       delarr: "",
       selectedList: [],
-      departmentList: [],
-      chaDepartmentForm: {
-        name: "",
+      detailList: [],
+      chaDetailForm: {
+        budgetBudgettype:'',
+        budgetAccounttype:'',
+        budgetCompletetime:'',
+        budgetBusinesstype:'',
         pageCode: 1, //当前页
-        pageSize: 3 //每页显示的记录数
+        pageSize: 10 //每页显示的记录数
       },
-      addDepartmentForm: {
-        name: "",
-        orderNum: ""
+      addDetailForm: {
+        budgetOrdernumber:'',
+        budgetBusinesstype:'',
+        budgetAccounttype:'',
+        budgetBelong:'',
+        budgetDesc:'',
+        budgetCompletetime:'',
+        budgetBudgettype:'',
+        budgetBudgetamount:'',
+
       },
-      editDepartmentForm: {
-        name: "",
-        orderNum: ""
-      },
-      addDepartmentRules: {
-        name: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
+      shouzhileixing:[{
+        id:'0',value:'收入'
+      },{
+        id:'1',value:'支出'
+      }],
+      yewuleixing:[{
+        id:'0',value:'销售'
+      },{
+        id:'1',value:'采购'
+      },{
+        id:'3',value:'其它'
+      }],
+      zhanghuleixing:[],
+      addDetailRules: {
+        addDetailForm: [
+         
+          { min: 0, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
-
-      //   自己做的部分
-      salesOrdermanagementForm: {
-        // 要发送的真实字段
-        orderNum: "", //订单号
-        select: "1", //订单号类型选择
-        warehouse: "", //仓库
-        pageCode: 1, //当前页
-        pageSize: 3, //每页显示的记录数
-        state: "",
-        phoneNumber: "",
-        name: "",
-        province: ""
-      },
-      // 仓库列表
-      warehouseOptions: [
-        {
-          value: 0,
-          label: "默认仓库"
-        },
-        {
-          value: 1,
-          label: "黄金糕"
-        }
-      ],
-      //订单状态列表（不完全）
-      orderStateOptions: [
-        {
-          value: 0,
-          label: "初始化"
-        },
-        {
-          value: 1,
-          label: "已付款"
-        },
-        {
-          value: 1,
-          label: "已完成"
-        }
-      ],
-      //分页相关数据
-      //currentPage:0,
-      total: 0,
-      // 页面表单数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-          no: 1,
-          orderNum: 99999,
-          username: "小明",
-          goodsInfo: "纸杯",
-          overbookingTime: "2016-05-02",
-          money1: 3000,
-          money2: 300,
-          payTime: "2016-05-02",
-          address: "上海市普陀区金沙江路 1518 弄",
-          createTime: "2016-05-02",
-          lastModifyTime: "2016-05-02",
-          orderState: "未完成",
-          orderNote: "0000"
-        }
-      ],
-      addOrder: false,
-      editOrder: false,
-      addGoods: false,
-      addOrderForm: {
-        activeName: "first"
-      },
-      goodsData: [
-        {
-          productName: "娃哈哈",
-          productNum: "12121212",
-          productType: "饮料",
-          unitPrice: 3,
-          salesQuantity: 7,
-          sumMoney: 21,
-          note: "哈哈哈哈哈",
-          opetate: ""
-        },
-        {
-          productName: "王老吉",
-          productNum: "12121212",
-          productType: "饮料",
-          unitPrice: 3,
-          salesQuantity: 8,
-          sumMoney: 21,
-          note: "大吉大利",
-          operate: ""
-        }
-      ],
-      title: "",
-      receiptType: [
-        {
-          label: "采购退货收款",
-          value: "0"
-        },
-        {
-          label: "销售订单收款",
-          value: "1"
-        }
-      ],
-      // 新增状态
-      stateOfAdd: false,
-      // 标签页激活页面
-      activeName: "first"
     };
   },
   created() {
     //自己写的方法
-    this.getWarehouseOptions();
+    this.getDetail();
+    this.list();
   },
   methods: {
-    addDepartment() {
-      this.$refs.addDepartmentRef.validate(async valid => {
+      async getDetail() {
+      const { data: res } = await this.$http.post("detail/selectDetail",this.chaDetailForm);
+      this.detailList = res.body.rows; //如何取
+      this.total=res.body.total;
+    },
+    async list(){
+       const { data: res } = await this.$http.post("jc/Basic/selectzijin");
+       this.zhanghuleixing=res;
+    },
+    addDetail() {
+      this.$refs.addDetailFormRef.validate(async valid => {
         if (!valid) return;
         const { data: res } = await this.$http.post(
-          "sys/dept/save",
-          this.addDepartmentForm
+          "detail/addDetail",
+          this.addDetailForm
         );
-        this.$message.success("用户创建成功！");
-        // this.getDepartmentList();
-        this.addbumenDialogVisible = false;
+        this.addDetailVisible = false;
+         this.getDetail();
       });
     },
-    chaDepartmentResetForm(formName) {
-      this.$refs.chaDepartmentRef.resetFields();
-      // this.getDepartmentList();
+    chaDetailForm1(formName) {
+      this.$refs.chaDetailFormRef.resetFields();
+      this.getDetail();
     },
+    
     async userStateChanged(userInfo) {
       const { data: res } = await this.$http.post("sys/dept/update", userInfo);
       // this.getDepartmentList();
@@ -421,10 +350,7 @@ export default {
 
     // 自己写的方法
     // 获取仓库列表
-    async getWarehouseOptions() {
-      const { data: res } = await this.$http.get("/getWarehouseOptions");
-      this.warehouseOptions = res.body.rows; //如何取
-    },
+  
     // 查询订单列表
     async queryOrderList() {
       // const { data: res } = await
@@ -445,7 +371,9 @@ export default {
         });
       this.tableData = res.body.rows; //如何取
     },
-
+ dialogClosed(){
+        this.$refs.addDetailFormRef.resetFields();
+      },
     //分页相关函数
     handleSizeChange(val) {
       this.salesOrdermanagementForm.pageSize = val;

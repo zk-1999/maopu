@@ -72,8 +72,8 @@
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" >物料控制</el-button>
+             <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
+             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState!=1">物料控制</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -101,24 +101,116 @@
         </el-form-item>
         <div class="fenge1">商品信息</div>
         <el-button type="primary" @click="xuanzhewuliao">选择物料</el-button>
+        <el-button type="primary" @click="selected">删除物料</el-button>
          <el-table
-    style="width: 100%" border @selection-change="handleSelectionChange" >
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
     <!-- default-expand-all -->
-    <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="物理编码" prop="productType" ></el-table-column>
-    <el-table-column label="物料名称" prop="productName" ></el-table-column>
-    <el-table-column label="商品描述" prop="productChanpchic"></el-table-column>
-    <el-table-column label="库存数量" prop="productInnerbao"></el-table-column>
-    <el-table-column label="单位" prop="productOutbao"></el-table-column>
-    <el-table-column label="计划使用量" prop="productOnege" ></el-table-column>
+    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
+    <el-table-column label="物理编码" prop="supgoolsId" ></el-table-column>
+    <el-table-column label="物料名称" prop="supgoolssmallType" ></el-table-column>
+    <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
+    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
+    <el-table-column label="单位" prop="productOutbao">
+      <template >
+        kg
+      </template>
+    </el-table-column>
+    <el-table-column label="计划使用量" prop="productOnege" >
+       <template scope="scope">
+        <el-input v-model="scope.row.prolistPlannum"></el-input>
+      </template>
+    </el-table-column>
   </el-table>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="addMaterial">确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
+    title="物料控制查看"
+    :visible.sync="editManageVisible1"
+    width="60%"
+    :before-close="handleClose">
+    <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
+        <div class="fenge">物料信息</div>
+        <el-form-item label="生产单号：" prop="prolistCode">
+            <el-input v-model="editMaterialForm.prolistCode" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="制单人员：" prop="prolistPlanman">
+            <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
+        </el-form-item>
+        <div class="fenge1">商品信息</div>
+         <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
+    <!-- default-expand-all -->
+    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
+    <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
+    <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
+    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
+    <el-table-column label="单位" prop="supplierGoolsDO.productOutbao">
+      <template >
+        kg
+      </template>
+    </el-table-column>
+    <el-table-column label="计划使用量" prop="prolistPlannum" >
+       <template scope="scope">
+        <el-input v-model="scope.row.prolistPlannum"></el-input>
+      </template>
+    </el-table-column>
+  </el-table>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="editManageVisible1 = false">取 消</el-button>
+        <!-- <el-button type="primary" @click="addMaterial">确 定</el-button> -->
+    </span>
+    </el-dialog>
+    
+    <el-dialog
+      title="物料选择"
+      :visible.sync="dialogVisible1"
+      width="58%"
+      :before-close="handleClose"
+      @closed="dialogClosed('chooseGoodsForm')"
+    >
+      <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
+        <el-form-item label="商品大类型：" prop="goodsBigType">
+          <el-select
+            placeholder="请选择商品"
+            v-model="chooseGoodsForm.goodsBigType"
+            @change="changeGoodsBigType"
+          >
+            <el-option value="原纸">原纸</el-option>
+            <el-option value="纸箱">纸箱</el-option>
+            <el-option value="袋子">袋子</el-option>
+            <el-option value="油墨">油墨</el-option>
+            <el-option value="其它">其它</el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-table border stripe :data="shangpi" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
+        <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+        <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
+        <el-table-column prop="supgoolsSplicing" label="商品描述"></el-table-column>
+        <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
+    <!-- <el-table-column label="单位" prop="productOutbao"></el-table-column> -->
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible1=false">取 消</el-button>
+        <el-button @click="shengchancaigou()" type="primary">保 存</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示" :visible.sync="delVisible11" width="300px">
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="delVisible11 = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRow" >确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- <el-dialog
       title="物料选择"
       :visible.sync="dialogVisible1"
       width="50%"
@@ -137,23 +229,19 @@
         <el-form-item >
         <el-button type="primary" @click="wuliaochaxun">查 询</el-button>
         </el-form-item>
-         <!-- <el-table
+         <el-table
           style="width: 100%" border @selection-change="handleSelectionChange" >
-           <el-table-column type="selection" width="35"></el-table-column>
           <el-table-column type="selection" width="35" align="center"></el-table-column>
-          <el-table-column label="物理编码" prop="productType" ></el-table-column>
-          <el-table-column label="物料名称" prop="productName" ></el-table-column>
+          <el-table-column label="商品编码" prop="productType" ></el-table-column>
+          <el-table-column label="商品名称" prop="productName" ></el-table-column>
           <el-table-column label="商品描述" prop="productChanpchic"></el-table-column>
-          <el-table-column label="库存数量" prop="productInnerbao"></el-table-column>
-          <el-table-column label="单位" prop="productOutbao"></el-table-column>
-          <el-table-column label="计划使用量" prop="productOnege" ></el-table-column>
-        </el-table> -->
+        </el-table>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1 = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
 
   </div>
 </template>
@@ -165,10 +253,14 @@ export default {
       delVisible1:false,
       addManageVisible: false,
       editManageVisible: false,
+      editManageVisible1: false,
+
       dialogVisible1:false,
       delVisible: false,
+      delVisible11:false,
       currentPage: 0,
       total: 0,
+      delarr:[],
       selectedList: [],
       xianshi:false,
       xianshi1:true,
@@ -182,14 +274,17 @@ export default {
         pageSize: 10 //每页显示的记录数
       },
       addManageForm1:{
-      productLeixing:'',
+       productLeixing:'',
         // productgoodsId:'',
       },
       editMaterialForm:{
        prolistCode:'',
        prolistPlanman:'',
        prolistPlantime:'',
+       kcTotalstock:'',
+       materialListDOs:[],
       },
+      editMaterialForm1:[],
       wuliaoForm:{
         lab:'',
       },
@@ -207,6 +302,14 @@ export default {
           { min: 1, max: 100, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ]
       },
+      chooseGoodsForm: {
+        addOrEdit: 0, // 最终选择的商品要去哪 1 添加 2 编辑、查看
+        goodsBigType: "原纸", // 商品大类型
+        goodsChoosed: [], // 选择商品的集合，
+        pageCode: 1, //当前页
+        pageSize: 10 //每页显示的记录数
+      },
+      shangpi:[],
       shangpinmingcheng:[],
       shangpingxinxi:[],
       huobileixing:[],
@@ -216,6 +319,7 @@ export default {
       zijinzhanghu:[],
       kehu:[],
     //   this.
+    productgoodsIdList:[],
     };
   },
   created() {
@@ -225,40 +329,149 @@ export default {
   },
   methods: {
    async ManageList() {
-     if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
-       this.chaManageForm.pageCode=1;
-       this.chaManageForm.pageSize=10;
-     }
+    //  if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
+    //    this.chaManageForm.pageCode=1;
+    //    this.chaManageForm.pageSize=10;
+    //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
+     dialogClosed(val) {
+      this.$refs[val].resetFields();
+    },
+    async changeGoodsBigType(val) {
+      
+      const { data: res } = await this.$http.post(
+        "sc/Materal/selectname",
+        { params: { lab: this.chooseGoodsForm.goodsBigType,
+        pageCode: this.chooseGoodsForm.pageCode ,
+        pageSize:this.chooseGoodsForm.pageSize} }
+      );
+      this.shangpi = res.body.rows;
+      this.total = res.body.total;
+    },
     xuanzhewuliao(){
+       if (this.editManageVisible == true) {
+        this.productgoodsIdList = this.editMaterialForm.materialListDOs.map(
+          item => {
+            return item.suppliergoolsId;
+          }
+        );
+      } 
       this.dialogVisible1=true;
+      this.changeGoodsBigType();
     },
-    async wuliaochaxun(){
-      const { data: res } = await this.$http.post("sc/Materal/selectname",this.wuliaoForm);
+    
+ shengchancaigou(){
+      var chongfu=0;
+        if(this.editMaterialForm.materialListDOs.length>=1){
+          if(this.editManageVisible==true){
+            const needAdd = [];
+          this.selectedList.forEach(item => {
+            if (this.productgoodsIdList.indexOf(item.suppliergoolsId) === -1) {
+              needAdd.push(item);
+            } else {
+              chongfu ++;
+            }
+          });
+          this.editMaterialForm.materialListDOs = [
+            ...this.editMaterialForm.materialListDOs,
+            ...needAdd
+          ];
+          }
+        }else{
+          for (let index = 0; index < this.selectedList.length; index++) {
+            if(this.editManageVisible==true){
+              this.editMaterialForm.materialListDOs.push(this.selectedList[index]);
+            }
+        }
+          
+    }
+      const charu = this.selectedList.length - chongfu;
+      this.$message({
+        type: "info",
+        message: chongfu > 0 ? `此次添加有重复数据，重复数据${chongfu}条，成功插入${charu}条` : `此次成功插入${charu}条`
+      });
+       this.dialogVisible1=false;
     },
+    shanchuwuliao(){
+
+    },
+    selected(){
+      if(this.selectedList.length == 0){
+        this.delVisible11 = false;
+        this.$message({
+        type: "info",
+        message: '未选择商品,请选择商品进行删除！'
+      });
+      }else{
+        this.delVisible11 = true;
+      }
+      
+      this.delarr=[];
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push(this.selectedList[i].suppliergoolsId)
+      }
+    },
+    async deleteRow(){
+        if(this.editManageVisible==true){
+             for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.editMaterialForm.materialListDOs.length; i++) {
+              if(this.delarr[index]==this.editMaterialForm.materialListDOs[i].suppliergoolsId)
+              this.editMaterialForm.materialListDOs.splice(i,1);
+           }
+         }
+        }
+         this.delVisible11 = false;
+         
+      },
+   async addMaterial(){
+     console.log(this.editMaterialForm);
+     
+       const { data: res } = await this.$http.post("sc/Materal/insertmaterial",this.editMaterialForm);
+       this.editManageVisible = false;
+        this.ManageList();
+    },
+
     getCookie: function() {
       var storage=window.localStorage;
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(prolistCode,xian,sorderStatus) {
-      this.editMaterialForm.prolistCode=prolistCode;
+      // if(sorderStatus==0){
+         let param = new URLSearchParams();
+          param.append("prolistCode", prolistCode);
+        const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
+        if(res.body.rows.length>=1){
+          this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
+           this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;
+           this.editMaterialForm.materialListDOs=res.body.rows[0].materialListDOs;
+           
+        }else{
+         
+        this.editMaterialForm.materialListDOs=[];
+
+        }
+        if(sorderStatus==1){
+       this.editMaterialForm.prolistCode=prolistCode;
       this.editMaterialForm.prolistPlanman=this.shenpiren;
       this.editManageVisible = true;
+        }else{
+           this.editManageVisible1 = true;
+        }
+      
+        
+        // this.editManageVisible = true;
+      // }else{
+      
+      // }
+      
     },
     async list(){
       const { data: res } = await this.$http.post("jc/Basic/selectparameters");
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
-
-    //   const { data: res1 } = await this.$http.post("jc/Basic/selectpaymode");
-    //   const { data: res2 } = await this.$http.post("jc/Basic/selectinpaymode");
-    //   const { data: res3 } = await this.$http.post("jc/Basic/selectzijin");
-    //   this.zijinzhanghu=res3;
-    //   this.shouruleixing=res2;
-    //   this.huobileixing=res1;
       this.yinshuafangshi = res;
     },
 
@@ -284,11 +497,14 @@ export default {
 
     //分页相关函数
     handleSizeChange(val) {
+      console.log(val);
       this.chaManageForm.pageSize = val;
       this.ManageList();
 
     },
     handleCurrentChange(val) {
+      console.log(val);
+      
       this.chaManageForm.pageCode = val;
       this.currentPage=val;
       this.ManageList();

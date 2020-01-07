@@ -236,18 +236,18 @@
     <el-form-item label="备注：" prop="sorderRemark0">
       <el-input class="w400" :disabled="xianshi" v-model="editOrdermanagementForm.sorderRemark0"></el-input>
     </el-form-item>
-    <div class="fenge1" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3">审核信息</div>
-    <el-form-item label="审核人：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderChushen">
+    <div class="fenge1" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5">审核信息</div>
+    <el-form-item label="审核人：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderChushen">
       <el-input v-model="editOrdermanagementForm.sorderChushen" :disabled="true"></el-input>
     </el-form-item>
-     <el-form-item label="审核结果：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderStatus">
+     <el-form-item label="审核结果：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderStatus">
       <el-radio v-model="editOrdermanagementForm.sorderStatus" label='3' @change="guoqudangqianshijian" :disabled="!xianshi1">通过</el-radio>
       <el-radio v-model="editOrdermanagementForm.sorderStatus" label='2' @change="guoqudangqianshijian" :disabled="!xianshi1">驳回</el-radio>
     </el-form-item>
-    <el-form-item label="审核时间：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderChushentime">
+    <el-form-item label="审核时间：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderChushentime">
       <el-input v-model="editOrdermanagementForm.sorderChushentime" :disabled="!xianshi1"></el-input>
     </el-form-item> 
-    <el-form-item label="审核描述：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3" prop="sorderChushendesc">
+    <el-form-item label="审核描述：" v-if="xianshi1||editOrdermanagementForm.sorderStatus==2||editOrdermanagementForm.sorderStatus==3||editOrdermanagementForm.sorderStatus==4||editOrdermanagementForm.sorderStatus==5" prop="sorderChushendesc">
       <el-input class="w400" v-model="editOrdermanagementForm.sorderChushendesc" :disabled="!xianshi1"></el-input>
     </el-form-item>
   </el-form>
@@ -349,6 +349,7 @@ export default {
           label: '已通过'
         }],
         value:'',
+        
       addOrdermanagementForm: {
         customerId: '',
         sorderAddress: '',
@@ -531,8 +532,12 @@ export default {
       if(res.sorderFushen==null || res.sorderFushen==''){
         res.sorderChushen=this.shenpiren;
       }
+      if(res.sorderStatus==4||res.sorderStatus==5){
+        res.sorderStatus='3';
+      }
       this.editOrdermanagementForm = res;
        
+console.log(this.editOrdermanagementForm);
 
       this.editOrdermanagementVisible = true;
     },

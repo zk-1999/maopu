@@ -38,6 +38,11 @@
         </el-form-item>
       </el-form>
       <el-button type="success" @click="addManageVisible = true">新 建</el-button>
+      <el-button
+            type="warning"
+            @click="selectedqi"
+            :disabled="selectedList.length == 0"
+          >批量生产</el-button>
       <el-table
         :data="manageList"
         striped
@@ -45,6 +50,8 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
+            <el-table-column type="selection" width="35"></el-table-column>
+
         <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
         <el-table-column prop="cusName" label="客户名称">
@@ -604,7 +611,13 @@
         <el-button type="primary" @click="editManage">确 定</el-button>
     </span>
     </el-dialog>
-
+ <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
+      <div class="del-dialog-cnt">此操作将批量启用, 是否继续？</div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="delVisibleqi = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -613,12 +626,13 @@ export default {
   data() {
     return {
       labelPosition: "right",
-      delVisibleqi:false,
+      // delVisibleqi:false,
       addManageVisible: false,
       editManageVisible: false,
       delVisible: false,
       currentPage: 0,
       total: 0,
+      delVisibleqi:false,
       selectedList: [],
       xianshi:false,
       xianshi1:true,
@@ -699,6 +713,7 @@ export default {
       shouruleixing:[],
       zijinzhanghu:[],
       kehu:[],
+       delarr:[],
     //   this.
     };
   },
@@ -708,11 +723,25 @@ export default {
     this.getCookie();
   },
   methods: {
+     selectedqi(){
+      this.delarr=[];
+      this.delVisibleqi = true;
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=1})
+      }
+      console.log(this.delarr);
+    },
+     async deleteRowqi(){
+         const {data:res} = await this.$http.post('sc/Production/updatestatusmore',this.delarr);
+         this.delVisibleqi = false;
+         this.ManageList();
+     
+      },
    async ManageList() {
-     if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
-       this.chaManageForm.pageCode=1;
-       this.chaManageForm.pageSize=10;
-     }
+    //  if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
+    //    this.chaManageForm.pageCode=1;
+    //    this.chaManageForm.pageSize=10;
+    //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
       this.total=res.body.total;
       this.manageList = res.body.rows;

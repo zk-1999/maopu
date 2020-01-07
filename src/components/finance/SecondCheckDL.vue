@@ -75,8 +75,8 @@
             <el-table-column prop="reimbursementBxremark" label="备注"></el-table-column>
             <el-table-column label="操作" width="190px">
              <template slot-scope="scope">
-                <el-button type="success" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'0',scope.row.reimbursementStatus)">查 看</el-button>
-                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'0',scope.row.reimbursementStatus)" :disabled=" scope.row.reimbursementStatus==4 ||scope.row.reimbursementStatus==5">审 批</el-button>
+                <el-button type="success" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'0',scope.row.reimbursementStatus,true)">查 看</el-button>
+                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'1',scope.row.reimbursementStatus,true)" :disabled=" scope.row.reimbursementStatus==4 ||scope.row.reimbursementStatus==5">审 批</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -158,16 +158,18 @@
       width="50%"
       :before-close="handleClose"
     >
-    <div class="fenge">报销人员信息</div>
+        <div class="fenge">报销人员信息</div>
       <el-form :inline="true" class="demo-form-inline" :model="editDispatchListForm" ref="addDispatchListFormRef" :rules="addDispatchListRules">
         <el-form-item label="报销制单人：" prop="reimbursementBxproducer">
           <el-input v-model="editDispatchListForm.reimbursementBxproducer" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="报销类型：" prop="reimbursementType">
-          <el-input v-model="editDispatchListForm.reimbursementType" ></el-input>
+          <el-input v-model="editDispatchListForm.reimbursementType" :disabled="xianshi"></el-input>
         </el-form-item>
+        <br>
         <el-form-item label="备注信息：" prop="reimbursementBxremark">
           <el-input
+          :disabled="xianshi"
             type="textarea"
             :autosize="{ minRows: 1.3, maxRows:3}"
             placeholder="请输入内容"
@@ -176,8 +178,10 @@
         </el-form-item>
 <div class="fenge1">报销凭证上传/查看</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item v-if="editDispatchListForm.reimbursementVoucher">
+        <img width="20%" :src="ip1 +editDispatchListForm.reimbursementVoucher" alt="" @click="a(editDispatchListForm.reimbursementVoucher)">
           <el-upload
+          :disabled="xianshi"
             ref="upload"
             :action="ip"
             name="picture"
@@ -193,8 +197,11 @@
         </el-form-item>
 <div class="fenge1">付款凭证</div>
         <!-- 两个按钮 -->
-        <el-form-item>
+        <el-form-item v-if="editDispatchListForm.reimbursementMessage">
+        <img width="20%" :src="ip1+editDispatchListForm.reimbursementMessage" alt="" @click="a(editDispatchListForm.reimbursementMessage)">
+       
           <el-upload
+          :disabled="xianshi"
             ref="upload"
             :action="ip"
             name="picture"
@@ -208,34 +215,35 @@
               <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-         <div class="fenge1" v-if='xianshi1'>初审信息</div>
-        <el-form-item label="审核人：" prop="sorderChushen" v-if='xianshi1'>
+         <div class="fenge1" v-if='!xianshi1||editDispatchListForm.reimbursementStatus==2||editDispatchListForm.reimbursementStatus==3||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5'>初审信息</div>
+        <el-form-item label="审核人：" prop="sorderChushen" v-if='!xianshi1||editDispatchListForm.reimbursementStatus==2||editDispatchListForm.reimbursementStatus==3||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5'>
           <el-input v-model="editDispatchListForm.reimbursementMana" :disabled="xianshi"></el-input>
         </el-form-item>
-        <el-form-item label="审核结果："  prop="sorderStatus" v-if='xianshi1'>
-          <el-radio v-model="editDispatchListForm.reimbursementStatus" label='3'  :disabled="xianshi">通过</el-radio>
-          <el-radio v-model="editDispatchListForm.reimbursementStatus" label='2'  :disabled="xianshi">驳回</el-radio>
+        <el-form-item label="审核结果："  prop="sorderStatus" v-if='!xianshi1||editDispatchListForm.reimbursementStatus==2||editDispatchListForm.reimbursementStatus==3||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5'>
+          <el-radio v-model="radio" label='3'  :disabled="xianshi">通过</el-radio>
+          <el-radio v-model="editDispatchListForm.reimbursementStatus" label='2' :disabled="xianshi">驳回</el-radio>
         </el-form-item>
-        <el-form-item label="审核时间：" prop="sorderChushentime" v-if='xianshi1'>
+        <el-form-item label="审核时间：" prop="sorderChushentime" v-if='!xianshi1||editDispatchListForm.reimbursementStatus==2||editDispatchListForm.reimbursementStatus==3||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5'>
           <el-input v-model="editDispatchListForm.reimbursementTimea" :disabled="xianshi"></el-input>
         </el-form-item> 
-        <el-form-item label="审核描述："  prop="sorderChushendesc" v-if='xianshi1'>
+        <el-form-item label="审核描述："  prop="sorderChushendesc" v-if='!xianshi1||editDispatchListForm.reimbursementStatus==2||editDispatchListForm.reimbursementStatus==3||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5'>
           <el-input class="w400" v-model="editDispatchListForm.reimbursementBxremarka" :disabled="xianshi"></el-input>
         </el-form-item>
-        <div class="fenge1" v-if='xianshi2'>复审信息</div>
-        <el-form-item label="审核人："  prop="sorderFushen" v-if='xianshi2'>
-          <el-input v-model="editDispatchListForm.reimbursementManb" :disabled="xianshi"></el-input>
-        </el-form-item>
-        <el-form-item label="审核结果：" v-if='xianshi2'>
-          <el-radio  label="5" v-model="editDispatchListForm.reimbursementStatus" :disabled="xianshi">通过</el-radio>
-          <el-radio  label="4" v-model="editDispatchListForm.reimbursementStatus" :disabled="xianshi">驳回</el-radio>
-        </el-form-item>
-        <el-form-item label="审核时间："  prop="sorderFushentime" v-if='xianshi2'>
-          <el-input v-model="editDispatchListForm.reimbursementTimeb" :disabled="xianshi"></el-input>
-        </el-form-item>
-        <el-form-item label="审核描述："  prop="sorderFushendesc" v-if='xianshi2'>
-          <el-input class="w400" v-model="editDispatchListForm.reimbursementBxremarkb" :disabled="xianshi"></el-input>
-        </el-form-item>
+        <div class="fenge1" v-if="xianshi1||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5">复审信息</div>
+    <el-form-item label="审核人：" v-if="xianshi1||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5" prop="reimbursementManb">
+      <el-input v-model="editDispatchListForm.reimbursementManb"  :disabled="true"></el-input>
+    </el-form-item>
+     <el-form-item label="审核结果：" v-if="xianshi1||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5">
+      <el-radio @change="guoqudangqianshijian" label=5 v-model="editDispatchListForm.reimbursementStatus" :disabled="!xianshi1">通过</el-radio>
+      <el-radio @change="guoqudangqianshijian" label=4 v-model="editDispatchListForm.reimbursementStatus" :disabled="!xianshi1">驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="审核时间：" v-if="xianshi1||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5" prop="reimbursementTimeb">
+      <el-input v-model="editDispatchListForm.reimbursementTimeb" :disabled="!xianshi1"></el-input>
+    </el-form-item>
+    <el-form-item label="审核描述：" v-if="xianshi1||editDispatchListForm.reimbursementStatus==4||editDispatchListForm.reimbursementStatus==5" prop="reimbursementBxremarkb">
+      <el-input class="w400" v-model="editDispatchListForm.reimbursementBxremarkb" :disabled="!xianshi1"></el-input>
+    </el-form-item>
+       
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="editbumenDialogVisible = false">取 消</el-button>
@@ -250,6 +258,15 @@
       <span slot="footer" class="dialog-footer">
           <el-button @click="delVisibleqi = false">取 消</el-button>
           <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title=""
+      :visible.sync="tupainfangdadialogVisible"
+      width="45%"
+      :before-close="handleClose" class="fanggda">
+      <img :src="tupainfangda" alt="" width="100%">
+      <span slot="footer" class="dialog-footer">
       </span>
     </el-dialog>
   </div>
@@ -270,7 +287,6 @@ export default {
       currentPage: 0,
       total: 0,
       delarr: "",
-      ip:'',
       selectedList: [],
       departmentList: [],
       chaDispatchListForm: {
@@ -306,6 +322,8 @@ export default {
         reimbursementTimeb:'',
         reimbursementBxremarkb:'',
       },
+      radio:'3',
+      shenpiren:'',
       xianshi:false,
       xianshi1:false,
       xianshi2:false,
@@ -360,7 +378,12 @@ export default {
         activeName: "first"
       },
       title: "",
-
+      ip:'',
+      ip1:'',
+      tupainfangda:'',
+      tupainfangdadialogVisible:false,
+      dialogImageUrl: '',
+      dialogVisible: false,
       // 新增状态
       stateOfAdd: false,
       // 编辑状态
@@ -375,7 +398,14 @@ export default {
     this.getCookie();
   },
   methods: {
+    a(url){
+      this.tupainfangdadialogVisible=true;
+      console.log(url);
+      
+      this.tupainfangda=this.ip1+url;
+    },
     async getDispatchListList(){
+       this.ip1=this.ips;
       this.ip=this.ips+'upload';
       this.chaDispatchListForm.status=2;
       const { data: res } = await this.$http.post("reimbursement/selectReimbursement", this.chaDispatchListForm);
@@ -405,10 +435,8 @@ export default {
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-                console.log('reimbursementVoucher');
-                
-                this.addProductForm.reimbursementVoucher=file.response.message;
-                this.editProductForm.reimbursementVoucher=file.response.message;
+                this.addDispatchListForm.reimbursementVoucher=file.response.message;
+                this.editDispatchListForm.reimbursementVoucher=file.response.message;
 
                 // this.productList.picture=file.response.message;
                 
@@ -422,10 +450,9 @@ export default {
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-                console.log('reimbursementMessage');
                 
-                this.addProductForm.reimbursementMessage=file.response.message;
-                this.editProductForm.reimbursementMessage=file.response.message;
+                this.addDispatchListForm.reimbursementMessage=file.response.message;
+                this.editDispatchListForm.reimbursementMessage=file.response.message;
 
                 // this.productList.picture=file.response.message;
                 
@@ -469,11 +496,10 @@ export default {
             }
             return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
         },   
-         //读取cookie
     getCookie: function() {
       
       var storage=window.localStorage;
-      this.addDispatchListForm.reimbursementBxproducer = storage.getItem("username")
+      this.shenpiren = storage.getItem("username")
       
     },  
     addDispatchList() {
@@ -498,34 +524,43 @@ export default {
         this.addbumenDialogVisible = false;
       });
     },
-    async showDispatchList(reimbursementBxnumbers,xian,reimbursementStatus) {
-      if(xian=='0'){
-        this.xianshi=true;
-        if(reimbursementStatus=='0' || reimbursementStatus=='1'){
-          this.xianshi1=false;
-          this.xianshi2=false;
-        }else if(reimbursementStatus=='2' || reimbursementStatus=='3'){
-          this.xianshi1=true;
-        }else{
-          this.xianshi1=true;
-          this.xianshi2=true;
-        }
-      }else if(xian=='1'){
-        this.xianshi=false;
-        this.xianshi1=false;
-        this.xianshi2=false;
+    async showDispatchList(reimbursementBxnumbers,xian,reimbursementStatus,zhi) {
+      // if(xian=='0'){
+      //   this.xianshi=true;
+      //   if(reimbursementStatus=='2' || reimbursementStatus=='3'){
+      //     this.xianshi1=false;
+      //     this.xianshi2=false;
+      //   }else if(reimbursementStatus=='4' || reimbursementStatus=='5'){
+      //     this.xianshi1=true;
+      //   }else{
+      //     this.xianshi1=true;
+      //     this.xianshi2=true;
+      //   }
+      // }else if(xian=='1'){
+      //   this.xianshi=false;
+      //   this.xianshi1=false;
+      //   this.xianshi2=false;
+      // }
+      this.xianshi=zhi;
+      if(xian==0){
+         this.xianshi1=!zhi;
+      }else if(xian==1){
+        this.xianshi1=zhi;
       }
       let param = new URLSearchParams();
       param.append("reimbursementBxnumbers", reimbursementBxnumbers);
-
+      
       const { data: res } = await this.$http.post("reimbursement/selectReimbursementList",param);
+      res.body.result.reimbursementManb=this.shenpiren;
+      res.body.result.reimbursementStatus=res.body.result.reimbursementStatus+'';
       this.editDispatchListForm = res.body.result;
-      console.log(res);
-
+      console.log( this.editDispatchListForm);
+     
       this.editbumenDialogVisible = true;
     },
-    async editDispatchList(Status) {
-      this.editDispatchListForm.reimbursementStatus=Status;
+    async editDispatchList() {
+      
+    this.editDispatchListForm.reimbursementStatus=parseInt(this.editDispatchListForm.reimbursementStatus);
       const { data: res } = await this.$http.put(
         "reimbursement/updateReimbursement",
         this.editDispatchListForm
@@ -584,7 +619,13 @@ export default {
         })
         .catch(_ => {});
     },
-
+guoqudangqianshijian(){
+      var date = new Date();
+      var y = date.getFullYear()
+      var mm = date.getMonth() + 1
+      var d = date.getDate()
+      this.editDispatchListForm.reimbursementTimeb=`${y}-${mm}-${d}`
+    },
     deletebumen(reimbursementBxnumbers) {
       this.$confirm("此操作将永久删除该职务, 是否继续?", "提示", {
         confirmButtonText: "确定",

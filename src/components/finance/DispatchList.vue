@@ -256,7 +256,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
           <el-button @click="editbumenDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="editDispatchList">确 定</el-button>
+          <el-button type="primary" @click="editDispatchList" v-if='!xianshi'>确 定</el-button>
         </span>
     </el-dialog>
     <el-dialog :visible.sync="dialogVisible">
@@ -554,9 +554,6 @@ export default {
       this.editbumenDialogVisible = true;
     },
     async editDispatchList() {
-      console.log(this.editDispatchListForm.reimbursementStatus);
-      
-      // this.editDispatchListForm.reimbursementStatus=Status;
       if(this.editDispatchListForm.reimbursementStatus == 2 || this.editDispatchListForm.reimbursementStatus == 4){
            this.editDispatchListForm.reimbursementStatus=0;
       }

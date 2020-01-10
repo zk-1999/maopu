@@ -9,105 +9,96 @@
 
     <el-card>
       <!-- <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="入库查询" name="first"> -->
-          <el-form
-            :inline="true"
-            class="demo-form-inline search"
-            :model="chaInOrderFrom"
-            ref="chaInOrderFrom"
-            label-width="90px"
-            label-position="left"
-          >
-            <el-row :gutter="20" class="row">
-              <el-col :span="24">
-                <el-form-item label="出库单号：" prop="inboundReceipt">
-                  <el-input class="_small" v-model="chaInOrderFrom.inboundReceipt"></el-input>
-                </el-form-item>
-                <el-form-item label="关联单号：" prop="porderCode">
-                  <el-input v-model="chaInOrderFrom.porderCode" class="_small"></el-input>
-                </el-form-item>
-                <el-form-item label="出库类型：" prop="inboundType">
-                  <el-select v-model="chaInOrderFrom.inboundType" placeholder="请选择" class="_small">
-                    <el-option value="0" label="采购入库"></el-option>
-                    <el-option value="1" label="生产入库"></el-option>
-                    <el-option value="3" label="售后入库"></el-option>
-                    <el-option value="4" label="其他入库"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="出库状态：" prop="inboundStatus">
-                  <el-select
-                    v-model="chaInOrderFrom.inboundStatus"
-                    placeholder="请选择"
-                    class="_small"
-                  >
-                    <el-option value label="全部"></el-option>
-                    <el-option value="0" label="待审核"></el-option>
-                    <el-option value="1" label="审核不通过"></el-option>
-                    <el-option value="2" label="已出库"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item>
-                  <el-button @click="getList(1)">查 询</el-button>
-                  <el-button type="primary" @click="ResetForm('chaInOrderFrom')">重 置</el-button>
-                  <!-- <el-button type="primary" @click="addOrderVisible = true">重 置</el-button> -->
-                  <!-- <el-button type="primary" @click="editOrderVisible = true">重 置</el-button> -->
-                  <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
+      <el-tab-pane label="入库查询" name="first">-->
+      <el-form
+        :inline="true"
+        class="demo-form-inline search"
+        :model="chaOutOrderForm"
+        ref="chaOutOrderForm"
+        label-width="90px"
+        label-position="left"
+      >
+        <el-row :gutter="20" class="row">
+          <el-col :span="24">
+            <el-form-item label="出库单号：" prop="outboundReceipt">
+              <el-input class="_small" v-model="chaOutOrderForm.outboundReceipt"></el-input>
+            </el-form-item>
+            <el-form-item label="关联单号：" prop="preturnCode">
+              <el-input v-model="chaOutOrderForm.preturnCode" class="_small"></el-input>
+            </el-form-item>
+            <el-form-item label="出库类型：" prop="outboundType">
+              <el-select v-model="chaOutOrderForm.outboundType" placeholder="请选择" class="_small">
+                <el-option value="0" label="退货出库"></el-option>
+                <el-option value="1" label="生产出库"></el-option>
+                <el-option value="3" label="销售出库"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="出库状态：" prop="outboundStatus">
+              <el-select v-model="chaOutOrderForm.outboundStatus" placeholder="请选择" class="_small">
+                <el-option value label="全部"></el-option>
+                <el-option value="0" label="待审核"></el-option>
+                <el-option value="1" label="审核不通过"></el-option>
+                <el-option value="2" label="审核通过"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="getList(1)">查 询</el-button>
+              <el-button type="primary" @click="ResetForm('chaOutOrderForm')">重 置</el-button>
+              <!-- <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-            <el-table border :data="orderList">
-              <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
-              <el-table-column prop="inboundReceipt" label="出库单号" width="180px" align="center"></el-table-column>
-              <el-table-column prop="porderCode" label="关联单号" width="180px" align="center"></el-table-column>
-              <!-- <el-table-column prop="supplierDOs.supName" label="供应商" :show-overflow-tooltip="true"></el-table-column> -->
-              <el-table-column prop="inboundType" label="出库类型">
-                <template slot-scope="scope">
-                  <span v-if="scope.row.inboundType == 0">采购入库</span>
-                  <span v-if="scope.row.inboundType == 1">生产入库</span>
-                  <span v-if="scope.row.inboundType == 2">售后入库</span>
-                  <span v-if="scope.row.inboundType == 3">其他入库</span>
-                </template>
-              </el-table-column>
-              <!-- <el-table-column prop="inboundWhousenum" label="出库数量"></el-table-column> -->
-              <el-table-column prop="inboundTime" label="出库时间"></el-table-column>
-              <el-table-column prop="inboundProducer" label="制单人"></el-table-column>
-              <el-table-column prop="inboundOrdertime" label="制单时间"></el-table-column>
-              <el-table-column prop="inboundStatus" label="出库状态" width="100px">
-                <template slot-scope="scope">
-                <el-tag type="danger" v-if="scope.row.inboundStatus == 0">待审核</el-tag>
-                <el-tag type="danger" v-if="scope.row.inboundStatus == 1">审核不通过</el-tag>
-                <el-tag type="danger" v-if="scope.row.inboundStatus == 2">审核通过</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="90px" align="center" fixed="right">
-                <template slot-scope="scope">
-                  <el-button
-                    type="success"
-                    size="mini"
-                    @click="lookUpState = true;checkState = false;showEditOrder(scope.row.inboundReceipt)"
-                    :disabled="scope.row.inboundStatus != 0"
-                  >查看</el-button>
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="lookUpState = true;checkState = true;showEditOrder(scope.row.inboundReceipt)"
-                    :disabled="scope.row.inboundStatus != 0"
-                  >审核</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-form>
-          <el-pagination
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-size="10"
-            layout="total, prev, pager, next"
-            :total="total"
-          ></el-pagination>
-        <!-- </el-tab-pane>
+        <el-table border :data="orderList">
+          <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
+          <el-table-column prop="outboundReceipt" label="出库单号" width="180px" align="center"></el-table-column>
+          <el-table-column prop="preturnCode" label="关联单号" width="180px" align="center"></el-table-column>
+          <!-- <el-table-column prop="supplierDOs.supName" label="供应商" :show-overflow-tooltip="true"></el-table-column> -->
+          <el-table-column prop="outboundType" label="出库类型">
+            <template slot-scope="scope">
+              <span v-if="scope.row.outboundType == 0">退货出库</span>
+              <span v-if="scope.row.outboundType == 1">生产出库</span>
+              <span v-if="scope.row.outboundType == 2">销售出库</span>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column prop="inboundWhousenum" label="出库数量"></el-table-column> -->
+          <el-table-column prop="outboundTime" label="出库时间"></el-table-column>
+          <el-table-column prop="outboundProducer" label="制单人"></el-table-column>
+          <el-table-column prop="outboundOrdertime" label="制单时间"></el-table-column>
+          <el-table-column prop="outboundStatus" label="出库状态" width="100px" align="center">
+            <template slot-scope="scope">
+              <el-tag type="danger" v-if="scope.row.outboundStatus == 0">待审核</el-tag>
+              <el-tag type="danger" v-if="scope.row.outboundStatus == 1">审核不通过</el-tag>
+              <el-tag type="danger" v-if="scope.row.outboundStatus == 2">审核通过</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="180px" align="center" fixed="right">
+            <template slot-scope="scope">
+              <el-button
+                type="success"
+                size="mini"
+                @click="lookUpState = true;checkState = false;showEditOrder(scope.row.outboundReceipt,scope.row.outboundStatus)"
+              >查看</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                @click="lookUpState = true;checkState = true;showEditOrder(scope.row.outboundReceipt,scope.row.outboundStatus)"
+                :disabled="scope.row.outboundStatus != 0"
+              >审核</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+      <el-pagination
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="10"
+        layout="total, prev, pager, next"
+        :total="total"
+      ></el-pagination>
+      <!-- </el-tab-pane>
         <el-tab-pane label="出库查询" name="second"></el-tab-pane>
-      </el-tabs> -->
+      </el-tabs>-->
     </el-card>
 
     <el-dialog
@@ -127,27 +118,27 @@
         label-position="left"
       >
         <!-- 采购单号 -->
-        <el-form-item label="采购单号：" prop="porderCode">
-          <el-input v-model="editOrderFrom.porderCode" class="_small" :disabled="true"></el-input>
+        <el-form-item label="退货单号：" prop="preturnCode">
+          <el-input v-model="editOrderFrom.preturnCode " class="_small" :disabled="true"></el-input>
         </el-form-item>
 
         <!-- 入库类型 -->
-        <el-form-item label="入库类型：" prop="inboundType">
-          <el-select v-model="editOrderFrom.inboundType" class="_small" :disabled="true">
-            <el-option value="0" label="采购入库"></el-option>
-            <el-option value="1" label="生产入库"></el-option>
-            <el-option value="2" label="其他入库"></el-option>
+        <el-form-item label="出库类型：" prop="outboundType">
+          <el-select v-model="editOrderFrom.outboundType" class="_small" :disabled="true">
+            <el-option value="0" label="退货出库"></el-option>
+            <el-option value="1" label="生产出库"></el-option>
+            <el-option value="2" label="销售出库"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="制单人：" prop="inboundProducer">
-          <el-input v-model="editOrderFrom.inboundProducer" class="_small" :disabled="true"></el-input>
+        <el-form-item label="制单人：" prop="outboundProducer">
+          <el-input v-model="editOrderFrom.outboundProducer" class="_small" :disabled="true"></el-input>
         </el-form-item>
 
         <!-- 入库时间 -->
-        <el-form-item label="入库日期：" prop="inboundTime">
+        <el-form-item label="出库日期：" prop="outboundTime">
           <el-date-picker
-            v-model="editOrderFrom.inboundTime"
+            v-model="editOrderFrom.outboundTime"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
@@ -156,9 +147,7 @@
           ></el-date-picker>
         </el-form-item>
 
-        
-
-        <br />
+        <!-- <br />
 
         <el-button type="primary" @click="addGoods(editOrderFrom.porderCode)" v-if="!lookUpState">选择入库商品</el-button>
         <el-button
@@ -166,27 +155,24 @@
           @click="deleteAddPurGoods()"
           :disabled="selectedList.length == 0"
           v-if="!lookUpState"
-        >删除商品</el-button>
+        >删除商品</el-button>-->
 
         <!-- 带有排序功能的商品table -->
         <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
         <!-- v-show="addOrderFrom.inboundType == 0" -->
-        <el-table
-          :data="editOrderFrom.inboundGoolsDos"
-          style="width: 100%"
-        >
+        <el-table :data="editOrderFrom.outboundGoolsDos" style="width: 100%">
           <!-- <el-table-column type="selection" width="55"></el-table-column> -->
           <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
           <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
-          <el-table-column prop="supgoolsSplicing" width="200px" align="center" label="商品描述"></el-table-column>
+          <el-table-column prop="supgoolsSplicing" width="250px" align="center" label="商品描述"></el-table-column>
           <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column>
-          <el-table-column prop label="已入库数量"></el-table-column>
-          <el-table-column prop="inboundgoolsNum" label="本次入库数量">
+          <el-table-column prop="sum" label="已出库数量"></el-table-column>
+          <el-table-column prop="outboundgoolsNum" label="本次出库数量">
             <!-- <template slot-scope="scope">
               <el-input v-model="scope.row.inboundgoolsNum"></el-input>
-            </template> -->
+            </template>-->
           </el-table-column>
-          <el-table-column prop label="单位">
+          <el-table-column prop="unit" label="单位">
             <!-- <template slot-scope="scope">
               <el-select v-model="scope.row.inboundgoolsUnit" placeholder="请选择" class="_small">
                 <el-option
@@ -196,9 +182,9 @@
                   :value="item.basicId"
                 ></el-option>
               </el-select>
-            </template> -->
+            </template>-->
           </el-table-column>
-          <el-table-column prop label="入库仓库">
+          <el-table-column prop="warehouse" label="入库仓库">
             <!-- <template slot-scope="scope">
               <el-select v-model="scope.row.inboundgoolsWhouse" placeholder="请选择" class="_small">
                 <el-option
@@ -208,14 +194,14 @@
                   :value="item.basicId"
                 ></el-option>
               </el-select>
-            </template> -->
+            </template>-->
           </el-table-column>
 
-           <!-- <el-table-column prop label="操作" align="center" v-if="!lookUpState">
+          <!-- <el-table-column prop label="操作" align="center" v-if="!lookUpState">
             <template slot-scope="scope">
               <el-button @click="addOrderMsg(scope.$index)" size="mini" type="primary">关联追踪号</el-button>
             </template>
-          </el-table-column> -->
+          </el-table-column>-->
           <!-- <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column> -->
           <el-table-column prop="jsonofinboundgoolsTrack" type="expand">
             <template slot-scope="scope">
@@ -229,34 +215,32 @@
           </el-table-column>
         </el-table>
         <br />
-        <el-form-item label="备注：" prop="inboundRemark">
+        <el-form-item label="备注：" prop="outboundRemark">
           <el-input
             type="textarea"
             placeholder="请输入内容"
-            v-model="editOrderFrom.inboundRemark"
+            v-model="editOrderFrom.outboundRemark"
             style="width:600px"
             :disabled="lookUpState"
           ></el-input>
         </el-form-item>
 
-        <hr>
+        <div v-if="flag">
+          <div class="fenge1">审核信息</div>
 
-        <el-form-item label="审核人：" prop="inboundAuditor">
-          <el-input v-model="editOrderFrom.inboundAuditor" :disabled="true"></el-input>
-        </el-form-item>
-        &nbsp;    &nbsp;    
-        <el-form-item label="审核结果：" prop="inboundStatus">
-          <el-radio v-model="inboundStatus" label="2">通过</el-radio>
-          <el-radio v-model="inboundStatus" label="1">驳回</el-radio>
-        </el-form-item>
-        <br>
-        <el-form-item label="审核备注：" prop="inboundDesc" >
-          <el-input
-            type="textarea"
-            v-model="inboundDesc"
-            style="width:600px"
-          ></el-input>
-        </el-form-item>
+          <el-form-item label="审核人：" prop="outboundAuditor">
+            <el-input v-model="editOrderFrom.outboundAuditor" :disabled="true"></el-input>
+          </el-form-item>&nbsp; &nbsp;
+          <el-form-item label="审核结果：" prop="outboundStatus">
+            <el-radio v-model="outboundStatus" label="2" :disabled="checkState == false">通过</el-radio>
+            <el-radio v-model="outboundStatus" label="1" :disabled="checkState == false">驳回</el-radio>
+          </el-form-item>
+
+          <br />
+          <el-form-item label="审核备注：" prop="outboundDesc">
+            <el-input type="textarea" v-model="outboundDesc" style="width:600px" :disabled="checkState == false"></el-input>
+          </el-form-item>
+        </div>
       </el-form>
 
       <!-- 2个按钮 -->
@@ -271,40 +255,42 @@
 export default {
   data() {
     return {
-      chaInOrderFrom: {
-        inboundReceipt: "", //入库单号
-        porderCode: "", //采购单号
-        inboundType: "", //入库类型
-        inboundStatus: "", //入库状态
+      chaOutOrderForm: {
+        outboundReceipt: "", //入库单号
+        preturnCode: "", //采购单号
+        outboundType: "", //入库类型
+        outboundStatus: "", //入库状态
         pageCode: 1,
         pageSize: 10
       }, //查询表单数据
-      chaInOrder: {}, //查询真实数据
+      chaOutOrder: {}, //查询真实数据
       activeName: "first", //默认标签页
       orderList: [],
-      lookUpState:false,//查看状态
-      checkState:false,//审核状态
+      lookUpState: false, //查看状态
+      checkState: false, //审核状态
 
-      editOrderVisible:false,
-      editOrderFrom:{},
-      selectedList:[],
+      editOrderVisible: false,
+      editOrderFrom: {},
+      selectedList: [],
 
       warehouseOptions: [], //仓库数组
       unit: [], //单位数组
 
-      currentPage:1,
-      total:0,
+      currentPage: 1,
+      total: 0,
 
-      inboundStatus:0,//审核状态
-      inboundDesc:"",//审核描述
+      outboundStatus: 0, //审核状态
+      outboundDesc: "", //审核描述
 
-      checkForm:{
-        inboundReceipt:"",
-        inboundStatus:"0",
-        inboundDesc:"",
-        inboundAuditor:"",
-        porderCode:"",
-      }
+      checkForm: {
+        outboundReceipt: "",
+        outboundStatus: "0",
+        outboundDesc: "",
+        outboundAuditor: "",
+        preturnCode: "",
+        outboundReceipt:{}
+      },
+      flag: false // 审核信息是否可见，仅待审核状态 查看不可见
     };
   },
   created() {
@@ -312,7 +298,6 @@ export default {
     this.getWarehouseOptions();
     this.queryUnit();
     this.getList(1);
-    
   },
   methods: {
     handleClose(done) {
@@ -322,30 +307,6 @@ export default {
         })
         .catch(_ => {});
     },
-
-    // deletebumen(deptId) {
-    //   this.$confirm("此操作将永久删除该职务, 是否继续?", "提示", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //     type: "warning"
-    //   })
-    //     .then(async () => {
-    //       let param = new URLSearchParams();
-    //       param.append("deptId", deptId);
-    //       const { data: res } = await this.$http.post("sys/dept/remove", param);
-    //       // this.getDepartmentList();
-    //       this.$message({
-    //         type: "success",
-    //         message: "删除成功!"
-    //       });
-    //     })
-    //     .catch(() => {
-    //       this.$message({
-    //         type: "info",
-    //         message: "已取消删除"
-    //       });
-    //     });
-    // },
 
     // 自己写的方法
     // 获取仓库列表
@@ -372,13 +333,12 @@ export default {
       // this.chaOrderFrom.pageCode = 1;
       if (val) {
         // 重新点击时，需要重置查询页数
-        this.chaInOrderFrom.pageCode = 1;
-        this.chaInOrder = JSON.parse(JSON.stringify(this.chaInOrderFrom));
-        console.log(1111);
+        this.chaOutOrderForm.pageCode = 1;
+        this.chaOutOrder = JSON.parse(JSON.stringify(this.chaOutOrderForm));
       }
       const { data: res } = await this.$http.post(
-        "kc/inbound/selectInbound",
-        this.chaInOrder
+        "kc/outbound/selectOutbound",
+        this.chaOutOrder
       );
 
       // console.log(res1);
@@ -428,72 +388,154 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 查看表单
-    async showEditOrder(inboundReceipt){
-      const { data: res } = 
-        await this.$http.post("kc/inbound/selectindisplay",{inboundReceipt:inboundReceipt});
-      console.log(res)
+    async showEditOrder(outboundReceipt, outboundStatus) {
+      // 重置审核信息
+      this.checkForm = {
+        outboundReceipt: "",
+        outboundStatus: "0",
+        outboundDesc: "",
+        outboundAuditor: "",
+        preturnCode: "",
+        outboundReceipt:{}
+      }
+      this.outboundStatus = 0;
+      this.outboundDesc = "";
 
-      // 获取采购订单中对应商品的单位与仓库
-      // const { data: res2 } = await this.$http.post("jh/purchase/dtjresultMap", {
-      //   porderCode: res.body.result.porderCode
-      // });
 
-      this.editOrderFrom = res.body.result
+      // 待审核，查看 审核信息不可见
+      if (outboundStatus == 0 && this.checkState == false) {
+        this.flag = false; // 不可见
+      } else {
+        this.flag = true; // 可见
+      }
 
-      let ids = []
-      this.editOrderFrom.inboundGoolsDos.forEach((item,index,array) => {
-        // 将仓库 单位转为数字
-        item.inboundgoolsUnit = Number(item.inboundgoolsUnit)
-        item.inboundgoolsWhouse = Number(item.inboundgoolsWhouse)
+      const { data: res } = await this.$http.post(
+        "kc/outbound/selectoutdisplay",
+        { outboundReceipt: outboundReceipt }
+      );
+      console.log(res);
 
-        ids.push(item.suppliergoolsId)
+      let editOrder = res.body.result;
+      // 抓华出库类型为字符串
+      editOrder.outboundType += "";
+
+      // 获取所有供应商商品id
+      let ids = [];
+      editOrder.outboundGoolsDos.forEach((item, index, array) => {
+        ids.push(item.suppliergoolsId);
       });
 
+      // 获取对应供应商品的基础信息
       const { data: res1 } = await this.$http.post(
         "jc/suppliergoods/selectSuppliergoolslistmore",
         ids
       );
-
-      this.editOrderFrom.inboundGoolsDos.forEach((good,index,array) => {
-        res1.forEach((item,index,array) => {
-          if(good.suppliergoolsId == item.suppliergoolsId){
+      editOrder.outboundGoolsDos.forEach((good, index, array) => {
+        res1.forEach((item, index, array) => {
+          if (good.suppliergoolsId == item.suppliergoolsId) {
             good.supgoolssmallType = item.supgoolssmallType;
             good.supgoolsId = item.supgoolsId;
             good.supgoolsSplicing = item.supgoolsSplicing;
           }
+        });
+      });
+
+      // 单位和仓库显示
+      editOrder.outboundGoolsDos.forEach((good,index,array) => {
+        // 单位
+        this.unit.forEach((u,index,array)=>{
+          if(good.pcommodityUnit == u.basicId){
+            good.unit = u.basicRetainone
+          }
+        })
+        // 仓库
+        this.warehouseOptions.forEach((w,index,array)=>{
+          if(good.basicId == w.basicId){
+            good.warehouse = w.basicRetainone
+          }
         })
       });
-      this.getCookie();
-      console.log( this.editOrderFrom)
 
-      this.checkForm.inboundReceipt = inboundReceipt;
+      // 根据退货单号和商品id查询商品已出库数量
+      const { data: res2 } = await this.$http.post(
+        "kc/outbound/selectallgools",
+        {
+          preturnCode:editOrder.preturnCode,
+          suppliergoolsId:ids
+        }
+      );
+      editOrder.outboundGoolsDos.forEach((good, index, array) => {
+        // 如果该商品没有已入库数量，设置为0
+        good.sum = 0;
+        res2.forEach((item, index, array) => {
+          if (good.suppliergoolsId == item.suppliergoolsId) {
+            good.sum = item.sum;
+          }
+        });
+      });
+
+
+      // 审核状态反显
+      if(this.checkState == false){
+        this.outboundStatus = editOrder.outboundStatus + ""
+        this.outboundDesc = editOrder.outboundDesc
+        console.log("出库单审核状态")
+        console.log(this.outboundStatus)
+      }
+      
+
+      
+
+
+      this.editOrderFrom = editOrder;
+      if(this.checkState == true){
+        this.getCookie()
+      }
+
+      console.log("--------------------------")
+      console.log(this.editOrderFrom)
 
       this.editOrderVisible = true;
     },
     dialogClosed(val) {
       this.$refs[val].resetFields();
       // 手动重置
-        this.checkForm = {};
-        this.inboundStatus = 0;
-        this.inboundDesc = "";
+      this.checkForm = {};
+      this.inboundStatus = 0;
+      this.inboundDesc = "";
     },
     getCookie: function() {
       var storage = window.localStorage;
-      this.editOrderFrom.inboundAuditor = storage.getItem("username");
+      this.editOrderFrom.outboundAuditor = storage.getItem("username");
     },
     // 入库单审核
-    async check(){
-        this.checkForm.porderCode = this.editOrderFrom.porderCode;
-        this.checkForm.inboundAuditor = this.editOrderFrom.inboundAuditor;
-        this.checkForm.inboundStatus = Number(this.inboundStatus);
-        this.checkForm.inboundDesc = this.inboundDesc;
-        
+    async check() {
+      this.checkForm.preturnCode = this.editOrderFrom.preturnCode;
+      this.checkForm.outboundAuditor = this.editOrderFrom.outboundAuditor;
+      this.checkForm.outboundStatus = Number(this.outboundStatus);
+      this.checkForm.outboundDesc = this.outboundDesc;
+      this.checkForm.outboundReceipt = this.editOrderFrom.outboundReceipt
+      this.checkForm.outboundGoolsDos = this.editOrderFrom.outboundGoolsDos
 
-        const { data: res } = await this.$http.post("kc/inbound/examine",this.checkForm);
+      const { data: res } = await this.$http.post(
+        "kc/outbound/examine",
+        this.checkForm
+      );
 
+      if(res.body.respCode == 200){
+        this.$message({
+          type: "success",
+          message: res.body.msg
+        });
+      }else{
+        this.$message({
+          type: "info",
+          message: "出库单审核失败"
+        });
+      }
 
-        this.getList();
-        this.editOrderVisible = false
+      this.getList();
+      this.editOrderVisible = false;
     }
   }
 };
@@ -531,5 +573,23 @@ hr {
 }
 .a {
   text-align: right;
+}
+.fenge {
+  position: absolute;
+  top: 34px;
+  left: 0px;
+  height: 25px;
+  width: 98.5%;
+  line-height: 25px;
+  padding-left: 15px;
+  background-color: #dcdfe6;
+}
+.fenge1 {
+  height: 25px;
+  width: 98.5%;
+  line-height: 25px;
+  padding-left: 15px;
+  background-color: #dcdfe6;
+  margin-bottom: 20px;
 }
 </style>  

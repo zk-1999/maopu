@@ -192,13 +192,13 @@
                   <el-button
                     type="primary"
                     size="mini"
-                    :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
+                    :disabled="scope.row.outboundStatus == 0 || scope.row.outboundStatus == 2"
                     @click="lookUpState = false;showOutEditOrder(scope.row.outboundReceipt)"
                   >编辑</el-button>
                   <el-button
                     type="danger"
                     size="mini"
-                    :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
+                    :disabled="scope.row.outboundStatus == 0 || scope.row.outboundStatus == 2"
                     @click="deleteOutputOrder(scope.row.outboundReceipt)"
                   >删除</el-button>
                 </template>
@@ -291,7 +291,7 @@
           <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
           <el-table-column prop="supgoolsSplicing" width="200px" align="center" label="商品描述"></el-table-column>
           <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column>
-          <el-table-column prop="sum" label="已入库数量"></el-table-column>
+          <el-table-column prop="sum" label="已入库数量" width="90px"></el-table-column>
           <el-table-column prop="inboundgoolsNum" label="本次入库数量" width="120px">
             <!-- <template slot-scope="scope">
               <el-input v-model="scope.row.inboundgoolsNum"></el-input>

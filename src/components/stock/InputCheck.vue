@@ -39,15 +39,13 @@
                 <el-option value label="全部"></el-option>
                 <el-option value="0" label="待审核"></el-option>
                 <el-option value="1" label="审核不通过"></el-option>
-                <el-option value="2" label="已出库"></el-option>
+                <el-option value="2" label="审核通过"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
               <el-button @click="getList(1)">查 询</el-button>
               <el-button type="primary" @click="ResetForm('chaInOrderFrom')">重 置</el-button>
-              <!-- <el-button type="primary" @click="addOrderVisible = true">重 置</el-button> -->
-              <!-- <el-button type="primary" @click="editOrderVisible = true">重 置</el-button> -->
-              <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button>
+              <!-- <el-button type="primary" @click="editOrderVisible = true;lookUpState = true">重 置</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -411,6 +409,7 @@ export default {
     },
     // 查看表单
     async showEditOrder(inboundStatus, inboundReceipt) {
+
       // 根据入库单状态决定显示
       if (inboundStatus == 0 && this.checkState == false) {//审核状态并且为查看状态
         this.showCheckMsg = false;
@@ -425,6 +424,12 @@ export default {
       console.log(res);
 
       this.editOrderFrom = res.body.result;
+
+      // 查看时显示
+      if(this.checkState == false){
+        this.inboundStatus = this.editOrderFrom.inboundStatus + ""
+        this.inboundDesc = this.editOrderFrom.inboundDesc
+      }
 
       let ids = [];
       this.editOrderFrom.inboundGoolsDos.forEach((item, index, array) => {
@@ -515,11 +520,24 @@ export default {
       this.checkForm.inboundStatus = Number(this.inboundStatus);
       this.checkForm.inboundDesc = this.inboundDesc;
       this.checkForm.inboundReceipt = this.editOrderFrom.inboundReceipt;
+      this.checkForm.inboundGoolsDos = this.editOrderFrom.inboundGoolsDos;
 
       const { data: res } = await this.$http.post(
         "kc/inbound/examine",
         this.checkForm
       );
+
+      if(res.body.respCode == 200){
+        this.$message({
+          type: "success",
+          message: res.body.msg
+        });
+      }else{
+        this.$message({
+          type: "info",
+          message: res.body.msg
+        });
+      }
 
       this.getList();
       this.editOrderVisible = false;

@@ -39,7 +39,7 @@
                     placeholder="请选择"
                     class="_small"
                   >
-                    <el-option value="" label="全部"></el-option>
+                    <el-option value label="全部"></el-option>
                     <el-option value="0" label="未到货"></el-option>
                     <el-option value="1" label="部分到货"></el-option>
                     <el-option value="2" label="全部到货"></el-option>
@@ -97,7 +97,6 @@
             :inline="true"
             class="demo-form-inline search"
             :model="chaOrderFrom"
-            
             label-width="90px"
             label-position="left"
           >
@@ -116,7 +115,7 @@
                 </el-form-item>
 
                 <el-form-item>
-                  <el-button @click="getList(1)">查 询</el-button>
+                  <el-button @click="getProductList(1)">查 询</el-button>
                   <el-button type="primary" @click="ResetForm('chaOrderFrom')">重 置</el-button>
                   <!-- <el-button @click="traceNodialogVisible = true">查 询</el-button> -->
                 </el-form-item>
@@ -127,7 +126,7 @@
           <!-- 表格 -->
           <el-table border :data="orderList">
             <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
-            <el-table-column prop label="生产单号" width="180px" align="center"></el-table-column>
+            <el-table-column prop="prolistCode" label="生产单号" width="180px" align="center"></el-table-column>
             <el-table-column prop label="产品名称" width="180px" align="center"></el-table-column>
             <el-table-column prop label="产品规格" width="180px" align="center"></el-table-column>
             <el-table-column prop label="印刷版号" width="180px" align="center"></el-table-column>
@@ -162,7 +161,6 @@
             :inline="true"
             class="demo-form-inline search"
             :model="chaOrderFrom"
-            
             label-width="90px"
             label-position="left"
           >
@@ -408,7 +406,6 @@
       </span>
     </el-dialog>
 
-
     <!-- ref="chaOrderFrom" -->
     <el-dialog
       title="新增生产入库单"
@@ -420,7 +417,6 @@
         :inline="true"
         class="demo-form-inline search"
         :model="chaOrderFrom"
-        
         label-width="90px"
         label-position="left"
       >
@@ -491,7 +487,6 @@
       </span>
     </el-dialog>
 
-
     <!-- ref="chaOrderFrom" -->
     <el-dialog
       title="新增生产退料入库单"
@@ -503,7 +498,6 @@
         :inline="true"
         class="demo-form-inline search"
         :model="chaOrderFrom"
-        
         label-width="90px"
         label-position="left"
       >
@@ -582,7 +576,12 @@
                 </template>
               </el-table-column>
               <!-- <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column> -->
-              <el-table-column prop="jsonofinboundgoolsTrack" type="expand" label="追踪号" width="70px">
+              <el-table-column
+                prop="jsonofinboundgoolsTrack"
+                type="expand"
+                label="追踪号"
+                width="70px"
+              >
                 <template slot-scope="scope">
                   <!-- <span>{{scope.row.deliverOrderListShow}}</span> -->
                   <el-table
@@ -666,6 +665,14 @@ export default {
 
       // 生产入库
       addProduceInOrderVisible: false, //新建生产入库单是否可见
+      //查询生产表单数据
+      chaProductOrderForm: {
+        customerId: "",
+        prolistCode: "",
+        sorderTotalsum: "",
+        pageCode: 1,
+        pageSize: 10
+      },
 
       // 生产退料入库
       addProduceReturnOrderVisible: false //新建生产退料入库
@@ -681,9 +688,8 @@ export default {
   methods: {
     ResetForm(formName) {
       this.$refs[formName].resetFields();
-      console.log("表单重置")
-      console.log(this.chaOrderFrom)
-
+      console.log("表单重置");
+      console.log(this.chaOrderFrom);
     },
     // 供应商查询
     async querySupplier() {
@@ -788,7 +794,6 @@ export default {
         });
       });
 
-
       //获取已入库数量
       const { data: res2 } = await this.$http.post(
         "kc/inbound/selectallgools",
@@ -797,8 +802,8 @@ export default {
           suppliergoolsId: ids
         }
       );
-      console.log("res2 已入库数量")
-      console.log(res2)
+      console.log("res2 已入库数量");
+      console.log(res2);
       this.purchaseGoodsList.forEach((purGood, index, arr) => {
         res2.forEach((item, index, arr) => {
           if (purGood.suppliergoolsId == item.suppliergoolsId) {
@@ -807,8 +812,6 @@ export default {
           }
         });
       });
-
-
 
       this.choosePurchaseGoodsVisible = true;
     },
@@ -986,6 +989,23 @@ export default {
     // 相加
     add(arg1, arg2) {
       return (Math.round(arg1 * 100) + Math.round(arg2 * 100)) / 100;
+    },
+
+    // 生产入库
+    async getProductList(val) {
+      if (val) {
+        // 重新点击时，需要重置查询页数
+        this.chaProductOrderForm.pageCode = 1;
+        this.chaOrder = JSON.parse(JSON.stringify(this.chaProductOrderForm));
+      }
+      const { data: res } = await this.$http.post(
+        "sc/Production/selectproduction",
+        this.chaOrder
+      );
+      console.log("生产单查询")
+      console.log(res)
+      this.orderList = res.body.rows;
+      this.total = res.body.total;
     }
   }
 };

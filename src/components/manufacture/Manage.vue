@@ -612,7 +612,7 @@
     </span>
     </el-dialog>
  <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
-      <div class="del-dialog-cnt">此操作将批量启用, 是否继续？</div>
+      <div class="del-dialog-cnt">此操作将批量生产, 是否继续？</div>
       <span slot="footer" class="dialog-footer">
           <el-button @click="delVisibleqi = false">取 消</el-button>
           <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
@@ -640,6 +640,7 @@ export default {
       chaManageForm: {
         prolistCode:'',
         customerId:'',
+        line:0,
         sorderTotalsum:'',
         sorderWarehouse:'',
         pageCode: 1, //当前页
@@ -727,7 +728,7 @@ export default {
       this.delarr=[];
       this.delVisibleqi = true;
       for (let i = 0; i < this.selectedList.length; i++) {
-        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=1})
+        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=1,line:0})
       }
       console.log(this.delarr);
     },

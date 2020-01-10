@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>生产管理</el-breadcrumb-item>
-      <el-breadcrumb-item>印刷单领料</el-breadcrumb-item>
+      <el-breadcrumb-item>成型领料</el-breadcrumb-item>
     </el-breadcrumb>
 <el-card>
       <el-form
@@ -266,7 +266,6 @@ export default {
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        line:1,
         prolistCode:'',
         customerId:'',
         sorderTotalsum:'',

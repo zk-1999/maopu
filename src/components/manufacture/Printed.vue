@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>生产管理</el-breadcrumb-item>
-      <el-breadcrumb-item>印刷单领料</el-breadcrumb-item>
+      <el-breadcrumb-item>印刷</el-breadcrumb-item>
     </el-breadcrumb>
 <el-card>
       <el-form
@@ -37,7 +37,15 @@
           <el-button type="primary" @click="chaordermanagementForm">重 置</el-button>
         </el-form-item>
       </el-form>
-      <!-- <el-button type="success" @click="addManageVisible = true">新 建</el-button> -->
+      <el-button type="success" @click="selectedqi1"
+            :disabled="selectedList.length == 0 || selectedList.length > 1">补 料</el-button>
+      <el-button type="danger" @click="selectedqi2"
+            :disabled="selectedList.length == 0 || selectedList.length > 1">退 料</el-button>
+      <el-button
+            type="warning"
+            @click="selectedqi"
+            :disabled="selectedList.length == 0"
+          >印刷完成</el-button>
       <el-table
         :data="manageList"
         striped
@@ -45,6 +53,7 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
+       <el-table-column type="selection" width="35"></el-table-column>
         <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
         <el-table-column prop="producinggoodsDO.productName" label="商品名称">
@@ -72,8 +81,8 @@
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState!=1">物料控制</el-button>
+             <el-button @click="yinshuachanshu(scope.row.prolistCode)" type="success" size="small" >查看</el-button>
+             <el-button @click="yinshuachanshu(scope.row.prolistCode)" type="primary" size="small" >印刷</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,9 +95,94 @@
         :total="total"
       ></el-pagination>
     </el-card>
+     
     <el-dialog
-    title="物料控制"
+    
+    title="印刷"
     :visible.sync="editManageVisible"
+    width="75%"
+    :before-close="handleClose">
+    <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
+        <div class="fenge">生产信息</div>
+        <el-form-item label="生产单号：" prop="prolistCode">
+            <el-input v-model="editPrintedForm.productionDO.prolistCode" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="制单人员：" prop="prolistPlanman">
+            <el-input v-model="editPrintedForm.productionExecutionDO.pexeMan" disabled></el-input>
+        </el-form-item>
+        <div class="fenge1">设计稿信息</div>
+        <el-form-item label="设计稿编码：" prop="designName">
+            <el-input v-model="editPrintedForm.designDO.designName" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="设计稿颜色：" prop="designCol1">
+            <el-input v-model="editPrintedForm.designDO.designCol1" disabled></el-input>
+        </el-form-item>
+        <div class="fenge1">物料信息</div>
+         <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editPrintedForm.materialListDOs">
+    <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
+    <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId"  align="center"></el-table-column>
+    <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType"  align="center"></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing" align="center"></el-table-column>
+    <el-table-column label="计划使用量" prop="prolistPlannum" align="center"></el-table-column>
+    <el-table-column label="物料实际使用量" prop="prolistTruenum"  align="center">
+       <template scope="scope">
+        <el-input v-model="scope.row.prolistTruenum"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="单位"  >
+      <template >
+        kg
+      </template>
+    </el-table-column>
+  </el-table>
+  <div class="fenge1">印刷参数信息</div>
+  <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editPrintedForm.parametersDO">
+    <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
+    <el-table-column label="产品规格与名称" prop="parametersName"  align="center" ></el-table-column>
+    <el-table-column label="版锟齿数" prop="parametersSingle" width="80" align="center" ></el-table-column>
+    <el-table-column label="周长" prop="parametersSinglenum" width="80" align="center" ></el-table-column>
+    <el-table-column label="周长片数" prop="parametersTeethnum" width="80" align="center" ></el-table-column>
+    <el-table-column label="纸张门幅" prop="parametersDoorwidth" align="center" ></el-table-column>
+    <el-table-column label="门幅片数" prop="parametersDoornum" width="80" align="center" ></el-table-column>
+    <el-table-column label="总片数" prop="parametersNumber" width="65" align="center" ></el-table-column>
+    <el-table-column label="印刷方式"  prop="prolistParameters" align="center" ></el-table-column>
+    <el-table-column label="印刷放量" prop="prolistParamenumber" width="80" align="center" ></el-table-column>
+    <el-table-column label="计划用纸" prop="prolistUsemetre" align="center" ></el-table-column>
+    <el-table-column label="印刷重量" prop="prolistParamemetre"  align="center" ></el-table-column>
+    <el-table-column label="油墨计划用量"  prop="prolistPeweight" align="center" ></el-table-column>
+    <el-table-column label="油墨实际使用量"  prop="productOnege" align="center" >
+      <template scope="scope">
+        <el-input v-model="scope.row.prolistPlannum"></el-input>
+      </template>
+    </el-table-column>
+  </el-table>
+  <div class="fenge1">印刷批次信息</div>
+  <el-table border stripe :data="editPrintedForm.productionExecutionDO.productionBatchDOs" >
+        <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
+        <el-table-column prop="pbatParameterscode" label="印刷批次号">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.pbatParameterscode"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="pbatWeight" label="重量">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.pbatWeight"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="pbatStatus==''?'待质检':pbatStatus==1?'已质检:'待质检'" label="质检状态"></el-table-column>
+      </el-table>
+      <el-button @click="editPrintedForm.productionExecutionDO.productionBatchDOs.push({})">增加行</el-button>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="editManageVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addPrinted">确 定</el-button>
+    </span>
+    </el-dialog>
+    <el-dialog
+    title="补料"
+    :visible.sync="editManageVisible1"
     width="60%"
     :before-close="handleClose">
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
@@ -100,10 +194,10 @@
             <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
         </el-form-item>
         <div class="fenge1">商品信息</div>
-        <el-button type="primary" @click="xuanzhewuliao">选择物料</el-button>
-        <el-button type="primary" @click="selected">删除物料</el-button>
+        <el-button type="primary" @click="xuanzhewuliao">选择补料</el-button>
+        <el-button type="primary" @click="selected">删除补料</el-button>
          <el-table
-    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.buMaterialListDOs">
     <!-- default-expand-all -->
     <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
     <el-table-column label="物理编码" prop="supgoolsId" ></el-table-column>
@@ -123,53 +217,13 @@
   </el-table>
     </el-form>
     <span slot="footer" class="dialog-footer">
-        <el-button @click="editManageVisible = false">取 消</el-button>
+        <el-button @click="editManageVisible1 = false">取 消</el-button>
         <el-button type="primary" @click="addMaterial">确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
-    title="物料控制查看"
-    :visible.sync="editManageVisible1"
-    width="60%"
-    :before-close="handleClose">
-    <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
-        <div class="fenge">物料信息</div>
-        <el-form-item label="生产单号：" prop="prolistCode">
-            <el-input v-model="editMaterialForm.prolistCode" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="制单人员：" prop="prolistPlanman">
-            <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
-        </el-form-item>
-        <div class="fenge1">商品信息</div>
-         <el-table
-    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
-    <!-- default-expand-all -->
-    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
-    <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
-    <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
-    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
-    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
-    <el-table-column label="单位" prop="supplierGoolsDO.productOutbao">
-      <template >
-        kg
-      </template>
-    </el-table-column>
-    <el-table-column label="计划使用量" prop="prolistPlannum" >
-       <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
-      </template>
-    </el-table-column>
-  </el-table>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-        <el-button @click="editManageVisible1 = false">取 消</el-button>
-        <!-- <el-button type="primary" @click="addMaterial">确 定</el-button> -->
-    </span>
-    </el-dialog>
-    
-    <el-dialog
-      title="物料选择"
-      :visible.sync="dialogVisible1"
+      title="补料选择"
+      :visible.sync="dialogVisible11"
       width="58%"
       :before-close="handleClose"
       @closed="dialogClosed('chooseGoodsForm')"
@@ -199,50 +253,60 @@
     <!-- <el-table-column label="单位" prop="productOutbao"></el-table-column> -->
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible1=false">取 消</el-button>
+        <el-button @click="dialogVisible11=false">取 消</el-button>
         <el-button @click="shengchancaigou()" type="primary">保 存</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="delVisible11" width="300px">
-      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+    <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
+      <div class="del-dialog-cnt">此操作将批量印刷, 是否继续？</div>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="delVisible11 = false">取 消</el-button>
-          <el-button type="primary" @click="deleteRow" >确 定</el-button>
+          <el-button @click="delVisibleqi = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog
-      title="物料选择"
-      :visible.sync="dialogVisible1"
-      width="50%"
-      :before-close="handleClose">
-      <el-form ref="addManageRef" label-width="100px" :inline="true" :model="wuliaoForm" :rules="addManageRules">
-        <el-form-item label="物料类型：" prop="productType">
-          <el-select v-model="wuliaoForm.lab" placeholder="请选择" >
-            <el-option
-              v-for="item in wuliaoleixing"
-              :key="item.id"
-              :label="item.value"
-              :value="item.id">
-            </el-option>
-          </el-select>
+    <el-dialog
+    title="退料"
+    :visible.sync="editManageVisible2"
+    width="60%"
+    :before-close="handleClose">
+    <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
+        <div class="fenge">物料信息</div>
+        <el-form-item label="生产单号：" prop="prolistCode">
+            <el-input v-model="editMaterialForm.prolistCode" disabled></el-input>
         </el-form-item>
-        <el-form-item >
-        <el-button type="primary" @click="wuliaochaxun">查 询</el-button>
+        <el-form-item label="制单人员：" prop="prolistPlanman">
+            <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
         </el-form-item>
+        <div class="fenge1">商品信息</div>
          <el-table
-          style="width: 100%" border @selection-change="handleSelectionChange" >
-          <el-table-column type="selection" width="35" align="center"></el-table-column>
-          <el-table-column label="商品编码" prop="productType" ></el-table-column>
-          <el-table-column label="商品名称" prop="productName" ></el-table-column>
-          <el-table-column label="商品描述" prop="productChanpchic"></el-table-column>
-        </el-table>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible1 = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
-      </span>
-    </el-dialog> -->
-
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.tuiMaterialListDOs">
+    <!-- default-expand-all -->
+    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
+    <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
+    <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
+    <el-table-column label="单位" prop="productOutbao">
+      <template >
+        kg
+      </template>
+    </el-table-column>
+    <el-table-column label="计划使用量" prop="prolistPlannum" >
+       <!-- <template scope="scope">
+        <el-input v-model="scope.row.prolistPlannum"></el-input>
+      </template> -->
+    </el-table-column>
+    <el-table-column label="退货数量" prop="prolistLossnum" >
+       <template scope="scope">
+        <el-input v-model="scope.row.prolistLossnum"></el-input>
+      </template>
+    </el-table-column>
+  </el-table>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="editManageVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="addtuihuoshu">确 定</el-button>
+    </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -254,7 +318,9 @@ export default {
       addManageVisible: false,
       editManageVisible: false,
       editManageVisible1: false,
-
+      editManageVisible2:false,
+      dialogVisible11:false,
+      delVisibleqi:false,
       dialogVisible1:false,
       delVisible: false,
       delVisible11:false,
@@ -266,8 +332,8 @@ export default {
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        line:1,
         prolistCode:'',
+        line:2,
         customerId:'',
         sorderTotalsum:'',
         sorderWarehouse:'',
@@ -278,12 +344,27 @@ export default {
        productLeixing:'',
         // productgoodsId:'',
       },
+      editPrintedForm:{
+        designDO:{},
+        parametersDO:{},
+        producinggoodsDO:{},
+        productionDO:{},
+        productionExecutionDO:{
+          pexeMan:'',
+          productionBatchDOs:[],
+        },
+        basicDOs:{},
+        materialListDOs:[],
+      },
+        parametersDO1:[],
+
       editMaterialForm:{
        prolistCode:'',
        prolistPlanman:'',
        prolistPlantime:'',
        kcTotalstock:'',
-       materialListDOs:[],
+       buMaterialListDOs:[],
+       tuiMaterialListDOs:[],
       },
       editMaterialForm1:[],
       wuliaoForm:{
@@ -321,6 +402,7 @@ export default {
       kehu:[],
     //   this.
     productgoodsIdList:[],
+    traceNoList:[],
     };
   },
   created() {
@@ -329,6 +411,73 @@ export default {
     this.getCookie();
   },
   methods: {
+     async selectedqi1(){
+      this.editMaterialForm.prolistCode= this.selectedList[0].prolistCode;
+      this.editMaterialForm.prolistPlanman=this.shenpiren;
+      this.editManageVisible1=true;
+    },
+    async selectedqi2(){
+      this.editMaterialForm.prolistCode= this.selectedList[0].prolistCode;
+      this.editMaterialForm.prolistPlanman=this.shenpiren;
+      let param = new URLSearchParams();
+          param.append("prolistCode", this.selectedList[0].prolistCode);
+      const {data:res} = await this.$http.post('sc/BuMateral/selectpliscode',param);
+      this.editMaterialForm.tuiMaterialListDOs=res.body;
+      this.editManageVisible2=true;
+    },
+    async addtuihuoshu(){
+      const {data:res} = await this.$http.post('sc/BuMateral/inserttuimaterial',this.editMaterialForm);
+    },
+
+    selectedqi(){
+      this.delarr=[];
+      this.delVisibleqi = true;
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=3,line:2}
+        )
+      }
+      console.log(this.delarr);
+    },
+    
+     async deleteRowqi(){
+         const {data:res} = await this.$http.post('sc/Production/updatestatusmore',this.delarr);
+         this.delVisibleqi = false;
+         this.ManageList();
+     
+      },
+    async yinshuachanshu(prolistCode){
+      this.editPrintedForm.parametersDO={};
+      this.parametersDO1=[];
+      let param = new URLSearchParams();
+          param.append("prolistCode", prolistCode);
+      const { data: res } = await this.$http.post("sc/ProductionExecution/selectbyid",param);
+      this.editPrintedForm=res.body.SCProductionDO;
+       this.editPrintedForm.parametersDO.prolistParameters=this.editPrintedForm.productionDO.prolistParameters;
+       this.editPrintedForm.parametersDO.prolistParamenumber=this.editPrintedForm.productionDO.prolistParamenumber;
+       this.editPrintedForm.parametersDO.prolistUsemetre=this.editPrintedForm.productionDO.prolistUsemetre;
+       this.editPrintedForm.parametersDO.prolistParamemetre=this.editPrintedForm.productionDO.prolistParamemetre;
+        this.editPrintedForm.parametersDO.prolistPeweight=this.editPrintedForm.productionDO.prolistPeweight;
+       this.editPrintedForm.parametersDO.prolistParamemetre=this.editPrintedForm.productionDO.prolistParamemetre;
+       if(this.editPrintedForm.productionExecutionDO.productionBatchDOs==null){
+         this.editPrintedForm.productionExecutionDO.productionBatchDOs=[];
+       }
+       if(this.editPrintedForm.productionExecutionDO.pexeMan!=''){
+         this.editPrintedForm.productionExecutionDO.pexeMan= this.shenpiren;
+
+       }
+      
+       this.parametersDO1.push(this.editPrintedForm.parametersDO); 
+      this.editPrintedForm.parametersDO=this.parametersDO1;
+       
+      this.editManageVisible = true;
+      console.log(this.editPrintedForm);
+      
+    },
+    async addPrinted(){
+      this.editPrintedForm.parametersDO=this.editPrintedForm.parametersDO[0];
+      const { data: res } = await this.$http.post("sc/ProductionExecution/update",this.editPrintedForm);
+      this.editManageVisible=false;
+    },
    async ManageList() {
     //  if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
     //    this.chaManageForm.pageCode=1;
@@ -354,19 +503,19 @@ export default {
     },
     xuanzhewuliao(){
        if (this.editManageVisible == true) {
-        this.productgoodsIdList = this.editMaterialForm.materialListDOs.map(
+        this.productgoodsIdList = this.editMaterialForm.buMaterialListDOs.map(
           item => {
             return item.suppliergoolsId;
           }
         );
       } 
-      this.dialogVisible1=true;
+      this.dialogVisible11=true;
       this.changeGoodsBigType();
     },
     
  shengchancaigou(){
       var chongfu=0;
-        if(this.editMaterialForm.materialListDOs.length>=1){
+        if(this.editMaterialForm.buMaterialListDOs.length>=1){
           if(this.editManageVisible==true){
             const needAdd = [];
           this.selectedList.forEach(item => {
@@ -376,25 +525,28 @@ export default {
               chongfu ++;
             }
           });
-          this.editMaterialForm.materialListDOs = [
-            ...this.editMaterialForm.materialListDOs,
+          this.editMaterialForm.buMaterialListDOs = [
+            ...this.editMaterialForm.buMaterialListDOs,
             ...needAdd
           ];
           }
         }else{
           for (let index = 0; index < this.selectedList.length; index++) {
-            if(this.editManageVisible==true){
-              this.editMaterialForm.materialListDOs.push(this.selectedList[index]);
+            if(this.editManageVisible1==true){
+              this.editMaterialForm.buMaterialListDOs.push(this.selectedList[index]);
             }
+console.log(this.editMaterialForm.buMaterialListDOs);
         }
           
     }
+    
+    
       const charu = this.selectedList.length - chongfu;
       this.$message({
         type: "info",
         message: chongfu > 0 ? `此次添加有重复数据，重复数据${chongfu}条，成功插入${charu}条` : `此次成功插入${charu}条`
       });
-       this.dialogVisible1=false;
+       this.dialogVisible11=false;
     },
     shanchuwuliao(){
 
@@ -418,9 +570,9 @@ export default {
     async deleteRow(){
         if(this.editManageVisible==true){
              for (let index = 0; index < this.delarr.length; index++) {
-           for (let i = 0; i < this.editMaterialForm.materialListDOs.length; i++) {
-              if(this.delarr[index]==this.editMaterialForm.materialListDOs[i].suppliergoolsId)
-              this.editMaterialForm.materialListDOs.splice(i,1);
+           for (let i = 0; i < this.editMaterialForm.buMaterialListDOs.length; i++) {
+              if(this.delarr[index]==this.editMaterialForm.buMaterialListDOs[i].suppliergoolsId)
+              this.editMaterialForm.buMaterialListDOs.splice(i,1);
            }
          }
         }
@@ -428,10 +580,8 @@ export default {
          
       },
    async addMaterial(){
-     console.log(this.editMaterialForm);
-     
-       const { data: res } = await this.$http.post("sc/Materal/insertmaterial",this.editMaterialForm);
-       this.editManageVisible = false;
+       const { data: res } = await this.$http.post("sc/BuMateral/insertbumaterial",this.editMaterialForm);
+       this.editManageVisible1 = false;
         this.ManageList();
     },
 
@@ -447,11 +597,11 @@ export default {
         if(res.body.rows.length>=1){
           this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
            this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;
-           this.editMaterialForm.materialListDOs=res.body.rows[0].materialListDOs;
+           this.editMaterialForm.buMaterialListDOs=res.body.rows[0].buMaterialListDOs;
            
         }else{
          
-        this.editMaterialForm.materialListDOs=[];
+        this.editMaterialForm.buMaterialListDOs=[];
 
         }
         if(sorderStatus==1){

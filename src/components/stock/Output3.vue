@@ -305,8 +305,8 @@
           <el-table-column prop="productThnumber" label="总数"></el-table-column>
           <el-table-column prop="sum" label="已出库数量"></el-table-column>
           <el-table-column prop="outboundgoolsNum" label="本次出库数量" width="110px" align="center"></el-table-column>
-          <el-table-column prop label="单位"></el-table-column>
-          <el-table-column prop="preturnOutwarehouse" label="出库仓库"></el-table-column>
+          <el-table-column prop="pcommodityUnit1" label="单位"></el-table-column>
+          <el-table-column prop="preturnOutwarehouse1" label="出库仓库"></el-table-column>
           <el-table-column prop label="操作" align="center">
             <template slot-scope="scope">
               <el-button @click="addOrderMsg(scope.$index)" size="mini" type="primary">编辑</el-button>
@@ -355,9 +355,9 @@
         <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
         <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
         <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
-        <el-table-column prop="supgoolsSplicing" label="商品描述"></el-table-column>
+        <el-table-column prop="supgoolsSplicing" label="商品描述" width="250px"></el-table-column>
         <el-table-column prop="xxx" label="库存"></el-table-column>
-        <el-table-column prop="xxx" label="单位"></el-table-column>
+        <el-table-column prop="pcommodityUnit" label="单位"></el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="chooseGoodsFormCancel()">取 消</el-button>
@@ -744,8 +744,7 @@
 export default {
   data() {
     return {
-      // 仓库列表
-      warehouseOptions: [],
+      
       //分页相关数据
       currentPage: 0,
       total: 0,
@@ -802,11 +801,16 @@ export default {
       addProduceOrderVisibleB: false, //新增生产出库单 半成品出库是否可见
       // 销售出库
       addSaleOrderVisible: false,//新增销售出库单 出库单是否可见
+
+
+      unit:[],// 单位
+      warehouseOptions: [],// 仓库列表
     };
   },
   created() {
     //自己写的方法
-    this.getWarehouseOptions();
+    this.getWarehouseOptions();// 仓库
+    this.queryUnit();// 单位
     this.querySupplier();
     this.getList(1);
     this.getCookie();
@@ -827,8 +831,17 @@ export default {
     // 自己写的方法
     // 获取仓库列表
     async getWarehouseOptions() {
-      const { data: res } = await this.$http.get("/getWarehouseOptions");
-      this.warehouseOptions = res.body.rows; //如何取
+      const { data: res } = await this.$http.post("jc/Basic/selectwarehousing");
+      // console.log('仓库')
+      // console.log(res)
+      this.warehouseOptions = res; //如何取
+    },
+    // 查询库存单位
+    async queryUnit() {
+      const { data: res } = await this.$http.post("jc/Basic/selectstorenum");
+      // console.log('单位')
+      // console.log(res)
+      this.unit = res;
     },
 
     handleCurrentChange(val) {
@@ -926,6 +939,66 @@ export default {
         this.purchaseGoodsList[index].jsonofinboundgoolsTrack =
         traceNoList[good.suppliergoolsId]
       });
+
+      // 已出库数量
+      const { data: res4} = await this.$http.post(
+        "kc/outbound/selectallgools",
+        {
+          preturnCode: res.body.result[0].preturnCode,
+          suppliergoolsId: ids
+        }
+      );
+      console.log("res4");
+      console.log(res4);
+      let outputCountList = res4;
+      console.log(outputCountList)
+      this.purchaseGoodsList.forEach((purGood, index, arr) => {
+        purGood.sum = 0;
+        res4.forEach((item, index, arr) => {
+          if (purGood.suppliergoolsId == item.suppliergoolsId) {
+            purGood.sum = item.sum;
+          }
+        });
+      });
+
+      // 根据退货单号和商品id查询商品单位和仓库
+      const { data: res5 } = await this.$http.post(
+        "kc/outbound/selectmsg",
+        {
+          preturnCode: res.body.result[0].preturnCode,
+          suppliergoolsId: ids
+        }
+      );
+      console.log("res5");
+      console.log(res5);
+
+      this.purchaseGoodsList.forEach((purGood, index, arr) => {
+        res5.body.result.forEach((item, index, arr) => {
+          if (purGood.suppliergoolsId == item.suppliergoolsId) {
+            // 仓库
+            // purGood.preturnOutwarehouse = item.basicId;
+            this.warehouseOptions.forEach((warehouse,index,array)=>{
+              if(warehouse.basicId == item.basicId){
+                purGood.basicId = item.basicId;
+                purGood.preturnOutwarehouse1 = warehouse.basicRetainone
+              }
+            })
+
+            // 单位
+            // purGood.pcommodityUnit = Number(item.pcommodityUnit);
+            this.unit.forEach((u,index,array)=>{
+              if(u.basicId == item.pcommodityUnit){
+                purGood.pcommodityUnit = Number(item.pcommodityUnit);
+                purGood.pcommodityUnit1 = u.basicRetainone
+              }
+            })
+          }
+        });
+      });
+      console.log("this.purchaseGoodsList");
+      console.log(this.purchaseGoodsList);
+
+
 
       // 计算所有商品的本次出库数量
       let sum = 0;

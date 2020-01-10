@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>生产管理</el-breadcrumb-item>
-      <el-breadcrumb-item>印刷单领料</el-breadcrumb-item>
+      <el-breadcrumb-item>成型</el-breadcrumb-item>
     </el-breadcrumb>
 <el-card>
       <el-form
@@ -73,7 +73,7 @@
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState!=1">物料控制</el-button>
+             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState!=1">成型</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -266,7 +266,6 @@ export default {
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        line:1,
         prolistCode:'',
         customerId:'',
         sorderTotalsum:'',

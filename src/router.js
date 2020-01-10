@@ -49,6 +49,12 @@ import DispatchList from './components/finance/DispatchList.vue'
 import FirstCheckDL from './components/finance/FirstCheckDL.vue'
 import SecondCheckDL from './components/finance/SecondCheckDL.vue'
 import Detail from './components/finance/Detail.vue'
+import Printed from './components/manufacture/Printed.vue'
+
+import Quality from './components/manufacture/Quality.vue'
+import Requisition from './components/manufacture/Requisition.vue'
+import Molding from './components/manufacture/Molding.vue'
+import Testing from './components/manufacture/Testing.vue'
 
 Vue.use(Router)
 
@@ -61,6 +67,7 @@ const router = new Router({
             component: Home,
             redirect: '/welcome',
             children: [
+                { path: '/welcome', component: Welcome },
                 { path: '/welcome', component: Welcome },
                 { path: '/supplier', component: Supplier },
                 { path: '/client', component: Client },
@@ -105,6 +112,11 @@ const router = new Router({
                 { path: '/audit', component: Audit },
                 { path: '/manage', component: Manage },
                 { path: '/material', component: Material },
+                { path: '/printed', component: Printed },
+                { path: '/quality', component: Quality },
+                { path: '/requisition', component: Requisition },
+                { path: '/molding', component: Molding },
+                { path: '/testing', component: Testing },
 
             ]
         }

@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>生产管理</el-breadcrumb-item>
-      <el-breadcrumb-item>印刷单领料</el-breadcrumb-item>
+      <el-breadcrumb-item>印刷质检</el-breadcrumb-item>
     </el-breadcrumb>
 <el-card>
       <el-form
@@ -47,33 +47,23 @@
       >
         <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
-        <el-table-column prop="producinggoodsDO.productName" label="商品名称">
+        
+        <el-table-column prop="productName" label="商品名称">
         </el-table-column>
-        <el-table-column prop="producinggoodsDO.productType" label="产品名称"></el-table-column>
-        <el-table-column prop="prolistNumber" label="生产数量"></el-table-column>
-        <el-table-column prop="saleOrderDO.sorderDeliverytime" label="交货日期">
-         <template slot-scope="scope">
-          {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.sorderDeliverytime==null? '没有交货日期' : scope.row.saleOrderDO.sorderDeliverytime}}
-          </template> 
+        <el-table-column prop="productType" label="产品名称"></el-table-column>
+        <el-table-column prop="pbatParameterscode" label="批次号">
         </el-table-column>
-        <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
-        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column>
-        <el-table-column prop="prolistState" label="生产单状态" align="center">
+        <el-table-column prop="pbatWeight" label="重量"></el-table-column>
+         <el-table-column prop="pbatStatus" label="生产单状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待生产</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='1'">待印刷领料</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='2'">待印刷</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='3'">印刷中</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='4'">待成型领料</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='5'">待成型</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='6'">成型中</el-tag>
-          <el-tag type="danger" v-if="scope.row.prolistState=='7'">已完成</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='0'">待质检</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='1'">质检完成料</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState!=1">物料控制</el-button>
+             <el-button @click="showMaterial(scope.row.pbatId,scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
+             <el-button @click="showMaterial(scope.row.pbatId,scope.row.prolistCode,true,1)" :disabled="scope.row.pbatStatus==1" type="primary" size="small">印刷质检</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -87,44 +77,39 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-    title="物料控制"
+    title="印刷质检"
     :visible.sync="editManageVisible"
-    width="60%"
+    width="50%"
     :before-close="handleClose">
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
-        <div class="fenge">物料信息</div>
+        <div class="fenge">生产信息</div>
         <el-form-item label="生产单号：" prop="prolistCode">
-            <el-input v-model="editMaterialForm.prolistCode" disabled></el-input>
+            <el-input v-model="addzhijian.prolistCode" disabled></el-input>
         </el-form-item>
-        <el-form-item label="制单人员：" prop="prolistPlanman">
-            <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
+        <el-form-item label="制单人员：" prop="pbatController">
+            <el-input v-model="addzhijian.pbatController" disabled></el-input>
         </el-form-item>
-        <div class="fenge1">商品信息</div>
-        <el-button type="primary" @click="xuanzhewuliao">选择物料</el-button>
-        <el-button type="primary" @click="selected">删除物料</el-button>
-         <el-table
-    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
-    <!-- default-expand-all -->
-    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
-    <el-table-column label="物理编码" prop="supgoolsId" ></el-table-column>
-    <el-table-column label="物料名称" prop="supgoolssmallType" ></el-table-column>
-    <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
-    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
-    <el-table-column label="单位" prop="productOutbao">
-      <template >
-        kg
-      </template>
-    </el-table-column>
-    <el-table-column label="计划使用量" prop="productOnege" >
-       <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
-      </template>
-    </el-table-column>
-  </el-table>
+        <div class="fenge1">质检信息</div>
+       <el-table
+        :data="zhijian"
+        striped
+        border
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
+        <el-table-column prop="id" label="检查内容" align="center"></el-table-column>
+        <el-table-column prop="pbatParameterscode" label="检查结果" align="center">
+          <template slot-scope="scope">
+             <el-radio v-model="scope.row.value" label=0>备选项</el-radio>
+             <el-radio v-model="scope.row.value" label='1'>备选项</el-radio>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addMaterial">确 定</el-button>
+        <el-button type="primary" @click="addzhijianpanduan">确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
@@ -266,7 +251,6 @@ export default {
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        line:1,
         prolistCode:'',
         customerId:'',
         sorderTotalsum:'',
@@ -319,9 +303,49 @@ export default {
       shouruleixing:[],
       zijinzhanghu:[],
       kehu:[],
-    //   this.
+    ag:'0',
     productgoodsIdList:[],
+     zhijian:[{id:'纸张材料克重',value:0},
+     {id:'图案设计',value:0},
+     {id:'印刷颜色',value:0},
+     {id:'是否掉墨',value:0},
+     {id:'是否发虚',value:0},
+     {id:'是否糊版',value:0},
+     {id:'是否跷版',value:0},
+     {id:'是否重影',value:0},
+     {id:'是否毛边',value:0},
+     {id:'是否露白点',value:0},
+     {id:'是否有墨杠/水纹',value:0},
+     {id:'表面是否有刀线',value:0},
+     {id:'表面是否有脏点',value:0},
+     {id:'袋子封口',value:0},
+     {id:'封箱胶带',value:0},
+     ],
+     addzhijian:{
+       prolistCode:'',
+       pbatController:'',
+      pbatGramweight:0,
+      pbatDesign:0,
+      pbatColor:0,
+      pbatInkdropping:0,
+      pbatFalsenot:0,
+      pbatPaste:0,
+      pbatWarpage:0,
+      pbatDouble:0,
+      pbatBurr:0,
+      pbatWhitespot:0,
+      pbatInkbar:0,
+      pbatKnifeLine:0,
+      pbatDirty:0,
+      pbatBag:0,
+      pbatTape:0,
+      pbatController:0,
+      pbatTime:0,
+      pbatRemarks:0,
+      pbatId:0,
+     }
     };
+   
   },
   created() {
     this.ManageList();
@@ -330,11 +354,7 @@ export default {
   },
   methods: {
    async ManageList() {
-    //  if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
-    //    this.chaManageForm.pageCode=1;
-    //    this.chaManageForm.pageSize=10;
-    //  }
-      const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
+      const { data: res } = await this.$http.post("sc/ProductionExecution/selectBatch",this.chaManageForm);
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -399,6 +419,24 @@ export default {
     shanchuwuliao(){
 
     },
+    async addzhijianpanduan(){
+    this.addzhijian.pbatGramweight=this.zhijian[0].value;
+    this.addzhijian.pbatDesign=this.zhijian[1].value;
+    this.addzhijian.pbatColor=this.zhijian[2].value;
+    this.addzhijian.pbatInkdropping=this.zhijian[3].value;
+    this.addzhijian.pbatFalsenot=this.zhijian[4].value;
+    this.addzhijian.pbatPaste=this.zhijian[5].value;
+    this.addzhijian.pbatWarpage=this.zhijian[6].value;
+    this.addzhijian.pbatDouble=this.zhijian[7].value;
+    this.addzhijian.pbatBurr=this.zhijian[8].value;this.addzhijian.pbatWhitespot=this.zhijian[9].value;
+    this.addzhijian.pbatInkbar=this.zhijian[10].value;
+    this.addzhijian.pbatKnifeLine=this.zhijian[11].value;this.addzhijian.pbatDirty=this.zhijian[12].value;
+    this.addzhijian.pbatBag=this.zhijian[13].value;
+    this.addzhijian.pbatTape=this.zhijian[14].value;
+    const { data: res } = await this.$http.post("sc/ProductionExecution/updateBatch",this.addzhijian);
+    this.editManageVisible=false;
+    this.ManageList();
+    },
     selected(){
       if(this.selectedList.length == 0){
         this.delVisible11 = false;
@@ -439,35 +477,40 @@ export default {
       var storage=window.localStorage;
       this.shenpiren = storage.getItem("username");
     },
-    async showMaterial(prolistCode,xian,sorderStatus) {
-      // if(sorderStatus==0){
-         let param = new URLSearchParams();
-          param.append("prolistCode", prolistCode);
-        const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
-        if(res.body.rows.length>=1){
-          this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
-           this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;
-           this.editMaterialForm.materialListDOs=res.body.rows[0].materialListDOs;
-           
-        }else{
-         
-        this.editMaterialForm.materialListDOs=[];
+    async showMaterial(pbatId,prolistCode,xian,sorderStatus,) {
+      console.log();
+      
+      
+      this.addzhijian.pbatId=pbatId;
+       let param = new URLSearchParams();
+          param.append("pbatId", pbatId);
+       const { data: res } = await this.$http.post("sc/ProductionExecution/selectBatchid",param);
+      this.zhijian[0].value =res.body.ProductionBatchDO.pbatGramweight+'' ;
+      this.zhijian[1].value =res.body.ProductionBatchDO.pbatDesign+''     ;
+      this.zhijian[2].value =res.body.ProductionBatchDO.pbatColor+''      ;
+      this.zhijian[3].value =res.body.ProductionBatchDO.pbatInkdropping+'';
+      this.zhijian[4].value =res.body.ProductionBatchDO.pbatFalsenot+''   ;
+      this.zhijian[5].value =res.body.ProductionBatchDO.pbatPaste+''      ;
+      this.zhijian[6].value =res.body.ProductionBatchDO.pbatWarpage+''    ;
+      this.zhijian[7].value =res.body.ProductionBatchDO.pbatDouble+''     ;
+      this.zhijian[8].value =res.body.ProductionBatchDO.pbatBurr+''       ; 
+      this.zhijian[9].value =res.body.ProductionBatchDO.pbatWhitespot+''  ;
+      this.zhijian[10].value=res.body.ProductionBatchDO.pbatInkbar+''     ;
+      this.zhijian[11].value=res.body.ProductionBatchDO.pbatKnifeLine+''  ;  
+      this.zhijian[12].value=res.body.ProductionBatchDO.pbatDirty+''      ;
+      this.zhijian[13].value=res.body.ProductionBatchDO.pbatBag+''        ;
+      this.zhijian[14].value=res.body.ProductionBatchDO.pbatTape+''       ;
+      if(res.body.ProductionBatchDO.pbatController!=''){
+      this.addzhijian.pbatController=this.shenpiren;
+      }else{
+        this.addzhijian.pbatController=res.body.ProductionBatchDO.pbatController;
+      }
 
-        }
-        if(sorderStatus==1){
-       this.editMaterialForm.prolistCode=prolistCode;
-      this.editMaterialForm.prolistPlanman=this.shenpiren;
+      this.addzhijian.prolistCode=prolistCode;
+console.log(this.zhijian);
+
+     
       this.editManageVisible = true;
-        }else{
-           this.editManageVisible1 = true;
-        }
-      
-        
-        // this.editManageVisible = true;
-      // }else{
-      
-      // }
-      
     },
     async list(){
       const { data: res } = await this.$http.post("jc/Basic/selectparameters");

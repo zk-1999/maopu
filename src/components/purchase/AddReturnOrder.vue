@@ -24,7 +24,7 @@
               <el-input placeholder="请输入人员" v-model="chaOrderFrom.porderProducer" class="_small"></el-input>
             </el-form-item>
             <el-form-item label="到货情况：" prop="porderArrivalstatus">
-              <el-select v-model="chaOrderFrom.porderArrivalstatus" placeholder="请选择" class="hu">
+              <el-select v-model="chaOrderFrom.porderArrivalstatus" placeholder="请选择" class="_small">
                 <el-option value="3" label="全部"></el-option>
                 <el-option value="1" label="部分到货"></el-option>
                 <el-option value="2" label="全部到货"></el-option>
@@ -68,7 +68,7 @@
         <el-table-column prop="porderTotalnum" label="总数量"></el-table-column>
         <el-table-column prop="porderArrivalnumber" label="到货数量"></el-table-column>
         <el-table-column prop="porderDiffernumber" label="差异数量"></el-table-column>
-        <el-table-column prop="supplierDO.supName" label="供应商" width="120px" align="center"></el-table-column>
+        <el-table-column prop="supplierDO.supName" label="供应商" width="220px" align="center"></el-table-column>
         <el-table-column prop="porderArrivalstatus" label="到货情况">
           <template slot-scope="scope">
             <span v-if="scope.row.porderArrivalstatus == 0">未到货</span>
@@ -1197,6 +1197,30 @@ export default {
       ///this.createReturnFrom.pcommodityDos赋值
       //制单人员反显
       // this.preturnProducer = ?
+
+       //获取已入库数量
+      const { data: res3 } = await this.$http.post(
+        "kc/inbound/selectallgools",
+        {
+          porderCode: porderCode,
+          suppliergoolsId: ids
+        }
+      );
+      console.log("res3 已入库数量")
+      console.log(res3)
+      this.createReturnFrom.pcommodityDos.forEach((purGood, index, arr) => {
+        // 默认值
+        purGood.productDhnumber = 0,
+        res3.forEach((item, index, arr) => {
+          if (purGood.suppliergoolsId == item.suppliergoolsId) {
+            // 已到货数量
+            purGood.productDhnumber = item.sum;
+          }
+        });
+      });
+
+      console.log("到货数量")
+      console.log( this.createReturnFrom.pcommodityDos)
 
       this.createReturnVisible = true;
     },

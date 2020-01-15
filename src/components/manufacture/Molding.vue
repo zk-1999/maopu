@@ -73,7 +73,7 @@
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState!=1">成型</el-button>
+             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" >成型</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -87,7 +87,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-    title="物料控制"
+    title="成品"
     :visible.sync="editManageVisible"
     width="60%"
     :before-close="handleClose">
@@ -96,28 +96,71 @@
         <el-form-item label="生产单号：" prop="prolistCode">
             <el-input v-model="editMaterialForm.prolistCode" disabled></el-input>
         </el-form-item>
-        <el-form-item label="制单人员：" prop="prolistPlanman">
-            <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
+        <el-form-item label="制单人员：" prop="machMan">
+            <el-input v-model="editMaterialForm.machMan" disabled></el-input>
         </el-form-item>
-        <div class="fenge1">商品信息</div>
-        <el-button type="primary" @click="xuanzhewuliao">选择物料</el-button>
-        <el-button type="primary" @click="selected">删除物料</el-button>
+        <div class="fenge1">商品名称</div>
          <el-table
-    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
-    <!-- default-expand-all -->
-    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
-    <el-table-column label="物理编码" prop="supgoolsId" ></el-table-column>
-    <el-table-column label="物料名称" prop="supgoolssmallType" ></el-table-column>
-    <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
-    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.producinggoodsDO">
+    
+    <el-table-column label="商品名称" prop="productName" ></el-table-column>
+    <el-table-column label="产品名称" prop="productType" ></el-table-column>
+    <el-table-column label="产品规格" prop="productNorms"></el-table-column>
+    <el-table-column label="数量" prop="prolistNumber"></el-table-column>
+  </el-table>
+        <div class="fenge1">半成品信息</div>
+         <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.banFormingDOs">
+    <el-table-column label="产品名称" prop="supgoolsId" ></el-table-column>
+    <el-table-column label="规格" prop="supgoolssmallType" ></el-table-column>
+    <el-table-column label="重量" prop="banPlannum"></el-table-column>
     <el-table-column label="单位" prop="productOutbao">
       <template >
         kg
       </template>
     </el-table-column>
-    <el-table-column label="计划使用量" prop="productOnege" >
-       <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
+  </el-table>
+  <div class="fenge1">纸箱包装信息</div>
+         <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.xiangFormingDOs">
+    <el-table-column label="纸箱小类型" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
+    <el-table-column label="纸箱名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
+    <!-- <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column> -->
+    <el-table-column label="数量" prop="xiangPlannum"></el-table-column>
+  </el-table>
+  <div class="fenge1">袋子包装信息</div>
+         <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.daiFormingDOs">
+    <el-table-column label="袋子小类型" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
+    <el-table-column label="袋子名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
+    <el-table-column label="数量" prop="daiPlannum">
+      
+    </el-table-column>
+  </el-table>
+  <div class="fenge1">模具信息</div>
+   <el-form-item label="选择模具" prop="goodsBigType">
+          <el-select v-model="editMaterialForm.basicId" placeholder="请选择">
+            <el-option
+              v-for="item in editMaterialForm.machinedBatchDOs"
+              :key="item.basicId"
+              :label="item.basicRetainone"
+              :value="item.basicId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-button type="primary" @click="tianmoju">添加</el-button>
+        <el-button type="primary" @click="selected">删除</el-button>
+         <el-table
+    style="width: 100%" border @selection-change="handleSelectionChange" :data="machinedBatchDOs1">
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
+    <el-table-column label="模具名称" prop="basicRetainone" ></el-table-column>
+    <el-table-column label="模具产能" prop="basicRetainone1" ></el-table-column>
+    <el-table-column label="生产追踪号" prop="basicName"></el-table-column>
+    <el-table-column label="实际生产数量" prop="mbatReallynum">
+<template scope="scope">
+        <el-input v-model="scope.row.mbatReallynum"></el-input>
       </template>
     </el-table-column>
   </el-table>
@@ -128,55 +171,43 @@
     </span>
     </el-dialog>
     <el-dialog
-    title="物料控制查看"
-    :visible.sync="editManageVisible1"
-    width="60%"
-    :before-close="handleClose">
-    <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
-        <div class="fenge">物料信息</div>
-        <el-form-item label="生产单号：" prop="prolistCode">
-            <el-input v-model="editMaterialForm.prolistCode" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="制单人员：" prop="prolistPlanman">
-            <el-input v-model="editMaterialForm.prolistPlanman" disabled></el-input>
-        </el-form-item>
-        <div class="fenge1">商品信息</div>
-         <el-table
-    style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
-    <!-- default-expand-all -->
-    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
-    <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
-    <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
-    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
-    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
-    <el-table-column label="单位" prop="supplierGoolsDO.productOutbao">
-      <template >
-        kg
-      </template>
-    </el-table-column>
-    <el-table-column label="计划使用量" prop="prolistPlannum" >
-       <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
-      </template>
-    </el-table-column>
-  </el-table>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-        <el-button @click="editManageVisible1 = false">取 消</el-button>
-        <!-- <el-button type="primary" @click="addMaterial">确 定</el-button> -->
-    </span>
-    </el-dialog>
-    
-    <el-dialog
-      title="物料选择"
+      title="半成品选择"
       :visible.sync="dialogVisible1"
       width="58%"
       :before-close="handleClose"
       @closed="dialogClosed('chooseGoodsForm')"
     >
       <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
+        <el-form-item label="商品名称：" prop="goodsBigType"></el-form-item>
+         <el-form-item >
+           <el-button >查看</el-button>
+         </el-form-item>
+      </el-form>
+      <el-table border stripe :data="shangpi" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
+        <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+        <el-table-column prop="supgoolssmallType" label="产品名称"></el-table-column>
+        <el-table-column prop="supgoolsSplicing" label="规格"></el-table-column>
+        <el-table-column label="库存" prop="kcTotalstock"></el-table-column>
+        <el-table-column label="单位" prop="productOutbao"></el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible1=false">取 消</el-button>
+        <el-button @click="shengchancaigou()" type="primary">保 存</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="纸箱选择"
+      :visible.sync="dialogVisible2"
+      width="58%"
+      :before-close="handleClose"
+      @closed="dialogClosed('chooseGoodsForm')"
+    >
+     <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
         <el-form-item label="商品大类型：" prop="goodsBigType">
           <el-select
+          disabled
             placeholder="请选择商品"
             v-model="chooseGoodsForm.goodsBigType"
             @change="changeGoodsBigType"
@@ -199,7 +230,44 @@
     <!-- <el-table-column label="单位" prop="productOutbao"></el-table-column> -->
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible1=false">取 消</el-button>
+        <el-button @click="dialogVisible2=false">取 消</el-button>
+        <el-button @click="shengchancaigou()" type="primary">保 存</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="袋子选择"
+      :visible.sync="dialogVisible3"
+      width="58%"
+      :before-close="handleClose"
+      @closed="dialogClosed('chooseGoodsForm')"
+    >
+      <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
+        <el-form-item label="商品大类型：" prop="goodsBigType">
+          <el-select
+          disabled
+            placeholder="请选择商品"
+            v-model="chooseGoodsForm.goodsBigType"
+            @change="changeGoodsBigType"
+          >
+            <el-option value="原纸">原纸</el-option>
+            <el-option value="纸箱">纸箱</el-option>
+            <el-option value="袋子">袋子</el-option>
+            <el-option value="油墨">油墨</el-option>
+            <el-option value="其它">其它</el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-table border stripe :data="shangpi" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
+        <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+        <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
+        <el-table-column prop="supgoolsSplicing" label="商品描述"></el-table-column>
+        <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
+    <!-- <el-table-column label="单位" prop="productOutbao"></el-table-column> -->
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible3=false">取 消</el-button>
         <el-button @click="shengchancaigou()" type="primary">保 存</el-button>
       </span>
     </el-dialog>
@@ -254,7 +322,8 @@ export default {
       addManageVisible: false,
       editManageVisible: false,
       editManageVisible1: false,
-
+      dialogVisible3:false,
+      dialogVisible2:false,
       dialogVisible1:false,
       delVisible: false,
       delVisible11:false,
@@ -268,6 +337,7 @@ export default {
       chaManageForm: {
         prolistCode:'',
         customerId:'',
+        line:5,
         sorderTotalsum:'',
         sorderWarehouse:'',
         pageCode: 1, //当前页
@@ -279,11 +349,18 @@ export default {
       },
       editMaterialForm:{
        prolistCode:'',
-       prolistPlanman:'',
+       machMan:'',
        prolistPlantime:'',
        kcTotalstock:'',
-       materialListDOs:[],
+       banFormingDOs:[],
+       xiangFormingDOs:[],
+       daiFormingDOs:[],
+       producinggoodsDO:{},
+       machinedBatchDOs:[],
+       basicId:'',
       },
+      machinedBatchDOs1:[],
+      producinggoodsDO1:[],
       editMaterialForm1:[],
       wuliaoForm:{
         lab:'',
@@ -328,11 +405,35 @@ export default {
     this.getCookie();
   },
   methods: {
+    tianmoju(){
+     var a=0;
+     if(this.machinedBatchDOs1.length>=1){
+          for (let i = 0; i < this.machinedBatchDOs1.length; i++) {
+             if (this.editMaterialForm.basicId==this.machinedBatchDOs1[i].basicId) {
+               this.$message({
+                  type: "info",
+                  message: '已有此条数据！'
+                });
+                a=1;
+             }
+          }
+          if(a!=1){
+            for (let j = 0; j < this.editMaterialForm.machinedBatchDOs.length; j++) {
+                 if (this.editMaterialForm.basicId==this.editMaterialForm.machinedBatchDOs[j].basicId) {
+                   this.machinedBatchDOs1.push(this.editMaterialForm.machinedBatchDOs[j]);
+                 }
+               }
+          }
+        }else{
+          for (let index = 0; index < this.editMaterialForm.machinedBatchDOs.length; index++) {
+       if(this.editMaterialForm.basicId==this.editMaterialForm.machinedBatchDOs[index].basicId){
+         this.machinedBatchDOs1.push(this.editMaterialForm.machinedBatchDOs[index]);
+       }
+      } 
+      }
+      
+    },
    async ManageList() {
-    //  if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
-    //    this.chaManageForm.pageCode=1;
-    //    this.chaManageForm.pageSize=10;
-    //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
       this.total=res.body.total;
       this.manageList = res.body.rows;
@@ -353,7 +454,7 @@ export default {
     },
     xuanzhewuliao(){
        if (this.editManageVisible == true) {
-        this.productgoodsIdList = this.editMaterialForm.materialListDOs.map(
+        this.productgoodsIdList = this.editMaterialForm.banFormingDOs.map(
           item => {
             return item.suppliergoolsId;
           }
@@ -362,10 +463,35 @@ export default {
       this.dialogVisible1=true;
       this.changeGoodsBigType();
     },
+    xuanzhewuliao1(){
+      this.chooseGoodsForm.goodsBigType='纸箱';
+       if (this.editManageVisible == true) {
+        this.productgoodsIdList = this.editMaterialForm.xiangFormingDOs.map(
+          item => {
+            return item.suppliergoolsId;
+          }
+        );
+      } 
+      this.dialogVisible2=true;
+      this.changeGoodsBigType();
+    },
+    xuanzhewuliao2(){
+      this.chooseGoodsForm.goodsBigType='袋子';
+       if (this.editManageVisible == true) {
+        this.productgoodsIdList = this.editMaterialForm.daiFormingDOs.map(
+          item => {
+            return item.suppliergoolsId;
+          }
+        );
+      } 
+      this.dialogVisible3=true;
+      this.changeGoodsBigType();
+    },
     
  shengchancaigou(){
       var chongfu=0;
-        if(this.editMaterialForm.materialListDOs.length>=1){
+      if(this.chooseGoodsForm.goodsBigType=='纸箱'){
+        if(this.editMaterialForm.xiangFormingDOs.length>=1){
           if(this.editManageVisible==true){
             const needAdd = [];
           this.selectedList.forEach(item => {
@@ -375,28 +501,79 @@ export default {
               chongfu ++;
             }
           });
-          this.editMaterialForm.materialListDOs = [
-            ...this.editMaterialForm.materialListDOs,
+          this.editMaterialForm.xiangFormingDOs = [
+            ...this.editMaterialForm.xiangFormingDOs,
             ...needAdd
           ];
           }
         }else{
           for (let index = 0; index < this.selectedList.length; index++) {
             if(this.editManageVisible==true){
-              this.editMaterialForm.materialListDOs.push(this.selectedList[index]);
+             this.editMaterialForm.xiangFormingDOs.push(this.selectedList[index]);
             }
         }
-          
+      }
+      this.dialogVisible2=false;
+    }else if(this.chooseGoodsForm.goodsBigType=='袋子'){
+      if(this.editMaterialForm.daiFormingDOs.length>=1){
+          if(this.editManageVisible==true){
+            const needAdd = [];
+          this.selectedList.forEach(item => {
+            if (this.productgoodsIdList.indexOf(item.suppliergoolsId) === -1) {
+              needAdd.push(item);
+            } else {
+              chongfu ++;
+            }
+          });
+          this.editMaterialForm.daiFormingDOs = [
+            ...this.editMaterialForm.daiFormingDOs,
+            ...needAdd
+          ];
+          }
+        }else{
+          for (let index = 0; index < this.selectedList.length; index++) {
+            if(this.editManageVisible==true){
+             this.editMaterialForm.daiFormingDOs.push(this.selectedList[index]);
+            }
+        }
+      }
+       this.dialogVisible3=false;
+    }else{
+      if(this.editMaterialForm.banFormingDOs.length>=1){
+          if(this.editManageVisible==true){
+            const needAdd = [];
+          this.selectedList.forEach(item => {
+            if (this.productgoodsIdList.indexOf(item.suppliergoolsId) === -1) {
+              needAdd.push(item);
+            } else {
+              chongfu ++;
+            }
+          });
+          this.editMaterialForm.banFormingDOs = [
+            ...this.editMaterialForm.banFormingDOs,
+            ...needAdd
+          ];
+          }
+           this.dialogVisible2=false;
+        }else{
+          for (let index = 0; index < this.selectedList.length; index++) {
+            if(this.editManageVisible==true){
+             this.editMaterialForm.banFormingDOs.push(this.selectedList[index]);
+            }
+        }
+        
+      }
+      this.dialogVisible1=false;
     }
+         
       const charu = this.selectedList.length - chongfu;
       this.$message({
         type: "info",
         message: chongfu > 0 ? `此次添加有重复数据，重复数据${chongfu}条，成功插入${charu}条` : `此次成功插入${charu}条`
       });
-       this.dialogVisible1=false;
+       
     },
     shanchuwuliao(){
-
     },
     selected(){
       if(this.selectedList.length == 0){
@@ -415,58 +592,62 @@ export default {
       }
     },
     async deleteRow(){
+      if(this.chooseGoodsForm.goodsBigType=='纸箱'){
         if(this.editManageVisible==true){
              for (let index = 0; index < this.delarr.length; index++) {
-           for (let i = 0; i < this.editMaterialForm.materialListDOs.length; i++) {
-              if(this.delarr[index]==this.editMaterialForm.materialListDOs[i].suppliergoolsId)
-              this.editMaterialForm.materialListDOs.splice(i,1);
+           for (let i = 0; i < this.editMaterialForm.xiangFormingDOs.length; i++) {
+              if(this.delarr[index]==this.editMaterialForm.xiangFormingDOs[i].suppliergoolsId)
+              this.editMaterialForm.xiangFormingDOs.splice(i,1);
            }
          }
         }
+      }else if (this.chooseGoodsForm.goodsBigType=='袋子') {
+        if(this.editManageVisible==true){
+             for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.editMaterialForm.daiFormingDOs.length; i++) {
+              if(this.delarr[index]==this.editMaterialForm.daiFormingDOs[i].suppliergoolsId)
+              this.editMaterialForm.daiFormingDOs.splice(i,1);
+           }
+         }
+        }
+      }else{
+        if(this.editManageVisible==true){
+             for (let index = 0; index < this.delarr.length; index++) {
+           for (let i = 0; i < this.editMaterialForm.banFormingDOs.length; i++) {
+              if(this.delarr[index]==this.editMaterialForm.banFormingDOs[i].suppliergoolsId)
+              this.editMaterialForm.banFormingDOs.splice(i,1);
+           }
+         }
+        }
+      }
          this.delVisible11 = false;
-         
       },
    async addMaterial(){
      console.log(this.editMaterialForm);
-     
-       const { data: res } = await this.$http.post("sc/Materal/insertmaterial",this.editMaterialForm);
+     this.editMaterialForm.machinedBatchDOs=this.machinedBatchDOs1;
+       const { data: res } = await this.$http.post("sc/Machined/update",this.editMaterialForm);
        this.editManageVisible = false;
         this.ManageList();
     },
-
     getCookie: function() {
       var storage=window.localStorage;
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(prolistCode,xian,sorderStatus) {
-      // if(sorderStatus==0){
-         let param = new URLSearchParams();
-          param.append("prolistCode", prolistCode);
-        const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
-        if(res.body.rows.length>=1){
-          this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
-           this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;
-           this.editMaterialForm.materialListDOs=res.body.rows[0].materialListDOs;
-           
-        }else{
-         
-        this.editMaterialForm.materialListDOs=[];
-
-        }
-        if(sorderStatus==1){
-       this.editMaterialForm.prolistCode=prolistCode;
-      this.editMaterialForm.prolistPlanman=this.shenpiren;
+      let param = new URLSearchParams();
+      param.append("prolistCode", prolistCode);
+      const { data: res } = await this.$http.post("sc/Forming/select",param);
+      this.editMaterialForm=res.body.formingPickingDO;
+      this.producinggoodsDO1.push(res.body.producinggoodsDO);
+      this.editMaterialForm.producinggoodsDO= this.producinggoodsDO1;
+      this.editMaterialForm.machinedBatchDOs=res.body.machinedBatchDOs;
+      this.editMaterialForm.prolistCode=prolistCode;
+      if(res.body.formingPickingDO.machMan){
+         this.editMaterialForm.machMan=res.body.formingPickingDO.machMan;
+      }else{
+         this.editMaterialForm.machMan=this.shenpiren;
+      }
       this.editManageVisible = true;
-        }else{
-           this.editManageVisible1 = true;
-        }
-      
-        
-        // this.editManageVisible = true;
-      // }else{
-      
-      // }
-      
     },
     async list(){
       const { data: res } = await this.$http.post("jc/Basic/selectparameters");

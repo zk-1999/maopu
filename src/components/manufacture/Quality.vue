@@ -101,11 +101,25 @@
         <el-table-column prop="id" label="检查内容" align="center"></el-table-column>
         <el-table-column prop="pbatParameterscode" label="检查结果" align="center">
           <template slot-scope="scope">
-             <el-radio v-model="scope.row.value" label=0>备选项</el-radio>
-             <el-radio v-model="scope.row.value" label='1'>备选项</el-radio>
+             <el-radio v-model="scope.row.value" label=0>正确</el-radio>
+             <el-radio v-model="scope.row.value" label=1>错误</el-radio>
           </template>
         </el-table-column>
       </el-table>
+      <div class="fenge1" >质检结果信息</div>
+    <el-form-item label="质检人：" prop="pbatController" >
+      <el-input v-model="addzhijian.pbatController" ></el-input>
+    </el-form-item>
+     <el-form-item label="质检结果："  prop="pbatStatus">
+      <el-radio v-model="addzhijian.pbatStatus" label='0' @change="guoqudangqianshijian" >通过</el-radio>
+      <el-radio v-model="addzhijian.pbatStatus" label='1' @change="guoqudangqianshijian" >驳回</el-radio>
+    </el-form-item>
+    <el-form-item label="质检时间：" prop="pbatTime">
+      <el-input v-model="addzhijian.pbatTime" ></el-input>
+    </el-form-item> 
+    <el-form-item label="质检描述："  prop="pbatRemarks">
+      <el-input class="w400" v-model="addzhijian.pbatRemarks" ></el-input>
+    </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
@@ -254,6 +268,7 @@ export default {
         prolistCode:'',
         customerId:'',
         sorderTotalsum:'',
+        line:3,
         sorderWarehouse:'',
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
@@ -339,10 +354,11 @@ export default {
       pbatDirty:0,
       pbatBag:0,
       pbatTape:0,
-      pbatController:0,
-      pbatTime:0,
-      pbatRemarks:0,
+      pbatController:'',
+      pbatTime:'',
+      pbatRemarks:'',
       pbatId:0,
+      pbatStatus:''
      }
     };
    
@@ -353,6 +369,13 @@ export default {
     this.getCookie();
   },
   methods: {
+    guoqudangqianshijian(){
+      var date = new Date();
+      var y = date.getFullYear()
+      var mm = date.getMonth() + 1
+      var d = date.getDate()
+      this.addzhijian.pbatTime=`${y}-${mm}-${d}`
+    },
    async ManageList() {
       const { data: res } = await this.$http.post("sc/ProductionExecution/selectBatch",this.chaManageForm);
       this.total=res.body.total;

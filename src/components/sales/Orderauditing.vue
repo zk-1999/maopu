@@ -93,7 +93,7 @@
             <el-tag type="danger" v-if="scope.row.sorderStatus=='2'">已驳回</el-tag>
             <el-tag type="danger" v-if="scope.row.sorderStatus=='3'">已通过</el-tag>
             <el-tag type="danger" v-if="scope.row.sorderStatus=='4'">复审未通过</el-tag>
-            <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">生产中</el-tag>
+            <el-tag type="danger" v-if="scope.row.sorderStatus=='5'">复审通过</el-tag>
             <el-tag type="danger" v-if="scope.row.sorderStatus=='6'">待发货</el-tag>
             <el-tag type="danger" v-if="scope.row.sorderStatus=='7'">部分发货</el-tag>
             <el-tag type="danger" v-if="scope.row.sorderStatus=='8'">全部发货</el-tag>

@@ -43,6 +43,7 @@ import Stocktaking from './components/stock/Stocktaking.vue'
 import QueryIAndO from './components/stock/QueryIAndO.vue'
 import QueryStock from './components/stock/QueryStock.vue'
 import CheckStock from './components/stock/CheckStock.vue'
+import GoodsStockQuery from './components/stock/GoodsStockQuery.vue'
 import Receipt from './components/finance/Receipt.vue'
 import PaymentSlip from './components/finance/PaymentSlip.vue'
 import DispatchList from './components/finance/DispatchList.vue'
@@ -67,7 +68,6 @@ const router = new Router({
             component: Home,
             redirect: '/welcome',
             children: [
-                { path: '/welcome', component: Welcome },
                 { path: '/welcome', component: Welcome },
                 { path: '/supplier', component: Supplier },
                 { path: '/client', component: Client },
@@ -101,6 +101,7 @@ const router = new Router({
                 { path: '/queryIAndO', component: QueryIAndO },
                 { path: '/queryStock', component: QueryStock },
                 { path: '/checkStock', component: CheckStock },
+                { path: '/goodsStockQuery', component: GoodsStockQuery },
                 { path: '/outputCheck', component: OutputCheck },
                 { path: '/receipt', component: Receipt },
                 { path: '/paymentSlip', component: PaymentSlip },

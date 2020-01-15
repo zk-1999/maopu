@@ -77,12 +77,12 @@
               <el-button
                 type="success"
                 size="mini"
-                @click="lookUpState = true;checkState = false;showEditOrder(scope.row.outboundReceipt,scope.row.outboundStatus)"
+                @click="lookUpState = true;checkState = false;showEditOrder(scope.row.outboundReceipt,scope.row.outboundStatus,scope.row.outboundType)"
               >查看</el-button>
               <el-button
                 type="primary"
                 size="mini"
-                @click="lookUpState = true;checkState = true;showEditOrder(scope.row.outboundReceipt,scope.row.outboundStatus)"
+                @click="lookUpState = true;checkState = true;showEditOrder(scope.row.outboundReceipt,scope.row.outboundStatus,scope.row.outboundType)"
                 :disabled="scope.row.outboundStatus != 0"
               >审核</el-button>
             </template>
@@ -102,7 +102,7 @@
     </el-card>
 
     <el-dialog
-      title="出库单审核"
+      :title="!checkState?'查看出库单':'出库单审核'"
       :visible.sync="editOrderVisible"
       width="60%"
       :before-close="handleClose"
@@ -141,7 +141,6 @@
             v-model="editOrderFrom.outboundTime"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="选择日期"
             class="_small"
             :disabled="lookUpState"
           ></el-date-picker>
@@ -160,65 +159,81 @@
         <!-- 带有排序功能的商品table -->
         <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
         <!-- v-show="addOrderFrom.inboundType == 0" -->
-        <el-table :data="editOrderFrom.outboundGoolsDos" style="width: 100%">
-          <!-- <el-table-column type="selection" width="55"></el-table-column> -->
-          <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
-          <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
-          <el-table-column prop="supgoolsSplicing" width="250px" align="center" label="商品描述"></el-table-column>
-          <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column>
-          <el-table-column prop="sum" label="已出库数量"></el-table-column>
-          <el-table-column prop="outboundgoolsNum" label="本次出库数量">
-            <!-- <template slot-scope="scope">
-              <el-input v-model="scope.row.inboundgoolsNum"></el-input>
-            </template>-->
-          </el-table-column>
-          <el-table-column prop="unit" label="单位">
-            <!-- <template slot-scope="scope">
-              <el-select v-model="scope.row.inboundgoolsUnit" placeholder="请选择" class="_small">
-                <el-option
-                  v-for="item in unit"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicId"
-                ></el-option>
-              </el-select>
-            </template>-->
-          </el-table-column>
-          <el-table-column prop="warehouse" label="入库仓库">
-            <!-- <template slot-scope="scope">
-              <el-select v-model="scope.row.inboundgoolsWhouse" placeholder="请选择" class="_small">
-                <el-option
-                  v-for="item in warehouseOptions"
-                  :key="item.basicId"
-                  :label="item.basicRetainone"
-                  :value="item.basicId"
-                ></el-option>
-              </el-select>
-            </template>-->
-          </el-table-column>
+        <div v-show="outboundType == 0">
+          <el-table :data="editOrderFrom.outboundGoolsDos" style="width: 100%">
 
-          <!-- <el-table-column prop label="操作" align="center" v-if="!lookUpState">
-            <template slot-scope="scope">
-              <el-button @click="addOrderMsg(scope.$index)" size="mini" type="primary">关联追踪号</el-button>
-            </template>
-          </el-table-column>-->
-          <!-- <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column> -->
-          <el-table-column prop="jsonofinboundgoolsTrack" type="expand">
-            <template slot-scope="scope">
-              <!-- <span>{{scope.row.deliverOrderListShow}}</span> -->
-              <el-table :data="scope.row.jsonofinboundgoolsTrack" style="width: 50%" :border="true">
-                <el-table-column prop="traceNo" align="center" label="追踪号"></el-table-column>
-                <el-table-column prop="weight" label="数量" align="center"></el-table-column>
-                <!-- <el-table-column label="单位" align="center"></el-table-column> -->
-              </el-table>
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+            <el-table-column prop="supgoolsSplicing" width="250px" align="center" label="商品描述"></el-table-column>
+            <el-table-column prop="pcommodityPalnnum" label="总数"></el-table-column>
+            <el-table-column prop="sum" label="已出库数量"></el-table-column>
+            <el-table-column prop="outboundgoolsNum" label="本次出库数量"></el-table-column>
+            <el-table-column prop="unit" label="单位"></el-table-column>
+            <el-table-column prop="warehouse" label="入库仓库"></el-table-column>
+            <el-table-column prop="jsonofinboundgoolsTrack" type="expand">
+              <template slot-scope="scope">
+                <el-table
+                  :data="scope.row.jsonofinboundgoolsTrack"
+                  style="width: 50%"
+                  :border="true"
+                >
+                  <el-table-column prop="traceNo" align="center" label="追踪号"></el-table-column>
+                  <el-table-column prop="weight" label="数量" align="center"></el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <!-- 销售订单表单 -->
+        <div v-show="outboundType == 2">
+          <el-table
+            :data="editOrderFrom.outboundGoolsDos"
+            style="width: 100%"
+            border
+            default-expand-all
+            class="tb"
+          >
+            <el-table-column type="selection" width="35" align="center"></el-table-column>
+            <el-table-column type="expand" label="展开" width="50">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item label>{{ props.row.producinggoodsDOs.productSplicing }}</el-form-item>
+                </el-form>
+                <el-table
+                  :data="props.row.jsonofinboundgoolsTrack"
+                  style="width: 50%"
+                  :border="true"
+                >
+                  <el-table-column prop="traceNo" align="center" label="追踪号"></el-table-column>
+                  <el-table-column prop="weight" label="数量" align="center"></el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>
+            <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
+            <el-table-column label="销售单号" prop="sorderCode" width="140"></el-table-column>
+            <el-table-column label="客户名称" prop="cusName"></el-table-column>
+            <el-table-column label="合同号" prop="sorderWarehouse"></el-table-column>
+            <el-table-column label="交货地点" prop="sorderAddress"></el-table-column>
+            <el-table-column label="交货方式" prop="sorderTotalsum"></el-table-column>
+            <el-table-column label="商品名称" prop="producinggoodsDOs.productName"></el-table-column>
+            <el-table-column label="数量" prop="commodityNumber"></el-table-column>
+            <el-table-column label="已发数量" prop="sorderAuqntityshipped"></el-table-column>
+            <el-table-column label="发货数量" prop="dorderNumbers">
+              <template scope="scope">
+                <el-input v-model="scope.row.dorderNumbers" :disabled="true"></el-input>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column prop label="操作" align="center">
+              <template slot-scope="scope">
+                <el-button @click="addOrderMsg(scope.$index)" size="mini" type="primary">编辑</el-button>
+              </template>
+            </el-table-column> -->
+          </el-table>
+        </div>
         <br />
         <el-form-item label="备注：" prop="outboundRemark">
           <el-input
             type="textarea"
-            placeholder="请输入内容"
             v-model="editOrderFrom.outboundRemark"
             style="width:600px"
             :disabled="lookUpState"
@@ -238,7 +253,12 @@
 
           <br />
           <el-form-item label="审核备注：" prop="outboundDesc">
-            <el-input type="textarea" v-model="outboundDesc" style="width:600px" :disabled="checkState == false"></el-input>
+            <el-input
+              type="textarea"
+              v-model="outboundDesc"
+              style="width:600px"
+              :disabled="checkState == false"
+            ></el-input>
           </el-form-item>
         </div>
       </el-form>
@@ -281,6 +301,7 @@ export default {
 
       outboundStatus: 0, //审核状态
       outboundDesc: "", //审核描述
+      outboundType: 0, //出库类型
 
       checkForm: {
         outboundReceipt: "",
@@ -288,9 +309,9 @@ export default {
         outboundDesc: "",
         outboundAuditor: "",
         preturnCode: "",
-        outboundReceipt:{}
+        outboundReceipt: {}
       },
-      flag: false // 审核信息是否可见，仅待审核状态 查看不可见
+      flag: false, // 审核信息是否可见，仅待审核状态 查看不可见
     };
   },
   created() {
@@ -324,7 +345,7 @@ export default {
       this.unit = res;
     },
     handleCurrentChange(val) {
-      this.chaInOrder.pageCode = val;
+      this.chaOutOrder.pageCode = val;
       this.getList();
     },
 
@@ -388,7 +409,17 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 查看表单
-    async showEditOrder(outboundReceipt, outboundStatus) {
+    async showEditOrder(outboundReceipt, outboundStatus, outboundType) {
+      console.log("outboundType")
+      console.log(outboundType)
+      this.chaOutOrderForm = {
+        outboundReceipt: "", //入库单号
+        preturnCode: "", //采购单号
+        outboundType: "", //入库类型
+        outboundStatus: "", //入库状态
+        pageCode: 1,
+        pageSize: 10
+      }
       // 重置审核信息
       this.checkForm = {
         outboundReceipt: "",
@@ -396,11 +427,10 @@ export default {
         outboundDesc: "",
         outboundAuditor: "",
         preturnCode: "",
-        outboundReceipt:{}
-      }
+        outboundReceipt: {}
+      };
       this.outboundStatus = 0;
       this.outboundDesc = "";
-
 
       // 待审核，查看 审核信息不可见
       if (outboundStatus == 0 && this.checkState == false) {
@@ -408,6 +438,8 @@ export default {
       } else {
         this.flag = true; // 可见
       }
+      // outboundStatus控制页面table对于不同类型出库单的不同展现
+      this.outboundType = outboundType;
 
       const { data: res } = await this.$http.post(
         "kc/outbound/selectoutdisplay",
@@ -416,9 +448,12 @@ export default {
       console.log(res);
 
       let editOrder = res.body.result;
-      // 抓华出库类型为字符串
+      // 设置出库类型为字符串
       editOrder.outboundType += "";
 
+
+      // 采购退货
+      if(this.outboundType == 0){
       // 获取所有供应商商品id
       let ids = [];
       editOrder.outboundGoolsDos.forEach((item, index, array) => {
@@ -441,27 +476,27 @@ export default {
       });
 
       // 单位和仓库显示
-      editOrder.outboundGoolsDos.forEach((good,index,array) => {
+      editOrder.outboundGoolsDos.forEach((good, index, array) => {
         // 单位
-        this.unit.forEach((u,index,array)=>{
-          if(good.pcommodityUnit == u.basicId){
-            good.unit = u.basicRetainone
+        this.unit.forEach((u, index, array) => {
+          if (good.pcommodityUnit == u.basicId) {
+            good.unit = u.basicRetainone;
           }
-        })
+        });
         // 仓库
-        this.warehouseOptions.forEach((w,index,array)=>{
-          if(good.basicId == w.basicId){
-            good.warehouse = w.basicRetainone
+        this.warehouseOptions.forEach((w, index, array) => {
+          if (good.basicId == w.basicId) {
+            good.warehouse = w.basicRetainone;
           }
-        })
+        });
       });
 
       // 根据退货单号和商品id查询商品已出库数量
       const { data: res2 } = await this.$http.post(
         "kc/outbound/selectallgools",
         {
-          preturnCode:editOrder.preturnCode,
-          suppliergoolsId:ids
+          preturnCode: editOrder.preturnCode,
+          suppliergoolsId: ids
         }
       );
       editOrder.outboundGoolsDos.forEach((good, index, array) => {
@@ -473,27 +508,96 @@ export default {
           }
         });
       });
+      }else if(this.outboundType == 2){
+        let param = new URLSearchParams();
+      param.append("deliveryCode", res.body.result.preturnCode);
+      const { data: res1 } = await this.$http.post(
+        "xs/delivery/selectDeliveryNoticebyid",
+        param
+      );
 
+      // 商品
+      for (
+        let index = 0;
+        index < res1.body.DeliveryNoticeDO.deliveryOrderDOs.length;
+        index++
+      ) {
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].productSplicing =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].producinggoodsDOs.productSplicing;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].cusName =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.customerDOs.cusName;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].sorderWarehouse =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.sorderWarehouse;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].sorderAddress =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.sorderAddress;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].sorderTotalsum =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.sorderTotalsum;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].productName =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].producinggoodsDOs.productName;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].commodityNumber =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.commodityListDOs[0].commodityNumber;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+          index
+        ].sorderAuqntityshipped =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.sorderAuqntityshipped;
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs[index].sorderTotalsum =
+          res1.body.DeliveryNoticeDO.deliveryOrderDOs[
+            index
+          ].saleOrderDO.sorderTotalsum;
+      }
+      // editOrder.outboundGoolsDos
+      console.log("editOrder.outboundGoolsDos")
+      console.log(editOrder.outboundGoolsDos)
+
+      let arr = JSON.parse(JSON.stringify(editOrder.outboundGoolsDos));
+
+      editOrder.outboundGoolsDos =
+        res1.body.DeliveryNoticeDO.deliveryOrderDOs;
+
+        console.log(editOrder.outboundGoolsDos)
+        console.log(res.body.result.outboundGoolsDos) 
+      
+      // 获取追踪码
+      editOrder.outboundGoolsDos.forEach((good,index,array)=>{
+        arr.forEach((item,index,array)=>{
+          if(item.productgoodsId == good.productgoodsId && item.sorderCode == good.sorderCode){
+            good.jsonofinboundgoolsTrack = item.jsonofinboundgoolsTrack
+          }
+        })
+      })
+      }
 
       // 审核状态反显
-      if(this.checkState == false){
-        this.outboundStatus = editOrder.outboundStatus + ""
-        this.outboundDesc = editOrder.outboundDesc
-        console.log("出库单审核状态")
-        console.log(this.outboundStatus)
+      if (this.checkState == false) {
+        this.outboundStatus = editOrder.outboundStatus + "";
+        this.outboundDesc = editOrder.outboundDesc;
+        console.log("出库单审核状态");
+        console.log(this.outboundStatus);
       }
-      
-
-      
-
 
       this.editOrderFrom = editOrder;
-      if(this.checkState == true){
-        this.getCookie()
+      if (this.checkState == true) {
+        this.getCookie();
       }
 
-      console.log("--------------------------")
-      console.log(this.editOrderFrom)
+      console.log("--------------------------");
+      console.log(this.editOrderFrom);
 
       this.editOrderVisible = true;
     },
@@ -514,20 +618,20 @@ export default {
       this.checkForm.outboundAuditor = this.editOrderFrom.outboundAuditor;
       this.checkForm.outboundStatus = Number(this.outboundStatus);
       this.checkForm.outboundDesc = this.outboundDesc;
-      this.checkForm.outboundReceipt = this.editOrderFrom.outboundReceipt
-      this.checkForm.outboundGoolsDos = this.editOrderFrom.outboundGoolsDos
+      this.checkForm.outboundReceipt = this.editOrderFrom.outboundReceipt;
+      this.checkForm.outboundGoolsDos = this.editOrderFrom.outboundGoolsDos;
 
       const { data: res } = await this.$http.post(
         "kc/outbound/examine",
         this.checkForm
       );
 
-      if(res.body.respCode == 200){
+      if (res.body.respCode == 200) {
         this.$message({
           type: "success",
           message: res.body.msg
         });
-      }else{
+      } else {
         this.$message({
           type: "info",
           message: "出库单审核失败"
@@ -591,5 +695,11 @@ hr {
   padding-left: 15px;
   background-color: #dcdfe6;
   margin-bottom: 20px;
+}
+.demo-table-expand {
+  text-align: center;
+  .el-form-item {
+    margin-bottom: 0px;
+  }
 }
 </style>  

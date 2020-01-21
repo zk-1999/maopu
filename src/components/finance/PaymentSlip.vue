@@ -12,49 +12,59 @@
         class="demo-form-inline search"
         :model="chaOrderFrom"
         ref="chaOrderFrom"
-        label-width="70px"
+        label-width="90px"
         label-position="left"
       >
         <el-row :gutter="20" class="row">
           <el-col :span="24">
-            <el-form-item label="付款单号" prop="paymentorderno">
+            <el-form-item label="付款单号：" prop="paymentorderno">
               <el-input class="_small" v-model="chaOrderFrom.paymentorderno"></el-input>
             </el-form-item>
-            <el-form-item label="制单人员" prop="payexamine">
+            <el-form-item label="制单人员：" prop="payexamine">
               <el-input class="_small" v-model="chaOrderFrom.payexamine"></el-input>
             </el-form-item>
 
-            <el-form-item label="资金账户" prop="assetaccount">
-              <el-input class="_small" v-model="chaOrderFrom.assetaccount"></el-input>
+            <el-form-item label="资金账户：" prop="assetaccount">
+              <el-select
+                v-model="chaOrderFrom.assetaccount"
+                class="_small"
+                placeholder=""
+              >
+                <el-option
+                  v-for="item in zijinCount"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
             </el-form-item>
 
-            <el-form-item label="支出类型" prop="raetypes">
+            <el-form-item label="支出类型：" prop="raetypes">
               <el-select
                 v-model="chaOrderFrom.raetypes"
-                placeholder="请选择"
                 class="_small"
+                placeholder=""
               >
                 <el-option
                   v-for="item in paymode"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  :disabled="lookUpState"
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="付款类别" prop="typeOfPayment">
+            <!-- @change="changeTypeOfPayment($event)" -->
+            <el-form-item label="付款类别：" prop="typeOfPayment">
               <el-select
                 v-model="chaOrderFrom.typeOfPayment"
-                placeholder="请选择"
                 class="_small"
-                @change="changeTypeOfPayment($event)"
+                
               >
                 <el-option value="0" label="预付款"></el-option>
                 <el-option value="1" label="应付款"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="制单日期" prop="rectimeRange">
+            <el-form-item label="制单日期：" prop="rectimeRange">
               <el-date-picker
                 v-model="chaOrderFrom.rectimeRange"
                 type="daterange"
@@ -74,7 +84,7 @@
         </el-row>
       </el-form>
 
-      <el-button type="primary" @click="addAdvancePaymentFormVisible = true">新增预付款单</el-button>
+      <!-- <el-button type="primary" @click="addAdvancePaymentFormVisible = true">新增预付款单</el-button> -->
       <!-- @selection-change="handleSelectionChange2" -->
       <el-table border :data="orderList">
         <!-- <el-table-column type="selection" width="50px"></el-table-column> -->
@@ -117,13 +127,11 @@
           <template slot-scope="scope">
             <el-button
               type="success"
-              icon="el-icon-edit"
               size="mini"
               @click="lookUpState = true;showEditOrder(scope.row.paymentorderno)"
             >查看</el-button>
             <el-button
               type="primary"
-              icon="el-icon-edit"
               size="mini"
               :disabled="!(scope.row.paymentstatus == 0)"
               @click="lookUpState = false;showEditOrder(scope.row.paymentorderno)"
@@ -141,7 +149,6 @@
       </el-table>
 
       <el-pagination
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="chaOrder.pageCode"
         :page-size="10"
@@ -164,19 +171,30 @@
         label-width="90px"
         :model="addAdvancePaymentForm"
         ref="addAdvancePaymentForm"
-        :rules="addAdvancePaymentFormRules"
         :inline="true"
       >
-        <el-form-item label="采购订单号" prop="purchaseorderno">
+        <el-form-item label="采购订单号：" prop="purchaseorderno">
           <el-input class="_small" v-model="addAdvancePaymentForm.purchaseorderno"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付款金额" prop="amount">
+        <el-form-item label="预付款金额：" prop="amount">
           <el-input class="_small" v-model="addAdvancePaymentForm.amount"></el-input>
         </el-form-item>
 
-        <el-form-item label="资金账户" prop="assetaccount">
-          <el-input class="_small" v-model="addAdvancePaymentForm.assetaccount"></el-input>
+        <el-form-item label="资金账户：" prop="assetaccount">
+          <!-- <el-input class="_small" v-model="addAdvancePaymentForm.assetaccount"></el-input> -->
+          <el-select
+                v-model="addAdvancePaymentForm.assetaccount"
+                class="_small"
+                placeholder=""
+              >
+                <el-option
+                  v-for="item in zijinCount"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
           <!-- <el-select v-model="assetaccount" placeholder="请选择" class="_small">
             <el-option value label="全部"></el-option>
             <el-option value="0" label="未到货"></el-option>
@@ -185,8 +203,8 @@
           </el-select>-->
         </el-form-item>
 
-        <el-form-item label="支出类型" prop="raetypes">
-          <el-select v-model="addAdvancePaymentForm.raetypes" placeholder="请选择" class="_small">
+        <el-form-item label="支出类型：" prop="raetypes">
+          <el-select v-model="addAdvancePaymentForm.raetypes"  class="_small" placeholder=""> 
             <el-option
               v-for="item in paymode"
               :key="item.value"
@@ -197,14 +215,14 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="付款状态" prop="paymentstatus">
-          <el-select v-model="addAdvancePaymentForm.paymentstatus" placeholder="请选择" class="_small">
+        <el-form-item label="付款状态：" prop="paymentstatus">
+          <el-select v-model="addAdvancePaymentForm.paymentstatus"  class="_small">
             <el-option value="0" label="未付款"></el-option>
             <el-option value="1" label="已付款"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="备注" prop="remarks">
+        <el-form-item label="备注：" prop="remarks">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -239,51 +257,61 @@
             <el-dialog
       :title="lookUpState?'查看付款单':'付款'"
       :visible.sync="editPaymentVisible"
-      width="50%"
+      width="42%"
       :before-close="handleClose"
       @closed="dialogClosed('editPaymentForm')"
     >
       <el-form
         label-position="right"
-        label-width="90px"
+        label-width="100px"
         :model="editPaymentForm"
         ref="editPaymentForm"
-        :rules="editPaymentRules"
         :inline="true"
       >
-        <el-form-item label="付款制单人" prop="payexamine">
-          <el-input class="_small" v-model="editPaymentForm.payexamine" disabled="true"></el-input>
+        <el-form-item label="付款制单人：" prop="payexamine">
+          <el-input class="_small" v-model="editPaymentForm.payexamine" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="供应商名称" prop="supName">
-          <el-input class="_small" v-model="editPaymentForm.supName" disabled="true"></el-input>
+        <el-form-item label="供应商名称：" prop="supName">
+          <el-input class="_small" v-model="editPaymentForm.supName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="供应商编码" prop="supId">
-          <el-input class="_small" v-model="editPaymentForm.supId" disabled="true"></el-input>
+        <el-form-item label="供应商编码：" prop="supId">
+          <el-input class="_small" v-model="editPaymentForm.supId" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="采购订单号" prop="porderCode">
-          <el-input class="_small" v-model="editPaymentForm.porderCode" disabled="true"></el-input>
+        <el-form-item label="采购订单号：" prop="porderCode">
+          <el-input class="_small" v-model="editPaymentForm.porderCode" :disabled="true"></el-input>
         </el-form-item>
         <br />
-        <el-form-item label="采购数量" prop="porderTotalnum">
-          <el-input class="_small" v-model="editPaymentForm.porderTotalnum" disabled="true"></el-input>
+        <el-form-item label="采购数量：" prop="porderTotalnum">
+          <el-input class="_small" v-model="editPaymentForm.porderTotalnum" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="采购金额" prop="porderTotalmoney">
-          <el-input class="_small" v-model="editPaymentForm.porderTotalmoney" disabled="true"></el-input>
+        <el-form-item label="采购金额：" prop="porderTotalmoney">
+          <el-input class="_small" v-model="editPaymentForm.porderTotalmoney":disabled="true"></el-input>
         </el-form-item>
         <!-- <el-form-item label="结算方式" prop="settlemethod">
           <el-input class="_small" v-model="editPaymentForm.settlemethod" disabled="true"></el-input>
         </el-form-item> -->
-        <el-form-item label="预付款金额" prop="amount">
-          <el-input class="_small" v-model="editPaymentForm.amount" disabled="true"></el-input>
+        <el-form-item label="预付款金额：" prop="amount">
+          <el-input class="_small" v-model="editPaymentForm.amount" :disabled="true"></el-input>
         </el-form-item>
         <br />
-        <el-form-item label="资金账户" prop="assetaccount">
-          <el-input class="_small" v-model="editPaymentForm.assetaccount" :disabled="lookUpState"></el-input>
+        <el-form-item label="资金账户：" prop="assetaccount">
+          <!-- <el-input class="_small" v-model="editPaymentForm.assetaccount" :disabled="lookUpState"></el-input> -->
+          <el-select
+                v-model="editPaymentForm.assetaccount"
+                class="_small"
+                :disabled="lookUpState"
+              >
+                <el-option
+                  v-for="item in zijinCount"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
         </el-form-item>
-        <el-form-item label="支出类型" prop="raetypes">
+        <el-form-item label="支出类型：" prop="raetypes">
           <el-select
             v-model="editPaymentForm.raetypes"
-            placeholder="请选择"
             class="_small"
             :disabled="lookUpState"
           >
@@ -296,10 +324,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预付款状态" prop="paymentstatus">
+        <el-form-item label="预付款状态：" prop="paymentstatus">
           <el-select
             v-model="editPaymentForm.paymentstatus"
-            placeholder="请选择"
             class="_small"
             :disabled="lookUpState"
           >
@@ -308,7 +335,7 @@
           </el-select>
         </el-form-item>
         <br />
-        <el-form-item label="备注" prop="remarks">
+        <el-form-item label="备注：" prop="remarks">
           <el-input
             type="textarea"
             class="_small"
@@ -318,7 +345,25 @@
           ></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge1">付款凭证</div>
+        <el-form-item>
+          <el-upload
+                      ref="upload"
+                      :action="ip"
+                      name="picture"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-exceed="onExceed"
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreview"
+                      :on-success="handleSuccess"
+                      :on-error="handleError"
+                      :on-remove="handleRemove"
+                      :disabled="lookUpState"
+                      >
+                <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editPaymentVisible = false">取 消</el-button>
@@ -373,16 +418,20 @@ export default {
         remarks: "" //备注
       },
       // 新增预付款单显示
-      addAdvancePaymentFormVisible: false
+      addAdvancePaymentFormVisible: false,
+
+      zijinCount:[],
+
+      // 图片上传
+      ip:'',
     };
   },
   created() {
     //自己写的方法
-    this.getWarehouseOptions();
-    // this.chaOrder = JSON.parse(JSON.stringify(this.chaOrderFrom));
     this.getList(1);
     this.selectoutpaymode();
     this.getCookie();
+    this.selectZiJinCount();
   },
   methods: {
     addDepartment() {
@@ -410,7 +459,6 @@ export default {
       param.append("id", id);
       const { data: res } = await this.$http.post("sys/dept/getDept", param);
       this.editDepartmentForm = res.body.dept;
-      console.log(res);
 
       this.editbumenDialogVisible = true;
     },
@@ -431,7 +479,6 @@ export default {
 
         this.delarr += this.selectedList[i].deptId + ",";
       }
-      console.log(this.delarr);
     },
     async deleteRow() {
       let param = new URLSearchParams();
@@ -476,7 +523,6 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     // 解决弹出框title
@@ -493,56 +539,6 @@ export default {
     },
 
     // 自己写的方法
-    // 获取仓库列表
-    async getWarehouseOptions() {
-      const { data: res } = await this.$http.get("/getWarehouseOptions");
-      this.warehouseOptions = res.body.rows; //如何取
-    },
-    // 查询订单列表
-    async queryOrderList() {
-      // const { data: res } = await
-      this.$http
-        .get("/queryOrderList", {
-          params: {
-            salesOrdermanagementForm: this.salesOrdermanagementForm
-          }
-        })
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(error) {
-          console.log(error);
-        })
-        .then(function() {
-          // always executed
-        });
-      this.tableData = res.body.rows; //如何取
-    },
-
-    //分页相关函数
-    // handleSizeChange(val) {
-    //   this.salesOrdermanagementForm.pageSize = val;
-    //   console.log(`每页 ${val} 条`);
-    //   this.queryOrderList();
-    // },
-    handleCurrentChange(val) {
-      // this.chaOrder.pageCode = val;
-      // console.log(`当前页: ${val}`);
-      this.chaOrder.pageCode = val;
-      this.getList();
-    },
-    chooseReceiptType() {
-      if (this.rType === "0") {
-        this.stateOfReturn = true;
-        stateOfTypeChoose = false;
-      } else if (this.rType === "1") {
-        this.stateOfSell = true;
-        stateOfTypeChoose = false;
-      } else {
-        handleClose();
-      }
-    },
-
     // 查询
     async getList(val) {
       // const { data: res1 } = await this.$http.post("jh/purchase/dtjresultMap");
@@ -575,24 +571,31 @@ export default {
       //   this.chaOrder
       // );
 
-      console.log(res);
 
-      this.orderList = res.body.rows;
+      let arr = res.body.rows;
 
 
       // 循环遍历，raetypes变为名字
-      for(let i = 0;i<this.orderList.length;i++){
+      for(let i = 0;i<arr.length;i++){
         for(let j = 0;j<this.paymode.length;j++){
-          if(this.orderList[i].raetypes == this.paymode[j].value){
-            console.log(this.paymode[j].label)
-            this.orderList[i].raetypes = this.paymode[j].label
+          if(arr[i].raetypes == this.paymode[j].value){
+            arr[i].raetypes = this.paymode[j].label
           }
         }
       }
+      // 循环遍历，显示资金账户
+      arr.forEach(order=>{
+        this.zijinCount.forEach(account =>{
+          if(order.assetaccount == account.basicId){
+            order.assetaccount = account.basicRetainone;
+          }
+        })
+      }) 
+
+      this.orderList = arr
+
       this.total = res.body.total;
 
-      console.log(this.orderList);
-      console.log(this.total);
     },
     // 表单重置
     ResetForm(formName) {
@@ -600,6 +603,9 @@ export default {
     },
     // 获取支出类型
     async selectoutpaymode() {
+      //获取正确ip
+      this.ip=this.ips+'upload';
+      
       const { data: res } = await this.$http.post("jc/Basic/selectoutpaymode");
       res.forEach((item, index, array) => {
         let x = {
@@ -608,8 +614,6 @@ export default {
         };
         this.paymode.push(x);
       });
-      console.log("支出类型");
-      console.log(this.paymode);
     },
 
     // 获取收入类型
@@ -622,8 +626,6 @@ export default {
         };
         this.paymode.push(x);
       });
-      console.log("收入类型");
-      console.log(this.paymode);
     },
     dialogClosed(val) {
       this.$refs[val].resetFields();
@@ -645,7 +647,6 @@ export default {
         res = res2;
       }
 
-      console.log(res);
 
       this.addAdvancePaymentFormVisible = false;
       this.getList();
@@ -664,16 +665,26 @@ export default {
           paymentorderno: val
         });
         res = res2;
+
+        if(this.lookUpState == false){
+          var storage = window.localStorage;
+          res.body.result.payexamine =  storage.getItem("username");
+        }
       }
 
-      console.log(res.body.result);
+
+      
 
       this.editPaymentForm = res.body.result;
 
-      console.log(this.paymode);
       this.editPaymentForm.paymentstatus =
-        this.editPaymentForm.paymentstatus + "";
+      this.editPaymentForm.paymentstatus + "";
       this.editPaymentForm.paymentorderno = val;
+
+      if(res.body.result.assetaccount != null){
+        this.editPaymentForm.assetaccount = Number(this.editPaymentForm.assetaccount)
+      }
+      
       //  this.editPaymentForm.raetypes = this.editPaymentForm.raetypes + ''
 
       this.editPaymentVisible = true;
@@ -696,7 +707,18 @@ export default {
         res = res2;
       }
 
-      console.log(res.body.result);
+      if(res.body.respCode == 200){
+        this.$message({
+          type: "success",
+          message: res.body.msg
+        });
+      }else{
+        this.$message({
+          type: "info",
+          message: res.body.msg
+        });
+      }
+
 
       this.editPaymentVisible = false;
 
@@ -706,10 +728,78 @@ export default {
     getCookie: function() {
       var storage = window.localStorage;
       this.addAdvancePaymentForm.payexamine = storage.getItem("username");
-    }
+    },
+
+    async selectZiJinCount(userInfo) {
+      const { data: res } = await this.$http.post("jc/Basic/selectzijin", userInfo);
+
+      this.zijinCount = res
+
+    },
+    handleCurrentChange(val) {
+      this.chaOrder.pageCode = val;
+      this.getList();
+    },
+
+    //文件上传成功的钩子函数
+        handleSuccess(res, file) {
+            this.$message({
+                type: 'info',
+                message: '图片上传成功',
+                duration: 6000
+            });
+            if (file.response.success) {
+                // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+                
+                this.editPaymentForm.voucher=file.response.message;
+                // this.editProductForm.voucher=file.response.message;
+
+                // this.productList.picture=file.response.message;
+                
+            }
+        },
+        //删除文件之前的钩子函数
+        handleRemove(file, fileList) {
+            this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+            });
+        },
+        //点击列表中已上传的文件事的钩子函数
+        handlePreview(file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+        //上传的文件个数超出设定时触发的函数
+        onExceed(files, fileList) {
+            this.$message({
+                type: 'info',
+                message: '最多只能上传一个图片',
+                duration: 6000
+            });
+        },
+        //文件上传前的前的钩子函数
+        //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+        beforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isGIF = file.type === 'image/gif';
+            const isPNG = file.type === 'image/png';
+            const isBMP = file.type === 'image/bmp';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG && !isGIF && !isPNG && !isBMP) {
+                this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+        },
+        handleError(err, file, fileList){
+        }
 
     // changeTypeOfPayment(val){
-    //   // console.log(val)
     //   let res = '';
     //   if(val == 0){//预付款
     //     this.selectoutpaymode()
@@ -752,5 +842,24 @@ hr {
 }
 .a {
   text-align: right;
+}
+.fenge{
+position: absolute;
+top: 34px;
+left: 0px;
+height: 25px;
+width: 98.5%;
+line-height: 25px;
+padding-left:15px ;
+background-color: #DCDFE6;
+
+}
+.fenge1{
+height: 25px;
+width:98.5%;
+line-height: 25px;
+padding-left:15px ;
+background-color: #DCDFE6;
+margin-bottom: 20px;
 }
 </style>  

@@ -117,7 +117,7 @@
     </el-table-column>
     <el-table-column label="计划使用量" prop="productOnege" >
        <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
+        <el-input v-model="scope.row.prolistPlannum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
   </el-table>
@@ -156,7 +156,7 @@
     </el-table-column>
     <el-table-column label="计划使用量" prop="prolistPlannum" >
        <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
+        <el-input v-model="scope.row.prolistPlannum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
   </el-table>
@@ -439,8 +439,12 @@ export default {
       var storage=window.localStorage;
       this.shenpiren = storage.getItem("username");
     },
-    async showMaterial(prolistCode,xian,sorderStatus) {
-      // if(sorderStatus==0){
+    async showMaterial(prolistCode,xian,sorderStatus,xianshi) {
+           if(sorderStatus==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
          let param = new URLSearchParams();
           param.append("prolistCode", prolistCode);
         const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);

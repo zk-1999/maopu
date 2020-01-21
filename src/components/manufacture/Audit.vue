@@ -96,7 +96,7 @@
     </el-table-column>
     <el-table-column label="操作" width="135px">
       <template scope="scope">
-        <el-button type="danger" @click="zhuanweishengchandan(scope.row)">转为生产单</el-button>
+        <el-button type="danger" :disabled="scope.row.commodityStatus==1" @click="zhuanweishengchandan(scope.row)">转为生产单</el-button>
       </template>
     </el-table-column>
   </el-table>

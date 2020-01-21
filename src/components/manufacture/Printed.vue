@@ -81,8 +81,8 @@
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="yinshuachanshu(scope.row.prolistCode)" type="success" size="small" >查看</el-button>
-             <el-button @click="yinshuachanshu(scope.row.prolistCode)" type="primary" size="small" >印刷</el-button>
+             <el-button @click="yinshuachanshu(scope.row.prolistCode,0)" type="success" size="small" >查看</el-button>
+             <el-button @click="yinshuachanshu(scope.row.prolistCode,1)" type="primary" size="small" >印刷</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -127,7 +127,7 @@
     <el-table-column label="计划使用量" prop="prolistPlannum" align="center"></el-table-column>
     <el-table-column label="物料实际使用量" prop="prolistTruenum"  align="center">
        <template scope="scope">
-        <el-input v-model="scope.row.prolistTruenum"></el-input>
+        <el-input v-model="scope.row.prolistTruenum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
     <el-table-column label="单位"  >
@@ -154,30 +154,34 @@
     <el-table-column label="油墨计划用量"  prop="prolistPeweight" align="center" ></el-table-column>
     <el-table-column label="油墨实际使用量"  prop="productOnege" align="center" >
       <template scope="scope">
-        <el-input v-model="scope.row.prolistPlannum"></el-input>
+        <el-input v-model="scope.row.prolistPlannum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
   </el-table>
   <div class="fenge1">印刷批次信息</div>
   <el-table border stripe :data="editPrintedForm.productionExecutionDO.productionBatchDOs" >
         <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
-        <el-table-column prop="pbatParameterscode" label="印刷批次号">
+        <el-table-column prop="pbatParameterscode" label="印刷批次号" align="center" >
           <template slot-scope="scope">
-            <el-input v-model="scope.row.pbatParameterscode"></el-input>
+            <el-input v-model="scope.row.pbatParameterscode" :disabled='xianshi'></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="pbatWeight" label="重量">
+        <el-table-column prop="pbatWeight" label="重量" align="center" >
           <template slot-scope="scope">
-            <el-input v-model="scope.row.pbatWeight"></el-input>
+            <el-input v-model="scope.row.pbatWeight" :disabled='xianshi'></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="pbatStatus==''?'待质检':pbatStatus==1?'已质检:'待质检'" label="质检状态"></el-table-column>
+        <el-table-column prop="pbatStatus" label="质检状态" align="center" >
+          <template slot-scope="scope">
+             <el-tag type="danger">{{scope.row.pbatStatus=='' ? '待质检':scope.row.pbatStatus==0 ? '质检通过':'质检未通过'}}</el-tag>
+          </template>
+        </el-table-column>
       </el-table>
-      <el-button @click="editPrintedForm.productionExecutionDO.productionBatchDOs.push({})">增加行</el-button>
+      <el-button v-if="!xianshi" @click="editPrintedForm.productionExecutionDO.productionBatchDOs.push({})">增加行</el-button>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addPrinted">确 定</el-button>
+        <el-button type="primary" @click="addPrinted" v-if="!xianshi" >确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
@@ -433,7 +437,7 @@ export default {
       this.delarr=[];
       this.delVisibleqi = true;
       for (let i = 0; i < this.selectedList.length; i++) {
-        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=3,line:2}
+        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=4,line:2}
         )
       }
       console.log(this.delarr);
@@ -445,7 +449,12 @@ export default {
          this.ManageList();
      
       },
-    async yinshuachanshu(prolistCode){
+    async yinshuachanshu(prolistCode,xian){
+      if(xian==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
       this.editPrintedForm.parametersDO={};
       this.parametersDO1=[];
       let param = new URLSearchParams();
@@ -590,7 +599,8 @@ console.log(this.editMaterialForm.buMaterialListDOs);
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(prolistCode,xian,sorderStatus) {
-      // if(sorderStatus==0){
+
+       
          let param = new URLSearchParams();
           param.append("prolistCode", prolistCode);
         const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
@@ -611,12 +621,6 @@ console.log(this.editMaterialForm.buMaterialListDOs);
         }else{
            this.editManageVisible1 = true;
         }
-      
-        
-        // this.editManageVisible = true;
-      // }else{
-      
-      // }
       
     },
     async list(){

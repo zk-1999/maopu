@@ -56,8 +56,9 @@
         <el-table-column prop="pbatWeight" label="重量"></el-table-column>
          <el-table-column prop="pbatStatus" label="生产单状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.pbatStatus=='0'">待质检</el-tag>
-          <el-tag type="danger" v-if="scope.row.pbatStatus=='1'">质检完成料</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus==null">待质检</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='0'">质检通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='1'">质检不通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
@@ -101,24 +102,24 @@
         <el-table-column prop="id" label="检查内容" align="center"></el-table-column>
         <el-table-column prop="pbatParameterscode" label="检查结果" align="center">
           <template slot-scope="scope">
-             <el-radio v-model="scope.row.value" label=0>正确</el-radio>
-             <el-radio v-model="scope.row.value" label=1>错误</el-radio>
+             <el-radio v-model="scope.row.value" label=0 :disabled='xianshi'>正确</el-radio>
+             <el-radio v-model="scope.row.value" label=1 :disabled='xianshi'>错误</el-radio>
           </template>
         </el-table-column>
       </el-table>
       <div class="fenge1" >质检结果信息</div>
     <el-form-item label="质检人：" prop="pbatController" >
-      <el-input v-model="addzhijian.pbatController" ></el-input>
+      <el-input v-model="addzhijian.pbatController" :disabled='xianshi'></el-input>
     </el-form-item>
      <el-form-item label="质检结果："  prop="pbatStatus">
-      <el-radio v-model="addzhijian.pbatStatus" label='0' @change="guoqudangqianshijian" >通过</el-radio>
-      <el-radio v-model="addzhijian.pbatStatus" label='1' @change="guoqudangqianshijian" >驳回</el-radio>
+      <el-radio v-model="addzhijian.pbatStatus" label='0' @change="guoqudangqianshijian" :disabled='xianshi'>通过</el-radio>
+      <el-radio v-model="addzhijian.pbatStatus" label='1' @change="guoqudangqianshijian"  :disabled='xianshi'>驳回</el-radio>
     </el-form-item>
     <el-form-item label="质检时间：" prop="pbatTime">
-      <el-input v-model="addzhijian.pbatTime" ></el-input>
+      <el-input v-model="addzhijian.pbatTime" :disabled='xianshi'></el-input>
     </el-form-item> 
     <el-form-item label="质检描述："  prop="pbatRemarks">
-      <el-input class="w400" v-model="addzhijian.pbatRemarks" ></el-input>
+      <el-input class="w400" v-model="addzhijian.pbatRemarks" :disabled='xianshi'></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -501,9 +502,11 @@ export default {
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(pbatId,prolistCode,xian,sorderStatus,) {
-      console.log();
-      
-      
+       if(sorderStatus==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
       this.addzhijian.pbatId=pbatId;
        let param = new URLSearchParams();
           param.append("pbatId", pbatId);

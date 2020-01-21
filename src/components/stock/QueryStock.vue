@@ -125,6 +125,73 @@
             <el-table-column prop="productName" label="商品名称"></el-table-column>
             <el-table-column prop="productType" label="产品名称"></el-table-column>
             <el-table-column prop="productLeixing" label="产品类型"></el-table-column>
+            <el-table-column prop="productSplicing" label="产品描述" width="500px"></el-table-column>
+            <el-table-column prop="kcTotalstock" label="库存" width="270px" align="center"></el-table-column>
+            <el-table-column prop="xxx" label="单位"></el-table-column>
+            <!-- <el-table-column prop="xxx" label="仓库名称"></el-table-column> -->
+          </el-table>
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="10"
+            layout="total, prev, pager, next"
+            :total="total"
+          ></el-pagination>
+        </el-tab-pane>
+        <el-tab-pane label="半成品" name="third">
+          <el-form
+            :inline="true"
+            class="demo-form-inline search"
+            :model="chaHarfProductOrderForm"
+            ref="chaHarfProductOrderForm"
+            label-width="90px"
+            label-position="left"
+          >
+            <el-row :gutter="20" class="row">
+              <el-col :span="24">
+                <el-form-item label="商品名称：" prop="productName">
+                  <el-input class="_small" v-model="chaHarfProductOrderForm.productName"></el-input>
+                </el-form-item>
+                <el-form-item label="产品名称：" prop="productType">
+                  <el-input class="_small" v-model="chaHarfProductOrderForm.productType"></el-input>
+                </el-form-item>
+                <el-form-item label="产品类型：" prop="productLeixing">
+                  <el-select
+                    v-model="chaHarfProductOrderForm.productLeixing"
+                    placeholder="请选择"
+                    class="_small"
+                  >
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="单层"></el-option>
+                    <el-option value="1" label="双层"></el-option>
+                    <el-option value="2" label="瓦楞"></el-option>
+                    <el-option value="3" label="杯套"></el-option>
+                    <el-option value="4" label="手柄"></el-option>
+                  </el-select>
+                </el-form-item>
+                <!-- <el-form-item label="产品规格：" prop="porderArrivalstatus">
+                  <el-select v-model="chaOrderFrom" placeholder="请选择" class="_small">
+                    <el-option value label="全部"></el-option>
+                    <el-option value="0" label="未到货"></el-option>
+                    <el-option value="1" label="部分到货"></el-option>
+                    <el-option value="2" label="全部到货"></el-option>
+                  </el-select>
+                </el-form-item>-->
+
+                <el-form-item>
+                  <el-button @click="getHarfProGoodsList(1)">查 询</el-button>
+                  <el-button type="primary" @click="ResetForm('chaHarfProductOrderForm')">重 置</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+
+          <el-table border :data="orderList" @selection-change="addSelectionChange">
+            <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
+            <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
+            <el-table-column prop="productName" label="商品名称"></el-table-column>
+            <el-table-column prop="productType" label="产品名称"></el-table-column>
+            <el-table-column prop="productLeixing" label="产品类型"></el-table-column>
             <el-table-column prop="productSplicing" label="产品描述" width="400px"></el-table-column>
             <el-table-column prop="kcTotalstock" label="库存" width="270px" align="center"></el-table-column>
             <el-table-column prop="xxx" label="单位"></el-table-column>
@@ -252,7 +319,20 @@ export default {
         pageSize: 10
       },
       // 实际查询数据
-      chaProductOrder: {}
+      chaProductOrder: {},
+
+      // 半成品
+      chaHarfProductOrderForm: {
+        productgoodsId:"",// 没有用到，但是接口中有
+        productName: "", //商品名称
+        productType: "", //产品名称
+        productLeixing: "", //产品类型
+        productgoodsId: "", //生产商品id
+        pageCode: 1,
+        pageSize: 10
+      },
+      // 实际查询数据
+      chaHarfProductOrder: {}
     };
   },
   created() {
@@ -509,8 +589,65 @@ export default {
       } else if (tab.paneName == "second") {
         // 查询生产订单
         this.getProGoodsList(1);
+      } else if (tab.paneName == "third") {
+        this.getHarfProGoodsList(1)
       }
-    }
+    },
+
+    // 半成品 方法
+    async getHarfProGoodsList(val) {
+      if (val) {
+        // 重新点击时，需要重置查询页数
+        this.chaHarfProductOrderForm.pageCode = 1;
+        this.chaHarfProductOrder = JSON.parse(
+          JSON.stringify(this.chaHarfProductOrderForm)
+        );
+      }
+      const { data: res } = await this.$http.post(
+        "kc/stock/bcpselectstock",
+        this.chaHarfProductOrder
+      );
+      let orderListMsg = res.body.rows;
+
+      // 根据id数组查询生产商品
+      let ids = [];
+      orderListMsg.forEach((item, index, array) => {
+        ids.push(item.productgoodsId);
+      });
+      console.log("ids");
+      console.log(ids);
+      const { data: res1 } = await this.$http.post(
+        "/jc/Produconggoods/selectall",
+        ids
+      );
+
+      orderListMsg.forEach((item, index, array) => {
+        res1.forEach((good, index, array) => {
+          if(item.productgoodsId == good.productgoodsId){
+            item.productName = good.productName
+            item.productType = good.productType
+
+            if(good.productLeixing == 0){
+              item.productLeixing = "单层"
+            }else if(good.productLeixing == 1){
+              item.productLeixing = "双层"
+            }else if(good.productLeixing == 2){
+              item.productLeixing = "瓦楞"
+            }else if(good.productLeixing == 3){
+              item.productLeixing = "杯套"
+            }else if(good.productLeixing == 4){
+              item.productLeixing = "手柄"
+            }
+            item.productSplicing = good.productSplicing
+          }
+        });
+      });
+
+      this.total = res.body.total;
+
+      this.orderList = orderListMsg;
+    },
+
   }
 };
 </script>

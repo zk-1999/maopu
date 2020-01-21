@@ -983,7 +983,7 @@ export default {
       this.purchaseGoodsList.forEach((purGood, index, arr) => {
         res2.forEach((item, index, arr) => {
           if (purGood.suppliergoolsId == item.suppliergoolsId) {
-            purGood.sum = item.sum;
+            purGood.sum = item.supoutboundsum;
           }
         });
       });

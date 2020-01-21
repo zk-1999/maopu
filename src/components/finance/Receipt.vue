@@ -12,24 +12,35 @@
         class="demo-form-inline search"
         :model="chaOrderFrom"
         ref="chaOrderFrom"
-        label-width="70px"
+        label-width="90px"
         label-position="left"
       >
         <el-row :gutter="20" class="row">
           <el-col :span="24">
-            <el-form-item label="收款单号" prop="advanceorderno">
+            <el-form-item label="收款单号：" prop="advanceorderno">
               <el-input class="_small" v-model="chaOrderFrom.advanceorderno"></el-input>
             </el-form-item>
 
-            <el-form-item label="制单人员" prop="payexamine">
+            <el-form-item label="制单人员：" prop="payexamine">
               <el-input class="_small" v-model="chaOrderFrom.payexamine"></el-input>
             </el-form-item>
 
-            <el-form-item label="资金账户" prop="assetaccount">
-              <el-input class="_small" v-model="chaOrderFrom.assetaccount"></el-input>
+            <el-form-item label="资金账户：" prop="assetaccount">
+               <el-select
+                v-model="chaOrderFrom.assetaccount"
+                class="_small"
+                placeholder=""
+              >
+                <el-option
+                  v-for="item in zijinAccount"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
             </el-form-item>
 
-            <el-form-item label="收入类型" prop="raetypes">
+            <el-form-item label="收入类型：" prop="raetypes">
               <el-select
                 v-model="chaOrderFrom.raetypes"
                 placeholder="请选择"
@@ -40,22 +51,20 @@
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  :disabled="lookUpState"
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="收款类别" prop="typeOfReceipt">
+            <el-form-item label="收款类别：" prop="typeOfReceipt">
               <el-select
                 v-model="chaOrderFrom.typeOfReceipt"
                 placeholder="请选择"
                 class="_small"
-                @change="changeTypeOfPayment($event)"
               >
                 <el-option value="0" label="预收款"></el-option>
                 <el-option value="1" label="应收款"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="制单日期" prop="rectimeRange">
+            <el-form-item label="制单日期：" prop="rectimeRange">
               <el-date-picker
                 v-model="chaOrderFrom.rectimeRange"
                 type="daterange"
@@ -76,7 +85,6 @@
       </el-form>
       <!-- </el-row> -->
       <!-- 表格 -->
-      <el-button type="primary" @click="addAdvancePaymentFormVisible = true">新增预收款单</el-button>
       <el-table border :data="orderList">
         <!-- <el-table-column type="selection" width="50px"></el-table-column> -->
         <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
@@ -106,13 +114,11 @@
           <template slot-scope="scope">
             <el-button
               type="success"
-              icon="el-icon-edit"
               size="mini"
               @click="lookUpState = true;showEditOrder(scope.row.advanceorderno)"
             >查看</el-button>
             <el-button
               type="primary"
-              icon="el-icon-edit"
               size="mini"
               :disabled="!(scope.row.paymentstatus == 0)"
               @click="lookUpState = false;showEditOrder(scope.row.advanceorderno)"
@@ -145,552 +151,63 @@
       <el-button type="primary" size="small" class="mar" @click="chooseReceiptType">确 定</el-button>
     </el-dialog>
 
-    <!-- 采购退货收款单 -->
-    <el-dialog
-      :title=" '采购退货收款单' "
-      :visible.sync="stateOfReturn"
-      width="60%"
-      :before-close="handleClose"
-    >
-      <el-form inline="true">
-        <hr />
-        <div>收款信息</div>
-        <!-- 收款单号 -->
-        <el-form-item label="收款单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款制单人 -->
-        <el-form-item label="收款制单人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 制单时间 -->
-        <el-form-item label="制单时间" class="mar">
-          <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item>
-
-        <!-- 收款类型 -->
-        <el-form-item label="收款类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 关联采购订单 -->
-        <el-form-item label="关联采购订单">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款方式 -->
-        <el-form-item label="收款方式">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 本次结算总额 -->
-        <el-form-item label="本次结算总额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 结算方式 -->
-        <!-- <el-form-item label="结算方式" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item> -->
-
-        <br />
-
-        <el-form-item label="备注" class="mar">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="textarea2"
-          ></el-input>
-        </el-form-item>
-
-        <hr />
-        <div>关联采购订单</div>
-        <el-form-item label="供应商编码">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="供应商名称">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="创建发票时间">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="采购金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <el-form-item label="预付款金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <br />采购商品明细：
-        <br />
-
-        <el-table :data="goodsData" style="width: 100%">
-          <el-table-column prop label="商品名称"></el-table-column>
-          <el-table-column prop label="商品编码"></el-table-column>
-          <el-table-column prop label="克重"></el-table-column>
-          <el-table-column prop label="采购价"></el-table-column>
-          <el-table-column prop label="当前库存（kg）"></el-table-column>
-          <el-table-column prop label="预计采购数量（kg）"></el-table-column>
-          <el-table-column prop label="金额"></el-table-column>
-        </el-table>
-
-        <hr />
-        <div>关联出库订单</div>
-
-        <!-- 两个按钮 -->
-        <el-form-item>
-          <el-button type="primary" size="small">选择出库单</el-button>
-          <el-button type="danger" size="small">删 除</el-button>
-        </el-form-item>
-
-        <el-table :data="goodsData" style="width: 100%">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="出库单号" width="120">
-            <template slot-scope="scope">{{ scope.row.no }}</template>
-          </el-table-column>
-
-          <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-          <el-table-column prop label="产品名称"></el-table-column>
-          <el-table-column prop label="产品编码"></el-table-column>
-          <el-table-column prop label="出库数量（kg）"></el-table-column>
-          <el-table-column prop label="结算单价"></el-table-column>
-          <el-table-column prop label="未结算数量（kg）"></el-table-column>
-          <el-table-column prop label="未结算金额"></el-table-column>
-          <el-table-column prop label="已结算金额"></el-table-column>
-          <el-table-column prop label="当前结算数量（kg）"></el-table-column>
-          <el-table-column prop label="当前结算金额"></el-table-column>
-        </el-table>
-
-        <hr />
-        <div>收款凭证</div>
-        <!-- 两个按钮 -->
-        <el-form-item>
-          <el-upload
-            class="upload-demo"
-            drag
-            action="https://jsonplaceholder.typicode.com/posts/"
-            multiple
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将文件拖到此处，或
-              <em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-          </el-upload>
-        </el-form-item>
-
-        <br />
-        <!-- 两个按钮 -->
-        <el-form-item style="margin-left:750px;">
-          <el-button type="primary" size="small">确 定</el-button>
-          <el-button type="primary" size="small">取 消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-
-    <!-- 销售订单收款单 -->
-    <el-dialog
-      :title=" '销售订单收款单' "
-      :visible.sync="stateOfSell"
-      width="60%"
-      :before-close="handleClose"
-    >
-      <el-form inline="true">
-        <hr />
-        <div>收款信息</div>
-        <!-- 收款单号 -->
-        <el-form-item label="收款单号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款制单人 -->
-        <el-form-item label="收款制单人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 制单时间 -->
-        <el-form-item label="制单时间" class="mar">
-          <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item>
-
-        <!-- 收款类型 -->
-        <el-form-item label="收款类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 关联销售订单 -->
-        <el-form-item label="关联销售订单">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款方式 -->
-        <el-form-item label="收款方式">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 本次结算总额 -->
-        <el-form-item label="本次结算总额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 结算方式 -->
-        <!-- <el-form-item label="结算方式" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item> -->
-
-        <br />
-
-        <el-form-item label="备注" class="mar">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="textarea2"
-          ></el-input>
-        </el-form-item>
-
-        <hr />
-        <div>关联销售订单</div>
-        <!-- 收款单号 -->
-        <el-form-item label="供应商编码">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款单号 -->
-        <el-form-item label="供应商名称">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款单号 -->
-        <el-form-item label="创建发票时间">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款单号 -->
-        <el-form-item label="采购金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 收款单号 -->
-        <el-form-item label="预付款金额">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <br />销售产品明细：
-        <br />
-
-        <el-table :data="goodsData" style="width: 100%">
-          <el-table-column prop label="产品名称"></el-table-column>
-          <el-table-column prop label="产品编码"></el-table-column>
-          <el-table-column prop label="产品类型"></el-table-column>
-          <el-table-column prop label="单价"></el-table-column>
-          <el-table-column prop label="销售数量"></el-table-column>
-          <el-table-column prop label="总金额"></el-table-column>
-          <el-table-column prop label="备注"></el-table-column>
-        </el-table>
-
-        <hr />
-        <div>关联出库订单</div>
-
-        <!-- 两个按钮 -->
-        <el-form-item>
-          <el-button type="primary" size="small">选择出库单</el-button>
-          <el-button type="danger" size="small">删 除</el-button>
-        </el-form-item>
-
-        <el-table :data="goodsData" style="width: 100%">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="出库单号" width="120">
-            <template slot-scope="scope">{{ scope.row.no }}</template>
-          </el-table-column>
-
-          <!-- <el-table-column prop="no" label="序号"></el-table-column> -->
-          <el-table-column prop label="产品名称"></el-table-column>
-          <el-table-column prop label="产品编码"></el-table-column>
-          <el-table-column prop label="出库数量（kg）"></el-table-column>
-          <el-table-column prop label="结算单价"></el-table-column>
-          <el-table-column prop label="未结算数量（kg）"></el-table-column>
-          <el-table-column prop label="未结算金额"></el-table-column>
-          <el-table-column prop label="已结算金额"></el-table-column>
-          <el-table-column prop label="当前结算数量（kg）"></el-table-column>
-          <el-table-column prop label="当前结算金额"></el-table-column>
-        </el-table>
-
-        <hr />
-        <div>收款凭证</div>
-        <!-- 两个按钮 -->
-        <el-form-item>
-          <el-upload
-            class="upload-demo"
-            drag
-            action="https://jsonplaceholder.typicode.com/posts/"
-            multiple
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将文件拖到此处，或
-              <em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-          </el-upload>
-        </el-form-item>
-
-        <br />
-        <!-- 两个按钮 -->
-        <el-form-item style="margin-left:750px;">
-          <el-button type="primary" size="small">确 定</el-button>
-          <el-button type="primary" size="small">取 消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-
-    <!-- 新增出库单 -->
-    <!-- :title="addOrder?"新增销售订单":"编辑销售订单""  :visible.sync="addOrder || editOrder"-->
-    <el-dialog :title=" '新增出库单' " :visible.sync="a" width="60%" :before-close="handleClose">
-      <!-- 新增出库单表格 -->
-      <el-form title="订单" inline="true">
-        <!-- 入库编号 -->
-        <el-form-item label="出库编号">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-        <!-- 选择仓库 -->
-        <el-form-item label="选择仓库" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <!-- 入库类型 -->
-        <el-form-item label="出库类型" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <br />
-        <!-- 制单人 -->
-        <el-form-item label="制单人">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-        <!-- 出库时间 -->
-        <el-form-item label="出库时间" class="mar">
-          <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
-        </el-form-item>
-
-        <!-- 采购退货出库 -->
-        <br />
-
-        <!-- 订单号 -->
-        <el-form-item label="采购退货单" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 生产出库 -->
-        <br />
-
-        <!-- 生产订单 -->
-        <el-form-item label="生产订单" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 售后入库 -->
-        <br />
-
-        <!-- 订单出库 -->
-        <el-form-item label="关联集装箱" class="mar">
-          <el-select v-model="salesOrdermanagementForm.warehouse" class="hu">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <!-- 其他出库 -->
-
-        <!-- 备注 -->
-        <br />
-        <el-form-item label="备注">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="textarea2"
-          ></el-input>
-        </el-form-item>
-
-        <br />
-        <!-- 3个按钮 -->
-        <el-form-item>
-          <el-button type="info" size="small">选择商品</el-button>
-          <el-button type="info" size="small">商品导入</el-button>
-          <el-button type="info" size="small">删除行</el-button>
-        </el-form-item>
-
-        <hr />
-
-        <!-- 带有排序功能的商品table -->
-        <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
-        <el-table :data="goodsData" style="width: 100%">
-          <!-- <el-table-column prop="date" label="日期" sortable width="180"></el-table-column>
-              <el-table-column prop="name" label="姓名" sortable width="180"></el-table-column>
-          <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>-->
-
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop label="商品编码"></el-table-column>
-          <el-table-column prop label="商品名称"></el-table-column>
-          <el-table-column prop label="规格名称"></el-table-column>
-          <el-table-column prop label="条形码"></el-table-column>
-          <el-table-column prop label="出库数量"></el-table-column>
-          <el-table-column prop label="已出库数量"></el-table-column>
-          <el-table-column prop label="总出库数量"></el-table-column>
-
-          <!-- 关联销售订单 仅订单出库有 -->
-          <el-table-column prop label="关联销售订单"></el-table-column>
-          <!-- 需要？？？ -->
-          <!-- <el-table-column prop="operate" label="操作">
-            <el-button type="danger" size="small">删 除</el-button>
-          </el-table-column>-->
-        </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[3, 5, 10, 15]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        ></el-pagination>
-        <hr />
-        <!-- 总数量 -->
-        <el-form-item label="总数量" class="mar">
-          <el-input v-model="salesOrdermanagementForm.phoneNumber" class="hu"></el-input>
-        </el-form-item>
-
-        <!-- 2个按钮 -->
-        <el-form-item label class="mar" style="margin-left:500px;">
-          <el-button type="info" size="small">确 定</el-button>
-          <el-button type="info" size="small">取 消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-
-    <!-- 审核收款单 -->
-    <el-dialog :title=" '审核收款单' " :visible.sync="stateOfCheck" width="30%">
-      <el-radio v-model="radio" label="0">审核通过</el-radio>
-      <el-radio v-model="radio" label="1">审核不通过</el-radio>
-      <br>
-      <el-button type="primary" size="small" style="margin-left:70%,margin-top:100%" @click="chooseReceiptType">确 定</el-button>
-      <el-button type="primary" size="small" class="mar" @click="chooseReceiptType">取 消</el-button>
-    </el-dialog>
-
 
         <el-dialog
       :title="lookUpState?'查看收款单':'收款'"
       :visible.sync="editPaymentVisible"
-      width="50%"
+      width="42%"
       :before-close="handleClose"
       @closed="dialogClosed('editPaymentForm')"
     >
       <el-form
         label-position="right"
-        label-width="90px"
+        label-width="100px"
         :model="editPaymentForm"
         ref="editPaymentForm"
-        :rules="editPaymentRules"
         :inline="true"
       >
-        <el-form-item label="付款制单人" prop="payexamine">
-          <el-input class="_small" v-model="editPaymentForm.payexamine" disabled="true"></el-input>
+        <el-form-item label="收款制单人：" prop="payexamine">
+          <el-input class="_small" v-model="editPaymentForm.payexamine" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="供应商名称" prop="supName">
-          <el-input class="_small" v-model="editPaymentForm.supName" disabled="true"></el-input>
+        <el-form-item label="供应商名称：" prop="supName">
+          <el-input class="_small" v-model="editPaymentForm.supName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="供应商编码" prop="supId">
-          <el-input class="_small" v-model="editPaymentForm.supId" disabled="true"></el-input>
+        <el-form-item label="供应商编码：" prop="supId">
+          <el-input class="_small" v-model="editPaymentForm.supId" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="销售订单号" prop="saleorderno">
-          <el-input class="_small" v-model="editPaymentForm.saleorderno" disabled="true"></el-input>
+        <el-form-item label="销售订单号：" prop="saleorderno">
+          <el-input class="_small" v-model="editPaymentForm.saleorderno" :disabled="true"></el-input>
         </el-form-item>
         <br />
-        <el-form-item label="采购数量" prop="porderTotalnum">
-          <el-input class="_small" v-model="editPaymentForm.porderTotalnum" disabled="true"></el-input>
+        <el-form-item label="销售数量：" prop="porderTotalnum">
+          <el-input class="_small" v-model="editPaymentForm.porderTotalnum" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="采购金额" prop="porderTotalmoney">
-          <el-input class="_small" v-model="editPaymentForm.porderTotalmoney" disabled="true"></el-input>
+        <el-form-item label="销售金额：" prop="porderTotalmoney">
+          <el-input class="_small" v-model="editPaymentForm.porderTotalmoney" :disabled="true"></el-input>
         </el-form-item>
         <!-- <el-form-item label="结算方式" prop="settlemethod">
           <el-input class="_small" v-model="editPaymentForm.settlemethod" disabled="true"></el-input>
         </el-form-item> -->
-        <el-form-item label="预付款金额" prop="amount">
-          <el-input class="_small" v-model="editPaymentForm.amount" disabled="true"></el-input>
+        <el-form-item label="预收款金额：" prop="amount">
+          <el-input class="_small" v-model="editPaymentForm.amount" :disabled="true"></el-input>
         </el-form-item>
         <br />
-        <el-form-item label="资金账户" prop="assetaccount">
-          <el-input class="_small" v-model="editPaymentForm.assetaccount" :disabled="lookUpState"></el-input>
+        <el-form-item label="资金账户：" prop="assetaccount">
+          <el-select
+                v-model="editPaymentForm.assetaccount"
+                placeholder="请选择"
+                class="_small"
+                :disabled="lookUpState"
+              >
+                <el-option
+                  v-for="item in zijinAccount"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
         </el-form-item>
-        <el-form-item label="收入类型" prop="raetypes">
+        <el-form-item label="收入类型：" prop="raetypes">
           <el-select
             v-model="editPaymentForm.raetypes"
             placeholder="请选择"
@@ -702,11 +219,10 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-              :disabled="lookUpState"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预收款状态" prop="paymentstatus">
+        <el-form-item label="预收款状态：" prop="paymentstatus">
           <el-select
             v-model="editPaymentForm.paymentstatus"
             placeholder="请选择"
@@ -718,7 +234,7 @@
           </el-select>
         </el-form-item>
         <br />
-        <el-form-item label="备注" prop="remarks">
+        <el-form-item label="备注：" prop="remarks">
           <el-input
             type="textarea"
             class="_small"
@@ -728,7 +244,25 @@
           ></el-input>
         </el-form-item>
 
-        <hr />
+        <div class="fenge1">收款凭证</div>
+        <el-form-item>
+          <el-upload
+                      ref="upload"
+                      :action="ip"
+                      name="picture"
+                      list-type="picture-card"
+                      :limit="1"
+                      :on-exceed="onExceed"
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreview"
+                      :on-success="handleSuccess"
+                      :on-error="handleError"
+                      :on-remove="handleRemove"
+                      :disabled="lookUpState"
+                      >
+                <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editPaymentVisible = false">取 消</el-button>
@@ -925,6 +459,10 @@ export default {
 
       // 收支类型数组
       paymode: [],
+
+      zijinAccount:[],// 资金账户
+
+      ip:"",
     };
   },
   created() {
@@ -932,7 +470,7 @@ export default {
     //this.getWarehouseOptions();
     this.getList(1);
     this.selectinpaymode();
-    this.getCookie();
+    this.selectZiJinCount();
   },
   methods: {
     addDepartment() {
@@ -961,7 +499,6 @@ export default {
       param.append("id", id);
       const { data: res } = await this.$http.post("sys/dept/getDept", param);
       this.editDepartmentForm = res.body.dept;
-      console.log(res);
 
       this.editbumenDialogVisible = true;
     },
@@ -982,7 +519,6 @@ export default {
 
         this.delarr += this.selectedList[i].deptId + ",";
       }
-      console.log(this.delarr);
     },
     async deleteRow() {
       let param = new URLSearchParams();
@@ -1027,7 +563,6 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     // 解决弹出框title
@@ -1049,7 +584,6 @@ export default {
       const { data: res } = this.$http.post("/receipt/selectReceipt", {
         params: { receiptDO: this.queryReceiptForm }
       });
-      console.log(data);
     },
 
     // 查询订单列表
@@ -1062,10 +596,8 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response);
         })
         .catch(function(error) {
-          console.log(error);
         })
         .then(function() {
           // always executed
@@ -1076,7 +608,6 @@ export default {
     //分页相关函数
     handleSizeChange(val) {
       this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
       this.queryOrderList();
     },
     handleCurrentChange(val) {
@@ -1127,52 +658,43 @@ export default {
       //   this.chaOrder
       // );
 
-      console.log(res);
 
-      this.orderList = res.body.rows;
-
-
-
-      console.log('-----------------------------------');
-      console.log(this.orderList);
-      console.log(this.paymode);
+      let arr = res.body.rows;
 
       // 循环遍历，raetypes变为名字
-      for(let i = 0;i<this.orderList.length;i++){
+      for(let i = 0;i<arr.length;i++){
         for(let j = 0;j<this.paymode.length;j++){
-          if(this.orderList[i].raetypes == this.paymode[j].value){
-            console.log(this.paymode[j].label)
-            this.orderList[i].raetypes = this.paymode[j].label
+          if(arr[i].raetypes == this.paymode[j].value){
+            arr[i].raetypes = this.paymode[j].label
+            break;
           }
         }
       }
 
-      // this.orderList.forEach()
+      // 资金账户
+      arr.forEach(order=>{
+        this.zijinAccount.forEach(account =>{
+          if(order.assetaccount == account.basicId){
+            order.assetaccount = account.basicRetainone;
+          }
+        })
+      }) 
+
+      this.orderList = arr
+
       this.total = res.body.total;
 
-      console.log(this.orderList);
-      console.log(this.total);
     },
     // 表单重置
     ResetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    // 获取支出类型
-    async selectoutpaymode() {
-      const { data: res } = await this.$http.post("jc/Basic/selectoutpaymode");
-      res.forEach((item, index, array) => {
-        let x = {
-          label: item.basicRetainone,
-          value: item.basicId
-        };
-        this.paymode.push(x);
-      });
-      console.log("支出类型");
-      console.log(this.paymode);
-    },
-
+    
     // 获取收入类型
     async selectinpaymode() {
+      //获取正确ip
+      this.ip=this.ips+'upload';
+
       const { data: res } = await this.$http.post("jc/Basic/selectinpaymode");
       res.forEach((item, index, array) => {
         let x = {
@@ -1181,8 +703,6 @@ export default {
         };
         this.paymode.push(x);
       });
-      console.log("收入类型");
-      console.log(this.paymode);
     },
     dialogClosed(val) {
       this.$refs[val].resetFields();
@@ -1204,8 +724,6 @@ export default {
         res = res2;
       }
 
-      console.log(res);
-
       this.addAdvancePaymentFormVisible = false;
       this.getList();
     },
@@ -1225,14 +743,12 @@ export default {
         res = res2;
       }
 
-      console.log(res.body.result);
-
       this.editPaymentForm = res.body.result;
 
-      console.log(this.paymode);
       this.editPaymentForm.paymentstatus =
         this.editPaymentForm.paymentstatus + "";
       this.editPaymentForm.advanceorderno = val;
+      this.editPaymentForm.assetaccount = Number(this.editPaymentForm.assetaccount);
       //  this.editPaymentForm.raetypes = this.editPaymentForm.raetypes + ''
 
       this.editPaymentVisible = true;
@@ -1255,7 +771,18 @@ export default {
         res = res2;
       }
 
-      console.log(res.body.result);
+
+      if(res.body.respCode == 200){
+        this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+      }else{
+        this.$message({
+            type: "info",
+            message: res.body.msg
+          });
+      }
 
       this.editPaymentVisible = false;
 
@@ -1265,7 +792,71 @@ export default {
     getCookie: function() {
       var storage = window.localStorage;
       this.addAdvancePaymentForm.payexamine = storage.getItem("username");
-    }
+    },
+    // 资金账户
+    async selectZiJinCount(userInfo) {
+      const { data: res } = await this.$http.post("jc/Basic/selectzijin", userInfo);
+      this.zijinAccount = res
+    },
+
+
+    //文件上传成功的钩子函数
+        handleSuccess(res, file) {
+            this.$message({
+                type: 'info',
+                message: '图片上传成功',
+                duration: 6000
+            });
+            if (file.response.success) {
+                // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+                
+                this.editPaymentForm.voucher=file.response.message;
+                // this.editProductForm.voucher=file.response.message;
+
+                // this.productList.picture=file.response.message;
+                
+            }
+        },
+        //删除文件之前的钩子函数
+        handleRemove(file, fileList) {
+            this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+            });
+        },
+        //点击列表中已上传的文件事的钩子函数
+        handlePreview(file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+        //上传的文件个数超出设定时触发的函数
+        onExceed(files, fileList) {
+            this.$message({
+                type: 'info',
+                message: '最多只能上传一个图片',
+                duration: 6000
+            });
+        },
+        //文件上传前的前的钩子函数
+        //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+        beforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isGIF = file.type === 'image/gif';
+            const isPNG = file.type === 'image/png';
+            const isBMP = file.type === 'image/bmp';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG && !isGIF && !isPNG && !isBMP) {
+                this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+        },
+        handleError(err, file, fileList){
+        }
   }
 };
 </script>
@@ -1302,5 +893,24 @@ hr {
 }
 .a {
   text-align: right;
+}
+.fenge{
+position: absolute;
+top: 34px;
+left: 0px;
+height: 25px;
+width: 98.5%;
+line-height: 25px;
+padding-left:15px ;
+background-color: #DCDFE6;
+
+}
+.fenge1{
+height: 25px;
+width:98.5%;
+line-height: 25px;
+padding-left:15px ;
+background-color: #DCDFE6;
+margin-bottom: 20px;
 }
 </style>  

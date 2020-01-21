@@ -104,8 +104,8 @@
         </el-table-column>
         <el-table-column label="操作" width="150px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="showManage(scope.row.prolistCode,true,1)" type="success" size="small" >查看</el-button>
-             <el-button @click="showManage(scope.row.prolistCode,true,1)" type="primary" size="small" >编辑</el-button>
+             <el-button @click="showManage(scope.row.prolistCode,0)" type="success" size="small" >查看</el-button>
+             <el-button @click="showManage(scope.row.prolistCode,1)" type="primary" size="small" >编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -123,7 +123,9 @@
     :visible.sync="addManageVisible"
     width="60%"
     @open="guoqushangpin"
-    :before-close="handleClose">
+    :before-close="handleClose"
+    @closed="dialogClosed"
+    >
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="addManageForm" :rules="addManageRules">
         <div class="fenge">生产信息</div>
         <el-form-item label="商品类型：" prop="productLeixing">
@@ -179,7 +181,7 @@
         </div>
         <div v-if="addManageForm.producinggoodsDO.productLeixing==1||addManageForm.producinggoodsDO.productLeixing==2||addManageForm.producinggoodsDO.productLeixing==3||addManageForm.producinggoodsDO.productLeixing==4">
         <div class="fenge1">外杯信息</div>
-        </el-form-item> -->
+        </el-form-item> 
         <el-form-item label="产品名称：" prop="productType">
             <el-input v-model="addManageForm.producinggoodsDO.productType"></el-input>
         </el-form-item>
@@ -364,8 +366,8 @@
     :before-close="handleClose">
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editManageForm" :rules="addManageRules">
         <div class="fenge">生产信息</div>
-        <el-form-item label="商品类型：" prop="productLeixing">
-          <el-select v-model="editManageForm.producinggoodsDO.productLeixing" class="sel" placeholder="请选择" @change="guoqushangpin">
+        <el-form-item label="商品类型：" prop="productLeixing" >
+          <el-select v-model="editManageForm.producinggoodsDO.productLeixing" class="sel" placeholder="请选择" @change="guoqushangpin" :disabled='xianshi'>
             <el-option
               v-for="item in shangpinleixing"
               :key="item.id"
@@ -375,7 +377,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="商品名称：" prop="productgoodsId">
-          <el-select v-model="editManageForm.producinggoodsDO.productgoodsId" class="sel" placeholder="请选择" @change="guoqushangpinmingcheng" :disabled="editManageForm.saleOrderDO">
+          <el-select v-model="editManageForm.producinggoodsDO.productgoodsId" class="sel" placeholder="请选择" @change="guoqushangpinmingcheng" :disabled="editManageForm.saleOrderDO!=null|| xianshi" >
             <el-option
               v-for="item in shangpinmingcheng"
               :key="item.productgoodsId"
@@ -388,153 +390,153 @@
         <div v-if="addManageForm.producinggoodsDO.productLeixing==0">
         <div class="fenge1">生产信息</div>
         <el-form-item label="生产单号：" prop="productType">
-            <el-input v-model="editManageForm.productionDO.prolistCode"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistCode" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="合同号：" prop="sorderWarehouse" v-if="editManageForm.saleOrderDO!=null">
-            <el-input  v-model="editManageForm.saleOrderDO.sorderWarehouse"></el-input>
+            <el-input  v-model="editManageForm.saleOrderDO.sorderWarehouse" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="下单日期：" prop="sorderCreatetime" v-if="editManageForm.saleOrderDO!=null">
-            <el-input v-model="editManageForm.saleOrderDO.sorderCreatetime"></el-input>
+            <el-input v-model="editManageForm.saleOrderDO.sorderCreatetime" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="交货日期：" prop="sorderDeliverytime" v-if="editManageForm.saleOrderDO!=null">
-            <el-input v-model="editManageForm.saleOrderDO.sorderDeliverytime"></el-input>
+            <el-input v-model="editManageForm.saleOrderDO.sorderDeliverytime" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="完成日期：" prop="productWanchengtime">
-            <el-input v-model="editManageForm.productionDO.productWanchengtime"></el-input>
+            <el-input v-model="editManageForm.productionDO.productWanchengtime" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="生产数量：" prop="prolistNumber">
-            <el-input v-model="editManageForm.productionDO.prolistNumber"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistNumber" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==0">
         <div class="fenge1">内杯信息</div>
         <el-form-item label="产品名称：" prop="productType">
-            <el-input v-model="editManageForm.producinggoodsDO.productType"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productType" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张品牌：" prop="productBrandinner">
-            <el-input v-model="editManageForm.producinggoodsDO.productBrandinner"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productBrandinner" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张类型：" prop="productZhizleix">
-            <el-input v-model="editManageForm.producinggoodsDO.productZhizleix"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productZhizleix" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张克重：" prop="productGraminner">
-            <el-input v-model="editManageForm.producinggoodsDO.productGraminner"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productGraminner" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="淋膜类型：" prop="productCoatedinner">
-            <el-input v-model="editManageForm.producinggoodsDO.productCoatedinner"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productCoatedinner" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="单个克重：" prop="productOneke">
-            <el-input v-model="editManageForm.producinggoodsDO.productOneke"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productOneke":disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="产品尺寸：" prop="productChanpchic">
-            <el-input v-model="editManageForm.producinggoodsDO.productChanpchic"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productChanpchic" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="设计稿：" prop="designModel">
-            <el-input v-model="editManageForm.designDO.designName==''?'':editManageForm.designDO.designName"></el-input>
+            <el-input v-model="editManageForm.designDO.designName==''?'':editManageForm.designDO.designName" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==1||editManageForm.producinggoodsDO.productLeixing==2||editManageForm.producinggoodsDO.productLeixing==3||editManageForm.producinggoodsDO.productLeixing==4">
         <div class="fenge1">外杯信息</div>
         <el-form-item label="产品名称：" prop="productType">
-            <el-input v-model="editManageForm.producinggoodsDO.productType"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productType" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张品牌：" prop="productBrandabroad">
-            <el-input v-model="editManageForm.producinggoodsDO.productBrandabroad"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productBrandabroad" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张类型：" prop="productZhizleix">
-            <el-input v-model="editManageForm.producinggoodsDO.productZhizleix"></el-input>
+            <el-input  v-model="editManageForm.producinggoodsDO.productZhizleix" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张克重：" prop="productGramabroad">
-            <el-input v-model="editManageForm.producinggoodsDO.productGramabroad"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productGramabroad" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="淋膜类型：" prop="productCoatedabroad">
-            <el-input v-model="editManageForm.producinggoodsDO.productCoatedabroad"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productCoatedabroad" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="单个克重：" prop="productOneke">
-            <el-input v-model="editManageForm.producinggoodsDO.productOneke"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productOneke" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="产品尺寸：" prop="productChanpchic">
-            <el-input v-model="editManageForm.producinggoodsDO.productChanpchic"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productChanpchic" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="设计稿：" prop="designModel">
-            <el-input v-model="editManageForm.designDO.designName==''?'':editManageForm.designDO.designName"></el-input>
+            <el-input v-model="editManageForm.designDO.designName==''?'':editManageForm.designDO.designName" :disabled='xianshi'></el-input>
         </el-form-item>
         
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==1||editManageForm.producinggoodsDO.productLeixing==2">
         <div class="fenge1" >内杯信息</div>
         <el-form-item label="内杯名称：" prop="productName1">
-            <el-input v-model="editManageForm.producinggoodsDO.productName1"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productName1" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==2||editManageForm.producinggoodsDO.productLeixing==3">
         <div class="fenge1">夹层信息</div>
         <el-form-item label="纸张品牌：" prop="productBrandmid">
-            <el-input v-model="editManageForm.producinggoodsDO.productBrandmid"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productBrandmid" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张类型：" prop="productZhizleixone">
-            <el-input v-model="editManageForm.producinggoodsDO.productZhizleixone"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productZhizleixone" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张克重：" prop="productGrammid">
-            <el-input v-model="editManageForm.producinggoodsDO.productGrammid"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productGrammid" :disabled='xianshi'></el-input>
         </el-form-item>
          <el-form-item label="淋膜类型：" prop="productCoatedmid">
-            <el-input v-model="editManageForm.producinggoodsDO.productCoatedmid"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productCoatedmid" :disabled='xianshi'></el-input>
         </el-form-item>
          <el-form-item label="瓦楞形状：" prop="productCorrugated">
-            <el-input v-model="editManageForm.producinggoodsDO.productCorrugated"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productCorrugated" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==4">
         <div class="fenge1">手柄信息</div>
         <el-form-item label="纸张品牌：" prop="productBrandabroad">
-            <el-input v-model="editManageForm.producinggoodsDO.productBrandabroad"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productBrandabroad" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张类型：" prop="productZhizleix">
-            <el-input v-model="editManageForm.productZhizleix"></el-input>
+            <el-input v-model="editManageForm.productZhizleix" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张克重：" prop="productGramabroad">
-            <el-input v-model="editManageForm.producinggoodsDO.productGramabroad"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productGramabroad" :disabled='xianshi'></el-input>
         </el-form-item>
          <el-form-item label="淋膜类型：" prop="productCoatedabroad">
-            <el-input v-model="editManageForm.producinggoodsDO.productCoatedabroad"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productCoatedabroad" :disabled='xianshi'></el-input>
         </el-form-item>
          <el-form-item label="手柄形状：" prop="productHandle">
-            <el-input v-model="editManageForm.producinggoodsDO.productHandle"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productHandle" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==0||editManageForm.producinggoodsDO.productLeixing==1||editManageForm.producinggoodsDO.productLeixing==2||editManageForm.producinggoodsDO.productLeixing==3||editManageForm.producinggoodsDO.productLeixing==4">
         <div class="fenge1">设计稿信息</div>
         <el-form-item label="设计稿名称：" prop="designModel">
-            <el-input v-model="editManageForm.designDO.designName==''?'':editManageForm.designDO.designName"></el-input>
+            <el-input v-model="editManageForm.designDO.designName==''?'':editManageForm.designDO.designName" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="设计稿颜色：" prop="parametersSinglenum">
-            <el-input v-model="editManageForm.designDO.designCol1==''?'':editManageForm.designDO.designCol1"></el-input>
+            <el-input v-model="editManageForm.designDO.designCol1==''?'':editManageForm.designDO.designCol1" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==0||editManageForm.producinggoodsDO.productLeixing==1||editManageForm.producinggoodsDO.productLeixing==2||editManageForm.producinggoodsDO.productLeixing==3||editManageForm.producinggoodsDO.productLeixing==4">
         <div class="fenge1">印刷信息</div>
         <el-form-item label="版锟齿数：" prop="parametersSingle">
-            <el-input v-model="editManageForm.parametersDO.parametersSingle"></el-input>
+            <el-input v-model="editManageForm.parametersDO.parametersSingle" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="版锟周长：" prop="parametersSinglenum">
-            <el-input v-model="editManageForm.parametersDO.parametersSinglenum"></el-input>
+            <el-input v-model="editManageForm.parametersDO.parametersSinglenum" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="周长片数：" prop="parametersTeethnum">
-            <el-input v-model="editManageForm.parametersDO.parametersTeethnum"></el-input>
+            <el-input v-model="editManageForm.parametersDO.parametersTeethnum" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="纸张门幅：" prop="parametersDoorwidth">
-            <el-input v-model="editManageForm.parametersDO.parametersDoorwidth"></el-input>
+            <el-input v-model="editManageForm.parametersDO.parametersDoorwidth" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="门幅片数：" prop="parametersDoornum">
-            <el-input v-model="editManageForm.parametersDO.parametersDoornum"></el-input>
+            <el-input v-model="editManageForm.parametersDO.parametersDoornum" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="总计片数：" prop="parametersNumber">
-            <el-input v-model="editManageForm.parametersDO.parametersNumber"></el-input>
+            <el-input v-model="editManageForm.parametersDO.parametersNumber" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="印刷方式：" prop="prolistParameters">
             <!-- <el-input v-model="editManageForm.prolistParameters"></el-input> -->
-            <el-select v-model="editManageForm.productionDO.prolistParameters" class="sel" placeholder="请选择" >
+            <el-select v-model="editManageForm.productionDO.prolistParameters" class="sel" placeholder="请选择"  :disabled='xianshi'>
             <el-option
               v-for="item in yinshuafangshi"
               :key="item.basicId"
@@ -544,19 +546,19 @@
           </el-select>
         </el-form-item>
         <el-form-item label="印刷放量：" prop="prolistParamenumber">
-            <el-input v-model="editManageForm.productionDO.prolistParamenumber"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistParamenumber" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="印刷重量：" prop="prolistParamemetre">
-            <el-input v-model="editManageForm.productionDO.prolistParamemetre"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistParamemetre" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="用纸米数：" prop="prolistUsemetre">
-            <el-input v-model="editManageForm.productionDO.prolistUsemetre"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistUsemetre" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="油墨用量：" prop="prolistPeweight">
-            <el-input v-model="editManageForm.productionDO.prolistPeweight"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistPeweight" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="备注：" prop="prolistParaexplain">
-            <el-input v-model="editManageForm.productionDO.prolistParaexplain" class="w400"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistParaexplain" class="w400" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
         <div v-if="editManageForm.producinggoodsDO.productLeixing==0||editManageForm.producinggoodsDO.productLeixing==1||editManageForm.producinggoodsDO.productLeixing==2||editManageForm.producinggoodsDO.productLeixing==3||editManageForm.producinggoodsDO.productLeixing==4">
@@ -580,28 +582,28 @@
         <div v-if="editManageForm.producinggoodsDO.productLeixing==0||editManageForm.producinggoodsDO.productLeixing==1||editManageForm.producinggoodsDO.productLeixing==2||editManageForm.producinggoodsDO.productLeixing==3||editManageForm.producinggoodsDO.productLeixing==4">
         <div class="fenge1">包装信息</div>
         <el-form-item label="内包装：" prop="productInnerbao">
-            <el-input v-model="editManageForm.producinggoodsDO.productInnerbao"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productInnerbao" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="外包装：" prop="productOutbao">
-            <el-input v-model="editManageForm.producinggoodsDO.productOutbao"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productOutbao" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="个/箱：" prop="productOnege">
-            <el-input v-model="editManageForm.producinggoodsDO.productOnege"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productOnege" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="外箱尺寸：" prop="productSizelength">
-            <el-input v-model="editManageForm.producinggoodsDO.productSizelength==''?'':editManageForm.producinggoodsDO.productSizelength"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productSizelength==''?'':editManageForm.producinggoodsDO.productSizelength" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="配盖：" prop="productCover">
-            <el-input v-model="editManageForm.producinggoodsDO.productCover"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productCover" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="箱唛：" prop="productBoxMark">
-            <el-input v-model="editManageForm.producinggoodsDO.productBoxMark"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productBoxMark" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="标唛：" prop="productLabel">
-            <el-input v-model="editManageForm.producinggoodsDO.productLabel"></el-input>
+            <el-input v-model="editManageForm.producinggoodsDO.productLabel" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="备注：" prop="prolistExplain">
-            <el-input v-model="editManageForm.productionDO.prolistExplain" class="w400"></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistExplain" class="w400" :disabled='xianshi'></el-input>
         </el-form-item>
         </div>
     </el-form>
@@ -798,7 +800,15 @@ export default {
        this.ManageList();
        this.addManageVisible=false;
     },
-    async showManage(prolistCode,xian,sorderStatus) { 
+      dialogClosed(){
+        this.$refs.addManageRef.resetFields();
+      },
+    async showManage(prolistCode,xian) { 
+      if(xian==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
       this.guoqushangpin();
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);

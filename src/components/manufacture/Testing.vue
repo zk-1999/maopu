@@ -47,7 +47,6 @@
       >
         <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
-        
         <el-table-column prop="productName" label="商品名称">
         </el-table-column>
         <el-table-column prop="productType" label="产品名称"></el-table-column>
@@ -62,8 +61,8 @@
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="showMaterial(scope.row.pbatId,scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.mbatId,scope.row.prolistCode,true,1)" :disabled="scope.row.pbatStatus==1" type="primary" size="small">成型质检</el-button>
+             <el-button @click="showMaterial(scope.row.mbatId,scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
+             <el-button @click="showMaterial(scope.row.mbatId,scope.row.prolistCode,true,1)" :disabled="scope.row.mbatStatus==1" type="primary" size="small">成型质检</el-button>
           </template>
         </el-table-column>
       </el-table>

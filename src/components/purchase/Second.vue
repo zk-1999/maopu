@@ -343,7 +343,7 @@
       </el-form>
 
       <!-- <hr v-if="!lookUpState"> -->
-      <el-button type="primary" @click="addAdvancePaymentFormVisible=true;addAdvancePaymentForm.purchaseorderno = checkOrderForm.porderCode" v-if="!lookUpState">新增预付款单</el-button>
+      <el-button type="primary" @click="addAdvancePaymentFormVisible=true;addAdvancePaymentForm.purchaseorderno = checkOrderForm.porderCode;addAdvancePaymentForm.payexamine = checkOrderForm.porderReviewedman;" v-if="!lookUpState">新增预付款单</el-button>
       <span slot="footer" class="dialog-footer">
         <el-button @click="checkOrderVisible=false">取 消</el-button>
         <el-button @click="editPurOrderState()" type="primary" v-if="!lookUpState">保 存</el-button>
@@ -352,28 +352,43 @@
     <el-dialog
       title="新增预付款单"
       :visible.sync="addAdvancePaymentFormVisible"
-      width="40%"
+      width="42%"
       :before-close="handleClose"
-      @closed="dialogClosed2('addAdvancePaymentForm')"
     >
     <div class="fenge">付款信息</div>
       <el-form
         label-position="right"
-        label-width="90px"
+        label-width="100px"
         :model="addAdvancePaymentForm"
         ref="addAdvancePaymentForm"
         :inline="true"
       >
-        <el-form-item label="采购订单号" prop="purchaseorderno">
+        <el-form-item label="采购订单号：" prop="purchaseorderno">
           <el-input class="_small" v-model="addAdvancePaymentForm.purchaseorderno" :disabled="true"></el-input>
         </el-form-item>
 
-        <el-form-item label="预付款金额" prop="amount">
+        <el-form-item label="制单人：" prop="payexamine">
+          <el-input class="_small" v-model="addAdvancePaymentForm.payexamine" :disabled="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="预付款金额：" prop="amount">
           <el-input class="_small" v-model="addAdvancePaymentForm.amount"></el-input>
         </el-form-item>
 
-        <el-form-item label="资金账户" prop="assetaccount">
-          <el-input class="_small" v-model="addAdvancePaymentForm.assetaccount"></el-input>
+        <el-form-item label="资金账户：" prop="assetaccount">
+          <el-select
+                v-model="addAdvancePaymentForm.assetaccount"
+                placeholder="请选择"
+                class="_small"
+                
+              >
+                <el-option
+                  v-for="item in zijinCount"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
           <!-- <el-select v-model="assetaccount" placeholder="请选择" class="_small">
             <el-option value label="全部"></el-option>
             <el-option value="0" label="未到货"></el-option>
@@ -382,7 +397,7 @@
           </el-select>-->
         </el-form-item>
 
-        <el-form-item label="支出类型" prop="raetypes">
+        <el-form-item label="支出类型：" prop="raetypes">
           <el-select v-model="addAdvancePaymentForm.raetypes" placeholder="请选择" class="_small">
             <el-option
               v-for="item in paymode"
@@ -394,14 +409,14 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="付款状态" prop="paymentstatus">
+        <el-form-item label="付款状态：" prop="paymentstatus">
           <el-select v-model="addAdvancePaymentForm.paymentstatus" placeholder="请选择" class="_small">
             <el-option value="0" label="未付款"></el-option>
             <el-option value="1" label="已付款"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="备注" prop="remarks">
+        <el-form-item label="备注：" prop="remarks">
           <el-input
             type="textarea"
             placeholder="请输入内容"
@@ -421,14 +436,16 @@
                       :before-upload="beforeUpload"
                       :on-preview="handlePreview"
                       :on-success="handleSuccess"
-                      :on-remove="handleRemove">
+                      :on-remove="handleRemove"
+                      >
                 <i class="el-icon-plus"></i>
             </el-upload>
           </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addAdvancePaymentFormVisible=false">取消</el-button>
-        <el-button @click="addAdvancePayment()" type="primary">保存</el-button>
+        <el-button @click="addAdvancePaymentFormVisible=false;dialogClosed2()">取消</el-button>
+        <el-button @click="addAdvancePaymentFormVisible=false" type="primary">保存</el-button>
+        <!-- <el-button @click="addAdvancePayment()" type="primary">保存</el-button> -->
       </span>
     </el-dialog>
   </div>
@@ -583,6 +600,8 @@ export default {
         voucher:'',//图片路径
       },
       paymode:[],//支出类型
+      orderList:[],
+      zijinCount:[],
     };
   },
   created() {
@@ -593,6 +612,7 @@ export default {
     this.getWarehouseOptions();
     this.queryUnit();
     this.selectoutpaymode();
+    this.selectZiJinCount();
   },
   methods: {
     //文件上传成功的钩子函数
@@ -651,6 +671,14 @@ export default {
             return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
         },
     //读取cookie
+    async selectZiJinCount(userInfo) {
+      const { data: res } = await this.$http.post("jc/Basic/selectzijin", userInfo);
+
+      this.zijinCount = res
+
+      console.log("资金账户")
+      console.log(res)
+    },
     getCookie: function() {
       // if (document.cookie.length > 0) {
       //   var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
@@ -725,9 +753,12 @@ export default {
     },
     dialogClosed() {
       this.$refs.checkOrderForm.resetFields();
+      this.dialogClosed2()
     },
-    dialogClosed2(val) {
-      this.$refs[val].resetFields();
+    dialogClosed2() {
+      this.$refs['addAdvancePaymentForm'].resetFields();
+      // 图片清空
+      this.$refs.upload.clearFiles()
     },
 
     addSelectionChange(val) {
@@ -867,6 +898,7 @@ export default {
           message: "审核失败！"
         });
       }
+      this.addAdvancePayment();
       this.checkOrderVisible = false;
     },
 
@@ -1062,7 +1094,7 @@ export default {
             message: "新增失败！"
           });
         }
-      this.addAdvancePaymentFormVisible = false;
+      // this.addAdvancePaymentFormVisible = false;
       // this.getList();
     },
     // 获取支出类型
@@ -1078,6 +1110,62 @@ export default {
       // console.log("支出类型");
       // console.log(this.paymode);
     },
+
+    //文件上传成功的钩子函数
+        handleSuccess(res, file) {
+            this.$message({
+                type: 'info',
+                message: '图片上传成功',
+                duration: 6000
+            });
+            if (file.response.success) {
+                // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+                
+                this.addAdvancePaymentForm.voucher=file.response.message;
+                // this.editProductForm.voucher=file.response.message;
+
+                // this.productList.picture=file.response.message;
+                
+            }
+        },
+        //删除文件之前的钩子函数
+        handleRemove(file, fileList) {
+            this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+            });
+        },
+        //点击列表中已上传的文件事的钩子函数
+        handlePreview(file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+        //上传的文件个数超出设定时触发的函数
+        onExceed(files, fileList) {
+            this.$message({
+                type: 'info',
+                message: '最多只能上传一个图片',
+                duration: 6000
+            });
+        },
+        //文件上传前的前的钩子函数
+        //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+        beforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isGIF = file.type === 'image/gif';
+            const isPNG = file.type === 'image/png';
+            const isBMP = file.type === 'image/bmp';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG && !isGIF && !isPNG && !isBMP) {
+                this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+        },
   }
 };
 </script>

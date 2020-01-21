@@ -595,34 +595,24 @@ export default {
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(prolistCode,xian,sorderStatus) {
-      // if(sorderStatus==0){
-         let param = new URLSearchParams();
-          param.append("prolistCode", prolistCode);
-        const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
-        if(res.body.rows.length>=1){
-          this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
-           this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;
-           this.editMaterialForm.materialListDOs=res.body.rows[0].materialListDOs;
-           
-        }else{
-         
-        this.editMaterialForm.materialListDOs=[];
-
-        }
-        if(sorderStatus==1){
-       this.editMaterialForm.prolistCode=prolistCode;
+    if(sorderStatus==1){
+      this.editMaterialForm.banFormingDOs=[];
+      this.editMaterialForm.xiangFormingDOs=[];
+      this.editMaterialForm.daiFormingDOs=[];
+      this.editMaterialForm.prolistCode=prolistCode;
       this.editMaterialForm.picMan=this.shenpiren;
+    }else{
+      let param = new URLSearchParams();
+      param.append("prolistCode", prolistCode);
+      const { data: res } = await this.$http.post("sc/Forming/select",param);
+      
+      this.editMaterialForm.banFormingDOs=res.body.formingPickingDO.banFormingDOs;
+      this.editMaterialForm.xiangFormingDOs=res.body.formingPickingDO.xiangFormingDOs;
+      this.editMaterialForm.daiFormingDOs=res.body.formingPickingDO.daiFormingDOs;
+      
+      
+    }
       this.editManageVisible = true;
-        }else{
-           this.editManageVisible1 = true;
-        }
-      
-        
-        // this.editManageVisible = true;
-      // }else{
-      
-      // }
-      
     },
     async list(){
       const { data: res } = await this.$http.post("jc/Basic/selectparameters");

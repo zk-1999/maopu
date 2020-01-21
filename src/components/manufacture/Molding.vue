@@ -38,6 +38,11 @@
         </el-form-item>
       </el-form>
       <!-- <el-button type="success" @click="addManageVisible = true">新 建</el-button> -->
+       <el-button
+            type="warning"
+            @click="selectedqi"
+            :disabled="selectedList.length == 0"
+          >成型完成</el-button>
       <el-table
         :data="manageList"
         striped
@@ -45,6 +50,7 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
+      <el-table-column type="selection" width="35"></el-table-column>
         <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
         <el-table-column prop="producinggoodsDO.productName" label="商品名称">
@@ -278,6 +284,13 @@
           <el-button type="primary" @click="deleteRow" >确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
+      <div class="del-dialog-cnt">此操作将批量印刷, 是否继续？</div>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="delVisibleqi = false">取 消</el-button>
+          <el-button type="primary" @click="deleteRowqi" >确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- <el-dialog
       title="物料选择"
       :visible.sync="dialogVisible1"
@@ -327,6 +340,7 @@ export default {
       dialogVisible1:false,
       delVisible: false,
       delVisible11:false,
+      delVisibleqi:false,
       currentPage: 0,
       total: 0,
       delarr:[],
@@ -405,6 +419,22 @@ export default {
     this.getCookie();
   },
   methods: {
+     selectedqi(){
+      this.delarr=[];
+      this.delVisibleqi = true;
+      for (let i = 0; i < this.selectedList.length; i++) {
+        this.delarr.push({prolistCode:this.selectedList[i].prolistCode,prolistState:this.selectedList[i].prolistState=7,line:5}
+        )
+      }
+      console.log(this.delarr);
+    },
+    
+     async deleteRowqi(){
+         const {data:res} = await this.$http.post('sc/Production/updatestatusmore',this.delarr);
+         this.delVisibleqi = false;
+         this.ManageList();
+     
+      },
     tianmoju(){
      var a=0;
      if(this.machinedBatchDOs1.length>=1){

@@ -10,6 +10,7 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="原材料" name="first"></el-tab-pane>
         <el-tab-pane label="成品" name="second"></el-tab-pane>
+        <el-tab-pane label="半成品" name="third"></el-tab-pane>
         <el-form
           :inline="true"
           class="demo-form-inline search"
@@ -63,7 +64,7 @@
 
         <el-button type="success" @click="addOrder = true;getCookie();">新 增</el-button>
 
-        <el-table border :data="orderList" @selection-change="addSelectionChange">
+        <el-table border :data="orderList">
           <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
           <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
           <el-table-column prop="inventoryReceipt" label="盘点单号"></el-table-column>
@@ -88,10 +89,10 @@
         </el-table>
         <el-pagination
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
           :page-size="10"
           layout="total, prev, pager, next"
           :total="total"
+          :current-page="currentPage"
         ></el-pagination>
       </el-tabs>
     </el-card>
@@ -123,9 +124,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="盘点时间：" prop="inventoryTime">
+        <el-form-item label="盘点时间：" prop="stringtime">
           <el-date-picker
-            v-model="addOrderForm.inventoryTime"
+            v-model="addOrderForm.stringtime"
             type="date"
             value-format="yyyy-MM-dd"
           ></el-date-picker>
@@ -142,33 +143,61 @@
         </el-form-item>
         <br />
 
-        <el-button type="primary" @click="addGoodsMethod(1)">添加商品</el-button>
+        <el-button type="primary" @click="addGoodsMethod()">添加商品</el-button>
         <el-button @click="deleteGoods()" :disabled="selectedList.length == 0">删除商品</el-button>
-        <el-table
-          :data="addOrderForm.inventoryGoolsDos"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-        >
-          <!-- <el-table-column prop="date" label="日期" sortable width="180"></el-table-column>
+        <div v-show="flag == 'first'">
+          <el-table
+            :data="addOrderForm.inventoryGoolsDos"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+          >
+            <!-- <el-table-column prop="date" label="日期" sortable width="180"></el-table-column>
               <el-table-column prop="name" label="姓名" sortable width="180"></el-table-column>
-          <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>-->
+            <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>-->
 
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="supgoolsBigType" label="商品大类型"></el-table-column>
-          <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
-          <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
-          <el-table-column prop label="盘点实存">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.inventorygoolsStock"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column prop="kcTotalstock" label="现有库存"></el-table-column>
-          <el-table-column prop="unit" label="单位"></el-table-column>
-        </el-table>
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column prop="supgoolsBigType" label="商品大类型"></el-table-column>
+            <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
+            <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
+            <el-table-column prop label="盘点实存">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.inventorygoolsStock"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="kcTotalstock" label="现有库存"></el-table-column>
+            <el-table-column prop="unit" label="单位"></el-table-column>
+          </el-table>
+        </div>
+        <div v-show="flag == 'second' || flag == 'third'">
+          <el-table
+            :data="addOrderForm.inventoryGoolsDos"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+            default-expand-all
+            class="tb"
+          >
+            <el-table-column type="selection" width="35" align="center"></el-table-column>
+            <el-table-column type="expand" label="展开" width="50">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item label>{{ props.row ? props.row.productSplicing : '' }}</el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column label="商品名称" prop="productName" width="150px"></el-table-column>
+            <el-table-column label="产品类别" prop="productType" width="150px"></el-table-column>
+            <el-table-column prop label="盘点实存">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.inventorygoolsStock"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="kcTotalstock" label="现有库存"></el-table-column>
+            <el-table-column prop="unit" label="单位"></el-table-column>
+          </el-table>
+        </div>
         <!-- <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
           :page-size="10"
           layout="total,  prev, pager, next"
           :total="total"
@@ -230,11 +259,7 @@
           ></el-input>
         </el-form-item>
 
-        <!-- 3个按钮 -->
-        <!-- <el-form-item>
-          <el-button type="primary" size="small" class="mar">查 询</el-button>
-        </el-form-item>
-        <hr />-->
+        <div v-show="flag == 'first'">
 
         <!-- 带有排序功能的商品table -->
         <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
@@ -250,10 +275,33 @@
           <el-table-column prop="kcTotalstock" label="现有库存"></el-table-column>
           <el-table-column prop="unit" label="单位"></el-table-column>
         </el-table>
+        </div>
+        <div v-show="flag == 'second' || flag == 'third'">
+          <el-table
+            :data="showOrderForm.inventoryGoolsDos"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+            default-expand-all
+            class="tb"
+          >
+            <el-table-column type="selection" width="35" align="center"></el-table-column>
+            <el-table-column type="expand" label="展开" width="50">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item label>{{ props.row ? props.row.productSplicing : '' }}</el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column label="商品名称" prop="productName" width="150px"></el-table-column>
+            <el-table-column label="产品类别" prop="productType" width="150px"></el-table-column>
+            <el-table-column label="盘点实存" prop="inventorygoolsStock" width="150px"></el-table-column>
+            <el-table-column label="现有库存" prop="kcTotalstock" width="150px"></el-table-column>
+            <el-table-column label="单位" prop="unit" width="150px"></el-table-column>
+          </el-table>
+        </div>
         <!-- <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
           :page-size="10"
           layout="total,  prev, pager, next"
           :total="total"
@@ -298,6 +346,65 @@
         <el-button @click="chooseGoodsFormSava()" type="primary">保 存</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title=" '新增生产商品' "
+      :visible.sync="addOrdermanagementVisible1"
+      width="55%"
+      :before-close="handleClose"
+      @closed="dialogClosed1"
+    >
+      <el-form
+        ref="shengchantRef"
+        label-width="110px"
+        :inline="true"
+        :model="shengchanFrom"
+      >
+        <el-form-item label="生产商品类型：" prop="productLeixing">
+          <el-select v-model="shengchanFrom.productLeixing" placeholder="请选择">
+            <el-option
+              v-for="item in shengchan"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-button type="primary" @click="shengchanshangping">查询</el-button>
+        <el-table
+          :data="shengchanlist"
+          style="width: 100%"
+          border
+          @selection-change="handleSelectionChange"
+        >
+          <!-- default-expand-all -->
+          <el-table-column type="selection" width="35" align="center"></el-table-column>
+          <el-table-column type="expand" label="展开" width="50">
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label>{{ props.row ? props.row.productSplicing : '' }}</el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column label="商品名称" prop="productName"></el-table-column>
+          <el-table-column label="产品名称" prop="productType"></el-table-column>
+          <el-table-column label="尺寸" prop="productChanpchic"></el-table-column>
+          <el-table-column label="个/包" prop="productInnerbao"></el-table-column>
+          <el-table-column label="包/箱" prop="productOutbao"></el-table-column>
+          <el-table-column label="个/箱" prop="productOnege"></el-table-column>
+          <el-table-column label="外箱尺寸" prop="productSizelength" width="150px">
+            <template
+              slot-scope="scope"
+            >{{scope.row.productSizelength}}*{{scope.row.productSizewide}}*{{scope.row.productSizehight}}</template>
+          </el-table-column>
+          <el-table-column label="单个克重" prop="productOneke"></el-table-column>
+        </el-table>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addOrdermanagementVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="shengchancaigou">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -306,16 +413,14 @@ export default {
     return {
       // v:false,
       labelPosition: "right",
-      //分页相关数据
-      //currentPage:0,
       total: 0,
+      currentPage:1,
       // 页面表单数据
       addOrder: false,
       editOrder: false,
       addGoods: false,
 
       activeName: "first", //默认标签页
-      chaOrderFrom: {}, //查询表单
       addGoodsVisual: false, //添加商品是否可见
 
       smallType: [], //小类型
@@ -330,6 +435,7 @@ export default {
         inventoryProducer: "", //制单人
         basicId: "", //盘点仓库
         inventoryTime: [], //盘点时间
+        inventoryType:0,//盘点单类型
         pageCode: 0,
         pageSize: 10
       },
@@ -345,10 +451,11 @@ export default {
       addOrderForm: {
         //新增表单
         basicId: "", //仓库id
-        inventoryTime: "", //盘点时间
+        stringtime: "", //盘点时间
         inventoryProducer: "", //制单人
         inventoryRemark: "", //备注
-        inventoryGoolsDos: [] //商品数组
+        inventoryGoolsDos: [], //商品数组
+        inventoryType:0,// 盘点单类型
       },
 
       visibleOfChooseGoods: false, //选择商品表单是否可见
@@ -360,9 +467,63 @@ export default {
 
       shangpi: [], //商品数组
 
-      selectedList: [], 
+      selectedList: [],
 
-      flag:"first",
+      flag: "first",
+
+      // --------------生产商品盘点-----------------
+      addOrdermanagementVisible: false,
+      productgoodsIdList: [], //
+      shengchanFrom: {
+        productLeixing: ""
+      },
+      shengchanlist: [],
+      shengchan: [
+        {
+          id: 0,
+          value: "单层"
+        },
+        {
+          id: 1,
+          value: "双层"
+        },
+        {
+          id: 2,
+          value: "瓦楞"
+        },
+        {
+          id: 3,
+          value: "杯套"
+        },
+        {
+          id: 4,
+          value: "手柄"
+        }
+      ],
+      caigou: [
+        {
+          id: 0,
+          value: "原纸"
+        },
+        {
+          id: 1,
+          value: "纸箱"
+        },
+        {
+          id: 2,
+          value: "袋子"
+        },
+        {
+          id: 3,
+          value: "油墨"
+        },
+        {
+          id: 4,
+          value: "其他"
+        }
+      ],
+      addOrdermanagementVisible1: false,
+      addOrdermanagementVisible2: false
     };
   },
   created() {
@@ -446,10 +607,9 @@ export default {
       this.queryOrderList();
     },
     handleCurrentChange(val) {
-      this.salesOrdermanagementForm.pageCode = val;
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      this.queryOrderList();
+      this.currentPage = val
+      this.chaOrder.pageCode = val;
+      this.getList();
     },
 
     // 查询商品小类型
@@ -463,6 +623,7 @@ export default {
       // this.chaOrderFrom.pageCode = 1;
       if (val) {
         // 重新点击时，需要重置查询页数
+        this.currentPage = 1;
         this.chaOrderForm.pageCode = 1;
         this.chaOrder = JSON.parse(JSON.stringify(this.chaOrderForm));
       }
@@ -494,8 +655,10 @@ export default {
       console.log(res);
 
       let showOrder = res.body.result[0];
+      // 仓库
       showOrder.basicId = Number(showOrder.basicId);
 
+      if(this.flag == "first"){//原材料
       // 获取供应商商品数组
       let ids = [];
       showOrder.inventoryGoolsDos.forEach((item, index, array) => {
@@ -525,6 +688,52 @@ export default {
           }
         });
       });
+      }else if(this.flag == "second"){//成品
+        let ids = [];
+        showOrder.inventoryGoolsDos.forEach((good)=>{
+          ids.push(good.productgoodsId)
+        })
+
+        // 根据id数组查询生产商品规格
+        const { data: res1 } = await this.$http.post(
+        "/jc/Produconggoods/selectall",
+        ids
+      );
+        // 规格
+        showOrder.inventoryGoolsDos.forEach((good)=>{
+          res1.forEach((item)=>{
+            if(good.productgoodsId == item.productgoodsId){
+              good.productName = item.productName
+              good.productType = item.productType
+              good.productSplicing = item.productSplicing
+            }
+          })
+        })
+      }else if(this.flag == "third"){//半成品
+        let ids = [];
+        showOrder.inventoryGoolsDos.forEach((good)=>{
+          ids.push(good.productgoodsId)
+        })
+
+        // 根据id数组查询生产商品规格
+        const { data: res1 } = await this.$http.post(
+        "/jc/Produconggoods/selectall",
+        ids
+      );
+        // 规格
+        showOrder.inventoryGoolsDos.forEach((good)=>{
+          res1.forEach((item)=>{
+            if(good.productgoodsId == item.productgoodsId){
+              good.productName = item.productName
+              good.productType = item.productType
+              good.productSplicing = item.productSplicing
+            }
+          })
+        })
+
+        console.log("111111111111111111111111")
+        console.log(showOrder)
+      }
 
       this.showOrderForm = showOrder;
 
@@ -539,7 +748,7 @@ export default {
         this.addOrderForm
       );
 
-      if (res.body.respCode == 200) {
+      if (res.body.respCode == 200) { 
         this.$message({
           type: "success",
           message: res.body.msg
@@ -584,11 +793,14 @@ export default {
       // this.gongyingshangOfForm = [];
     },
     // 选择商品表单保存
-    addGoodsMethod(val) {
-      // this.chooseGoodsForm.addOrEdit = val;
-      this.visibleOfChooseGoods = true;
+    addGoodsMethod() {
       this.selectedList = [];
-      this.changeGoodsBigType();
+      if (this.flag == "first") {
+        this.visibleOfChooseGoods = true;
+        this.changeGoodsBigType();
+      } else if (this.flag == "second" || this.flag == "third") {
+        this.shengchanshangping();
+      }
     },
     // 选择商品表单保存
     async chooseGoodsFormSava() {
@@ -644,8 +856,9 @@ export default {
       goods.forEach((item, index, array) => {
         ids.push(item.suppliergoolsId);
       });
+      // 根据原材料id查询当前库存
       const { data: res } = await this.$http.post(
-        "kc/stock/selectkcBygoolsId",
+        "kc/stock/selectkcBygoolsIdA",
         { suppliergoolsId: ids }
       );
 
@@ -681,8 +894,14 @@ export default {
     deleteGoods() {
       this.selectedList.forEach((delGood, index1, array1) => {
         this.addOrderForm.inventoryGoolsDos.forEach((item, index2, array2) => {
-          if (delGood.suppliergoolsId == item.suppliergoolsId) {
-            this.addOrderForm.inventoryGoolsDos.splice(index2, 1);
+          if (this.flag == "first") {
+            if (delGood.suppliergoolsId == item.suppliergoolsId) {
+              this.addOrderForm.inventoryGoolsDos.splice(index2, 1);
+            }
+          } else if (this.flag == "second") {
+            if (delGood.productgoodsId == item.productgoodsId) {
+              this.addOrderForm.inventoryGoolsDos.splice(index2, 1);
+            }
           }
         });
       });
@@ -690,8 +909,158 @@ export default {
 
     // 处理标签页切换
     handleClick(tab, event) {
-        this.flag = tab.paneName
+      this.flag = tab.paneName;
+      if( tab.paneName == "first"){
+        this.chaOrderForm.inventoryType = 0;
+        this.addOrderForm.inventoryType = 0
+      }else if(tab.paneName == "second"){
+        this.chaOrderForm.inventoryType = 1;
+        this.addOrderForm.inventoryType = 1;
+      }else if(tab.paneName == "third"){
+        this.chaOrderForm.inventoryType = 2;
+        this.addOrderForm.inventoryType = 2;
       }
+      this.ResetForm('chaOrderForm')
+      this.getList(1)
+    },
+
+    // ---------------------生产商品部分----------------------
+    async shengchanshangping() {
+      //  if (this.addOrdermanagementVisible == true) {// 判断是否为编辑
+      this.productgoodsIdList = this.addOrderForm.inventoryGoolsDos.map(
+        item => {
+          return item.productgoodsId;
+        }
+      );
+      // } else {
+      //   console.log('--------------');
+
+      //   console.log(this.addOrderForm.inventoryGoolsDos);
+
+      //   this.productgoodsIdList = this.editOrdermanagementForm.commodityListDOs.map(
+      //     item => {
+
+      //       return parseInt(item.productgoodsId);
+      //     }
+      //   );
+      // }
+      const { data: res } = await this.$http.post(
+        "jc/Produconggoods/selectProducing",
+        this.shengchanFrom
+      );
+      console.log(res);
+      this.shengchanlist = res.body.rows;
+      this.addOrdermanagementVisible1 = true;
+    },
+    async shengchancaigou() {
+
+      // 先对selectList进行处理，获取对应库存、单位
+      let ids = []
+      this.selectedList.forEach((item)=>{
+        ids.push(item.productgoodsId)
+      })
+
+      if(this.flag == "second"){// 成品库存
+        const { data: res } = await this.$http.post(
+        "kc/stock/selectkcBygoolsIdB",
+        {productgoodsId:ids}
+      );
+        this.selectedList.forEach((item)=>{
+          res.body.result.forEach((productGood)=>{
+            if(item.productgoodsId == productGood.productgoodsId){
+          //  库存
+              item.kcTotalstock = productGood.kcTotalstock
+          //  单位？？？
+            }
+        })
+      })
+      }else if(this.flag == "third"){// 半成品库存
+        const { data: res } = await this.$http.post(
+        "kc/stock/selectkcBygoolsIdC",
+        {productgoodsId1:ids}
+        );
+        this.selectedList.forEach((item)=>{
+          res.body.result.forEach((productGood)=>{
+            if(item.productgoodsId == productGood.productgoodsId1){
+          //  库存
+              item.kcTotalstock = productGood.kcTotalstock
+          //  单位？？？
+            }
+          })
+        })
+      }
+      
+     
+
+      var chongfu = 0;
+      // ||this.editOrdermanagementForm.commodityListDOs.length>=1
+      if (this.addOrderForm.inventoryGoolsDos.length >= 1) {
+        if (this.addOrdermanagementVisible1 == true) {
+          const needAdd = [];
+          this.selectedList.forEach(item => {
+            if (this.productgoodsIdList.indexOf(item.productgoodsId) === -1) {
+              needAdd.push(item);
+            } else {
+              chongfu++;
+            }
+          });
+          console.log("needAdd");
+          console.log(needAdd);
+          this.addOrderForm.inventoryGoolsDos = [
+            ...this.addOrderForm.inventoryGoolsDos,
+            ...needAdd
+          ];
+        }
+        // else if(this.editOrdermanagementVisible==true){
+        //   const needAdd = [];
+        // this.selectedList.forEach(item => {
+        //   if (this.productgoodsIdList.indexOf(item.productgoodsId) === -1) {
+        //     needAdd.push(item);
+        //   } else {
+        //     chongfu ++;
+        //   }
+        // });
+        // this.editOrdermanagementForm.commodityListDOs = [
+        //   ...this.editOrdermanagementForm.commodityListDOs,
+        //   ...needAdd
+        // ];
+        // }
+      } else {
+        console.log("++++++++++++++++++++");
+        for (let index = 0; index < this.selectedList.length; index++) {
+          if (this.addOrdermanagementVisible1 == true) {
+            this.addOrderForm.inventoryGoolsDos.push(this.selectedList[index]);
+          }
+          //   else if(this.editOrdermanagementVisible==true){
+          //     this.editOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
+          // }
+        }
+        console.log(this.selectedList);
+        console.log(this.addOrderForm.inventoryGoolsDos);
+      }
+      const charu = this.selectedList.length - chongfu;
+      this.$message({
+        type: "info",
+        message:
+          chongfu > 0
+            ? `此次添加有重复数据，重复数据${chongfu}条，成功插入${charu}条`
+            : `此次成功插入${charu}条`
+      });
+      console.log("---------------------------------");
+      console.log(this.addOrderForm.inventoryGoolsDos);
+      console.log("---------------------------------");
+      console.log(this.selectedList);
+      this.addOrdermanagementVisible1 = false;
+      this.addOrdermanagementVisible2 = false;
+      //   this.editOrdermanagementVisible1=false;
+      //  this.editOrdermanagementVisible2=false;
+    },
+    dialogClosed1(){
+      this.$refs.shengchantRef.resetFields();
+      this.selectedList = [];
+      console.log("this.selectedList")
+      console.log(this.selectedList)
+    },
   }
 };
 </script>
@@ -732,6 +1101,12 @@ hr {
 .el-form-item {
   ._small {
     width: 150px;
+  }
+}
+.demo-table-expand {
+  text-align: center;
+  .el-form-item {
+    margin-bottom: 0px;
   }
 }
 </style>  

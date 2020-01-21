@@ -207,6 +207,84 @@
             :total="total"
           ></el-pagination>
         </el-tab-pane>
+        <el-tab-pane label="半成品入库" name="fourth">
+          <el-form
+            :inline="true"
+            class="demo-form-inline search"
+            :model="chaHarfProOrderForm"
+            ref="chaHarfProOrderForm"
+            label-width="100px"
+            label-position="left"
+          >
+            <el-row :gutter="20" class="row">
+              <el-col :span="24">
+                <el-form-item label="生产单号：" prop="prolistCode">
+                  <el-input class="_small" v-model="chaHarfProOrderForm.prolistCode"></el-input>
+                </el-form-item>
+
+                <el-form-item label="印刷批次号：" prop="pbatParameterscode">
+                  <el-input class="_small" v-model="chaHarfProOrderForm.pbatParameterscode"></el-input>
+                </el-form-item>
+
+                <el-form-item label="商品名称：" prop="productgoodsId">
+                  <!-- <el-input class="_small" v-model="chaHarfProOrderForm.productgoodsId"></el-input> -->
+                  <el-select
+                v-model="chaHarfProOrderForm.productgoodsId"
+                placeholder="请选择"
+                class="_small"
+              >
+                <el-option
+                  v-for="item in productList"
+                  :key="item.productgoodsId"
+                  :label="item.productName"
+                  :value="item.productgoodsId"
+                ></el-option>
+              </el-select>
+                </el-form-item>
+
+                <el-form-item label="产品名称：" prop="productType">
+                  <el-input class="_small" v-model="chaHarfProOrderForm.productType"></el-input>
+                </el-form-item>
+
+                <el-form-item>
+                  <el-button @click="getHarfProList(1)">查 询</el-button>
+                  <el-button type="primary" @click="ResetForm('chaHarfProOrderForm')">重 置</el-button>
+                  <!-- <el-button @click="addProduceReturnOrderVisible = true">入库</el-button> -->
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+
+          <!-- 表格 -->
+          <el-table border :data="orderList">
+            <el-table-column type="index" label="序号" align="center" width="50px"></el-table-column>
+            <el-table-column prop="prolistCode" label="生产单号" align="center"></el-table-column>
+            <el-table-column prop="pbatParameterscode" label="印刷批次号" align="center"></el-table-column>
+            <el-table-column prop="productName" label="商品名称" align="center"></el-table-column>
+            <el-table-column prop="productType" label="产品名称" align="center"></el-table-column>
+            <el-table-column prop="pbatController" label="质检人" align="center"></el-table-column>
+            <el-table-column prop="pbatTime" label="质检时间" align="center"></el-table-column>
+            <!-- fixed="right" -->
+            <el-table-column label="操作" width="90px" align="center">
+              <template slot-scope="scope">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="harfProOrderInput(scope.row)"
+                >入库</el-button>
+
+                <!-- <el-button type="primary" size="mini" @click="addProduceInOrderVisible = true">查看</el-button> -->
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="10"
+            layout="total, prev, pager, next"
+            :total="total"
+          ></el-pagination>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
 
@@ -236,7 +314,8 @@
           <el-select v-model="addOrderFrom.inboundType" class="_small" :disabled="true">
             <el-option value="0" label="采购入库"></el-option>
             <el-option value="1" label="生产入库"></el-option>
-            <el-option value="2" label="其他入库"></el-option>
+            <el-option value="2" label="生产退料入库"></el-option>
+            <el-option value="3" label="半成品入库"></el-option>
           </el-select>
         </el-form-item>
 
@@ -615,6 +694,136 @@
         <el-button @click="chooseGoodsFormSava()" type="primary">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="新增半成品入库单"
+      :visible.sync="addHarfProOrderVisible"
+      width="60%"
+      :before-close="handleClose"
+      @closed="dialogClosed('addOrderFrom')"
+    >
+      <!-- 新增销售订单表格 -->
+      <el-form
+        :inline="true"
+        class="demo-form-inline search"
+        :model="addOrderFrom"
+        ref="addOrderFrom"
+        label-width="90px"
+        label-position="left"
+      >
+        <!-- 采购单号 -->
+        <el-form-item label="生产单号：" prop="porderCode">
+          <el-input v-model="addOrderFrom.porderCode" class="_small" :disabled="true"></el-input>
+        </el-form-item>
+
+        <!-- 入库类型 -->
+        <el-form-item label="入库类型：" prop="inboundType">
+          <el-select v-model="addOrderFrom.inboundType" class="_small" :disabled="true">
+            <el-option value="0" label="采购入库"></el-option>
+            <el-option value="1" label="生产入库"></el-option>
+            <el-option value="3" label="生产退料入库"></el-option>
+            <el-option value="4" label="半成品入库"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <!-- 采购单号 -->
+        <el-form-item label="制单人：" prop="inboundProducer">
+          <el-input v-model="addOrderFrom.inboundProducer" class="_small" :disabled="true"></el-input>
+        </el-form-item>
+
+        <!-- 入库时间 -->
+        <el-form-item label="入库日期 ：" prop="inboundTime">
+          <el-date-picker
+            v-model="addOrderFrom.inboundTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期"
+            class="_small"
+          ></el-date-picker>
+        </el-form-item>
+
+        <!-- 带有排序功能的商品table -->
+        <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
+        <!-- v-show="addOrderFrom.inboundType == 0" -->
+        <el-table
+          :data="addOrderFrom.inboundGoolsDos"
+          style="width: 100%"
+          @selection-change="handleSelectionChange1"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="productName" label="商品名称"></el-table-column>
+          <el-table-column prop="productType" label="产品名称"></el-table-column>
+          <el-table-column prop="pbatParameterscode" label="印刷批次号"></el-table-column>
+          <el-table-column prop="pbatWeight" label="总数"></el-table-column>
+          <!-- <el-table-column prop="sum" label="已入库数量"></el-table-column> -->
+          <el-table-column prop="inboundgoolsNum" label="本次入库数量">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.inboundgoolsNum"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pcommodityUnit" label="单位">
+            <template slot-scope="scope">
+              <el-select
+                v-model="scope.row.pcommodityUnit"
+                placeholder="请选择"
+                class="_small"
+              >
+                <el-option
+                  v-for="item in unit"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="basicId" label="入库仓库" width="140px">
+            <template slot-scope="scope">
+              <el-select
+                v-model="scope.row.basicId"
+                placeholder="请选择"
+                class="_small"
+              >
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button @click="addOrderMsg(scope.$index)" size="mini" type="primary">关联追踪号</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="jsonofinboundgoolsTrack" type="expand" label="追踪号" width="70px">
+            <template slot-scope="scope">
+              <el-table :data="scope.row.jsonofinboundgoolsTrack" style="width: 50%" :border="true">
+                <el-table-column prop="traceNo" align="center" label="追踪号"></el-table-column>
+                <el-table-column prop="weight" label="数量" align="center"></el-table-column>
+              </el-table>
+            </template>
+          </el-table-column> -->
+        </el-table>
+        <br />
+        <el-form-item label="备注：" prop="inboundRemark">
+          <el-input
+            type="textarea"
+            placeholder="请输入内容"
+            v-model="addOrderFrom.inboundRemark"
+            style="width:600px"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+
+      <!-- 2个按钮 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addHarfProOrderVisible = false">取 消</el-button>
+        <el-button @click="addInputOrder()" type="primary">确 认</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -675,15 +884,28 @@ export default {
       },
 
       // 生产退料入库
-      addProduceReturnOrderVisible: false //新建生产退料入库
+      addProduceReturnOrderVisible: false, //新建生产退料入库
+
+      // 半成品入库
+      chaHarfProOrderForm:{
+        prolistCode:"",
+        pbatParameterscode:"",
+        productgoodsId:"",
+        productType:"",
+        pageCode:0,
+        pageSize:10,
+      },
+      addHarfProOrderVisible:false,// 半成品入库单是否可见
+      productList:[],// 生产商品列表
     };
-  },
+},
   created() {
     this.getWarehouseOptions();
     this.querySupplier();
     this.getList(1);
     this.getCookie();
     this.queryUnit();
+    this.selectProductMsg();
   },
   methods: {
     ResetForm(formName) {
@@ -808,10 +1030,12 @@ export default {
         res2.forEach((item, index, arr) => {
           if (purGood.suppliergoolsId == item.suppliergoolsId) {
             // 已入库数量
-            purGood.sum = item.sum;
+            purGood.sum = item.supinboundsum;
           }
         });
       });
+
+      
 
       this.choosePurchaseGoodsVisible = true;
     },
@@ -912,6 +1136,7 @@ export default {
       }
 
       this.addOrderVisible = false;
+      this.addHarfProOrderVisible = false;
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -920,7 +1145,17 @@ export default {
         })
         .catch(_ => {});
     },
-    handleClick() {},
+    handleClick(tab,event) {
+      if (tab.paneName == "first") {
+        // 查询采购订单
+        this.getList(1);
+      } else if (tab.paneName == "second") {
+        // 查询生产订单
+      }else if (tab.paneName == "fourth") {
+        // 查询半成品订单
+        this.getHarfProList(1)
+      }
+    },
 
     // 关联送货单号，参数为入库单商品索引
     addOrderMsg(index) {
@@ -1006,7 +1241,60 @@ export default {
       console.log(res)
       this.orderList = res.body.rows;
       this.total = res.body.total;
-    }
+    },
+
+    // 半成品入库
+  async getHarfProList(val){
+    if (val) {
+        // 重新点击时，需要重置查询页数
+        this.chaHarfProOrderForm.pageCode = 1;
+        this.chaOrder = JSON.parse(JSON.stringify(this.chaHarfProOrderForm));
+      }
+      const { data: res } = await this.$http.post(
+        "sc/ProductionExecution/selectBatch1",
+        this.chaOrder
+      );
+
+      
+
+      console.log("半成品 查询")
+      console.log(res)
+      this.orderList = res.body.rows;
+      this.total = res.body.total;
+  },
+  harfProOrderInput(row){
+    this.addOrderFrom.porderCode = row.prolistCode
+    this.addOrderFrom.inboundType = "3"
+
+    let arr = []
+    let harfGoodMsg = {}
+    // 商品名称
+    harfGoodMsg.productName = row.productName
+    // 产品名称
+    harfGoodMsg.productType = row.productType
+    // 印刷批次号
+    harfGoodMsg.pbatParameterscode = row.pbatParameterscode
+    // 总数
+    harfGoodMsg.pbatWeight = row.pbatWeight
+    // 半成品商品id
+    harfGoodMsg.productgoodsId1 = row.productgoodsId
+
+
+    arr.push(harfGoodMsg)
+    this.addOrderFrom.inboundGoolsDos = arr
+
+
+
+    this.addHarfProOrderVisible = true;
+  },
+  async selectProductMsg(){
+    const { data: res} = await this.$http.post(
+        "jc/Produconggoods/selectProducing",{}
+      );
+    this.productList = res.body.rows
+    console.log("生产商品列表")
+    console.log(this.productList)
+  },
   }
 };
 </script>

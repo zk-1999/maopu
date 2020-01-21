@@ -504,7 +504,7 @@ export default {
         good.sum = 0;
         res2.forEach((item, index, array) => {
           if (good.suppliergoolsId == item.suppliergoolsId) {
-            good.sum = item.sum;
+            good.sum = item.supoutboundsum;
           }
         });
       });

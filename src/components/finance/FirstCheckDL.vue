@@ -53,7 +53,7 @@
       </el-form>
       <!-- </el-row> -->
       <!-- 4个按钮 -->
-      <el-button type="success"  @click="addbumenDialogVisible = true">新 增</el-button>
+      <!-- <el-button type="success"  @click="addbumenDialogVisible = true">新 增</el-button> -->
       <el-button type="warning" @click="selectedqi(1)">提 审</el-button>
       <el-table border stripe :data="dispatchListList" @selection-change="handleSelectionChange" align="center">
             <el-table-column type="selection" width="35"></el-table-column>

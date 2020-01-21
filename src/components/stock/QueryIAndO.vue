@@ -31,6 +31,7 @@
                     <el-option value="0" label="采购入库"></el-option>
                     <el-option value="1" label="生产入库"></el-option>
                     <el-option value="2" label="生产退料入库"></el-option>
+                    <el-option value="3" label="半成品入库"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="入库状态：" prop="inboundStatus">
@@ -64,8 +65,8 @@
                 <template slot-scope="scope">
                   <span v-if="scope.row.inboundType == 0">采购入库</span>
                   <span v-if="scope.row.inboundType == 1">生产入库</span>
-                  <span v-if="scope.row.inboundType == 2">售后入库</span>
-                  <span v-if="scope.row.inboundType == 3">其他入库</span>
+                  <span v-if="scope.row.inboundType == 2">生产退料入库</span>
+                  <span v-if="scope.row.inboundType == 3">半成品入库</span>
                 </template>
               </el-table-column>
               <el-table-column prop="inboundWhousenum" label="入库数量"></el-table-column>
@@ -84,13 +85,13 @@
                   <el-button
                     type="success"
                     size="mini"
-                    @click="lookUpState = true;showEditOrder(scope.row.inboundReceipt,scope.row.inboundStatus)"
+                    @click="lookUpState = true;showEditOrder(scope.row.inboundReceipt,scope.row.inboundStatus,scope.row.inboundType)"
                   >查看</el-button>
                   <el-button
                     type="primary"
                     size="mini"
                     :disabled="scope.row.inboundStatus == 0 || scope.row.inboundStatus == 2"
-                    @click="lookUpState = false;showEditOrder(scope.row.inboundReceipt,scope.row.inboundStatus)"
+                    @click="lookUpState = false;showEditOrder(scope.row.inboundReceipt,scope.row.inboundStatus,scope.row.inboundType)"
                   >编辑</el-button>
                   <el-button
                     type="danger"
@@ -264,6 +265,7 @@
 
         <br />
 
+        <div v-show="inboundTypeFlag == 0">
         <el-button
           type="primary"
           @click="addGoods(editOrderFrom.porderCode)"
@@ -275,11 +277,13 @@
           :disabled="selectedList.length == 0"
           v-if="!lookUpState"
         >删除商品</el-button>
+        </div>
 
         <!-- 带有排序功能的商品table -->
         <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
         <!-- v-show="addOrderFrom.inboundType == 0" -->
         <!-- style="width: 100%" -->
+        <div v-show="inboundTypeFlag == 0">
         <el-table :data="editOrderFrom.inboundGoolsDos" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center"></el-table-column>
           <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
@@ -345,6 +349,59 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
+        <div v-show="inboundTypeFlag == 3">
+          <el-table
+          :data="editOrderFrom.inboundGoolsDos"
+          style="width: 100%"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="productName" label="商品名称"></el-table-column>
+          <el-table-column prop="productType" label="产品名称"></el-table-column>
+          <el-table-column prop="pbatParameterscode" label="印刷批次号"></el-table-column>
+          <el-table-column prop="pbatWeight" label="总数"></el-table-column>
+          <!-- <el-table-column prop="sum" label="已入库数量"></el-table-column> -->
+          <el-table-column prop="inboundgoolsNum" label="本次入库数量">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.inboundgoolsNum" :disabled="lookUpState"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pcommodityUnit" label="单位">
+            <template slot-scope="scope">
+              <el-select
+                v-model="scope.row.pcommodityUnit"
+                placeholder="请选择"
+                class="_small"
+                :disabled="lookUpState"
+              >
+                <el-option
+                  v-for="item in unit"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="basicId" label="入库仓库" width="140px">
+            <template slot-scope="scope">
+              <el-select
+                v-model="scope.row.basicId"
+                placeholder="请选择"
+                class="_small"
+                :disabled="lookUpState"
+              >
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.basicId"
+                  :label="item.basicRetainone"
+                  :value="item.basicId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+        </el-table>
+        </div>
         <br />
         <el-form-item label="备注：" prop="inboundRemark">
           <el-input
@@ -652,6 +709,8 @@ export default {
       traceNodialogVisible: false, //送货单信息dialog是否可见
       traceNoList: [{}], //送货单表单数组
 
+      total:0,
+
       // 出库部分
       chaOutOrderForm: {
         outboundReceipt: "", //出库单号
@@ -677,6 +736,8 @@ export default {
       checkState:false,
       purchaseGoodsList:[],
       flag:false,
+
+      inboundTypeFlag:0,//控制dialog table显示
 
     };
   },
@@ -775,12 +836,16 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 查看表单
-    async showEditOrder(inboundReceipt,inboundStatus) {
+    async showEditOrder(inboundReceipt,inboundStatus,inboundType) {
       if(inboundStatus != 0){
         this.showCheckMsg = true;
       }else{
         this.showCheckMsg = false;
       }
+
+       this.inboundTypeFlag = inboundType;// 设置标志，控制表单显示
+
+      if(inboundType == 0){// 采购入库
       
       const { data: res } = await this.$http.post(
         "kc/inbound/selectindisplay",
@@ -830,7 +895,7 @@ export default {
       this.editOrderFrom.inboundGoolsDos.forEach((good, index, array) => {
         res2.forEach((item, index, array) => {
           if (good.suppliergoolsId == item.suppliergoolsId) {
-            good.sum = item.sum;
+            good.sum = item.supinboundsum;
           }
         });
       });
@@ -852,6 +917,36 @@ export default {
           }
         });
       });
+      }else if(inboundType == 3){// 半成品入库
+        const { data: res } = await this.$http.post(
+          "kc/inbound/selectindisplay",
+          {inboundReceipt:inboundReceipt}
+        );
+        let editOrder = res.body.result
+
+        editOrder.inboundType += ""
+
+        const { data: res1 } = await this.$http.post(
+          "jc/Produconggoods/selectall",
+          [res.body.result.inboundGoolsDos[0].productgoodsId1]
+        );
+
+        editOrder.inboundGoolsDos[0].productName = res1[0].productName
+        editOrder.inboundGoolsDos[0].productType = res1[0].productType
+
+        // 仓库
+        editOrder.inboundGoolsDos[0].basicId = Number(editOrder.inboundGoolsDos[0].basicId)
+        // 单位
+        editOrder.inboundGoolsDos[0].pcommodityUnit = Number(editOrder.inboundGoolsDos[0].pcommodityUnit)
+
+        // 查看时显示 审核结果 审核描述
+      // if(this.checkState == false){
+      //   this.inboundStatus = editOrder.inboundStatus + ""
+      //   this.inboundDesc = editOrder.inboundDesc
+      // }
+
+        this.editOrderFrom = editOrder
+      }
 
       console.log(this.editOrderFrom);
       this.editOrderFrom.inboundType += "";
@@ -1223,7 +1318,7 @@ export default {
         good.sum = 0;
         res2.forEach((item, index, array) => {
           if (good.suppliergoolsId == item.suppliergoolsId) {
-            good.sum = item.sum;
+            good.sum = item.supoutboundsum;
           }
         });
       });

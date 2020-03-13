@@ -23,6 +23,7 @@ body,
 
 .min1500 {
     min-width: 1600px;
+    /* background-color: aqua; */
 }
 
 .el-dialog__header {

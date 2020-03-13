@@ -41,6 +41,7 @@
         :data="ordermanagementList"
         striped
         border
+        :default-sort = "{prop: 'sorderCreatetime', order: 'descending'}"
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
@@ -52,7 +53,7 @@
         <el-table-column prop="sorderTotalsum" label="交货方式"></el-table-column>
         <el-table-column prop="sorderAllnumber" label="销售数量"></el-table-column>
         <el-table-column prop="sorderDeliverytime" label="交货日期"></el-table-column>
-        <el-table-column prop="sorderCreatetime" label="下单日期"></el-table-column>
+        <el-table-column prop="sorderCreatetime" label="下单日期" :formatter="formatter"></el-table-column>
         <el-table-column label="操作" width="150px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true,1)" type="success" size="small" >转为生产单</el-button>
@@ -286,6 +287,9 @@ export default {
     this.getCookie();
   },
   methods: {
+    formatter(row, column) {
+        return row.address;
+    },
      zhuanweishengchandan(shengchan,prolistNumber) {
        console.log(shengchan);
        

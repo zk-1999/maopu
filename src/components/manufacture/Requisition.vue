@@ -72,7 +72,7 @@
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
-             <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
+             <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" :disabled="scope.row.prolistState=='4'">查看</el-button>
              <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" >物料控制</el-button>
           </template>
         </el-table-column>
@@ -105,8 +105,8 @@
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.banFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="产品名称" prop="supgoolsId" ></el-table-column>
-    <el-table-column label="规格" prop="supgoolssmallType" ></el-table-column>
+    <el-table-column label="产品名称" prop="productType" ></el-table-column>
+    <el-table-column label="规格" prop="productNorms" ></el-table-column>
     <el-table-column label="重量" prop="banPlannum">
       <template scope="scope">
         <el-input v-model="scope.row.banPlannum"></el-input>
@@ -165,16 +165,16 @@
     >
       <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
         <el-form-item label="商品名称：" prop="goodsBigType"></el-form-item>
-         <el-form-item >
+         <!-- <el-form-item >
            <el-button >查看</el-button>
-         </el-form-item>
+         </el-form-item> -->
       </el-form>
       <el-table border stripe :data="shangpi" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column type="index" width="50px" label="序号" align="center"></el-table-column>
-        <el-table-column prop="supgoolsId" label="商品名称"></el-table-column>
-        <el-table-column prop="supgoolssmallType" label="产品名称"></el-table-column>
-        <el-table-column prop="supgoolsSplicing" label="规格"></el-table-column>
+        <el-table-column prop="productName" label="商品名称"></el-table-column>
+        <el-table-column prop="productType" label="产品名称"></el-table-column>
+        <el-table-column prop="productNorms" label="规格"></el-table-column>
         <el-table-column label="库存" prop="kcTotalstock"></el-table-column>
         <el-table-column label="单位" prop="productOutbao"></el-table-column>
       </el-table>
@@ -410,16 +410,27 @@ export default {
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
+    async banchengpin(){
+     const { data: res } = await this.$http.post(
+        "jc/Produconggoods/selectProducing",
+        {pageCode: 1,
+pageSize: 1000,
+productLeixing: "0",}
+      );
+      this.shangpi = res.body.rows;
+      this.total = res.body.total;
+    
+    },
     xuanzhewuliao(){
        if (this.editManageVisible == true) {
         this.productgoodsIdList = this.editMaterialForm.banFormingDOs.map(
           item => {
-            return item.suppliergoolsId;
+            return item.productgoodsId;
           }
         );
       } 
       this.dialogVisible1=true;
-      this.changeGoodsBigType();
+      this.banchengpin();
     },
     xuanzhewuliao1(){
       this.chooseGoodsForm.goodsBigType='纸箱';
@@ -501,7 +512,7 @@ export default {
           if(this.editManageVisible==true){
             const needAdd = [];
           this.selectedList.forEach(item => {
-            if (this.productgoodsIdList.indexOf(item.suppliergoolsId) === -1) {
+            if (this.productgoodsIdList.indexOf(item.productgoodsId) === -1) {
               needAdd.push(item);
             } else {
               chongfu ++;
@@ -545,8 +556,19 @@ export default {
       }
       
       this.delarr=[];
-      for (let i = 0; i < this.selectedList.length; i++) {
-        this.delarr.push(this.selectedList[i].suppliergoolsId)
+      if(this.chooseGoodsForm.goodsBigType=='纸箱'){
+        for (let i = 0; i < this.selectedList.length; i++) {
+          this.delarr.push(this.selectedList[i].suppliergoolsId)
+        }
+      }else if(this.chooseGoodsForm.goodsBigType=='袋子'){
+        for (let i = 0; i < this.selectedList.length; i++) {
+          this.delarr.push(this.selectedList[i].suppliergoolsId)
+        }
+      }
+      else{
+        for (let i = 0; i < this.selectedList.length; i++) {
+          this.delarr.push(this.selectedList[i].productgoodsId)
+        }
       }
     },
     async deleteRow(){
@@ -572,7 +594,7 @@ export default {
         if(this.editManageVisible==true){
              for (let index = 0; index < this.delarr.length; index++) {
            for (let i = 0; i < this.editMaterialForm.banFormingDOs.length; i++) {
-              if(this.delarr[index]==this.editMaterialForm.banFormingDOs[i].suppliergoolsId)
+              if(this.delarr[index]==this.editMaterialForm.banFormingDOs[i].productgoodsId)
               this.editMaterialForm.banFormingDOs.splice(i,1);
            }
          }

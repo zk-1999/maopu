@@ -415,6 +415,8 @@ export default {
   },
   methods: {
     async getClientList(){
+      console.log(this.$route.query.id);
+      this.chaclientForm.cusName=this.$route.query.id;
        const { data: res } = await this.$http.post("jc/customer/selectCustomer",this.chaclientForm);
       console.log(res);
       this.total=res.body.total;
@@ -448,6 +450,7 @@ export default {
         }
     },
     chaclientResetForm(){
+      this.$route.query.id='',
      this.$refs.chaclientRef.resetFields();
      this.getClientList();
 

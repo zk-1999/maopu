@@ -92,7 +92,7 @@
           :page-size="10"
           layout="total, prev, pager, next"
           :total="total"
-          :current-page="currentPage"
+          :current-page="chaOrder.pageCode"
         ></el-pagination>
       </el-tabs>
     </el-card>
@@ -566,7 +566,6 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     // 解决弹出框title
@@ -591,8 +590,6 @@ export default {
     // 获取仓库列表
     async getWarehouseOptions() {
       const { data: res } = await this.$http.post("jc/Basic/selectwarehousing");
-      // console.log('仓库')
-      // console.log(res)
       this.warehouseOptions = res; //如何取
     },
     // 表单重置
@@ -603,7 +600,6 @@ export default {
     //分页相关函数
     handleSizeChange(val) {
       this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
       this.queryOrderList();
     },
     handleCurrentChange(val) {
@@ -651,8 +647,6 @@ export default {
       const { data: res } = await this.$http.post("kc/inventory/selectAll", {
         inventoryReceipt: inventoryReceipt
       });
-      console.log("----------------------");
-      console.log(res);
 
       let showOrder = res.body.result[0];
       // 仓库
@@ -731,8 +725,6 @@ export default {
           })
         })
 
-        console.log("111111111111111111111111")
-        console.log(showOrder)
       }
 
       this.showOrderForm = showOrder;
@@ -742,7 +734,6 @@ export default {
 
     // 新增盘点单
     async addSave() {
-      console.log(this.addOrderForm);
       const { data: res } = await this.$http.post(
         "kc/inventory/createorder",
         this.addOrderForm
@@ -778,7 +769,6 @@ export default {
         "jc/suppliergoods/selectSuppliergoolslist",
         { params: { lab: this.chooseGoodsForm.goodsBigType } }
       );
-      // console.log(res);
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -804,8 +794,6 @@ export default {
     },
     // 选择商品表单保存
     async chooseGoodsFormSava() {
-      console.log("---------------------------  ");
-      console.log(this.selectedList);
 
       // 中间量
       let goods = [];
@@ -877,12 +865,9 @@ export default {
         });
       });
 
-      console.log(goods);
       this.addOrderForm.inventoryGoolsDos = goods;
 
-      console.log("111111111111111111111111");
       // this.addOrderForm.inventoryGoolsDos = this.selectedList
-      console.log(this.addOrderForm.inventoryGoolsDos);
       this.visibleOfChooseGoods = false;
     },
 
@@ -933,9 +918,6 @@ export default {
         }
       );
       // } else {
-      //   console.log('--------------');
-
-      //   console.log(this.addOrderForm.inventoryGoolsDos);
 
       //   this.productgoodsIdList = this.editOrdermanagementForm.commodityListDOs.map(
       //     item => {
@@ -948,7 +930,6 @@ export default {
         "jc/Produconggoods/selectProducing",
         this.shengchanFrom
       );
-      console.log(res);
       this.shengchanlist = res.body.rows;
       this.addOrdermanagementVisible1 = true;
     },
@@ -1004,8 +985,6 @@ export default {
               chongfu++;
             }
           });
-          console.log("needAdd");
-          console.log(needAdd);
           this.addOrderForm.inventoryGoolsDos = [
             ...this.addOrderForm.inventoryGoolsDos,
             ...needAdd
@@ -1026,7 +1005,6 @@ export default {
         // ];
         // }
       } else {
-        console.log("++++++++++++++++++++");
         for (let index = 0; index < this.selectedList.length; index++) {
           if (this.addOrdermanagementVisible1 == true) {
             this.addOrderForm.inventoryGoolsDos.push(this.selectedList[index]);
@@ -1035,8 +1013,6 @@ export default {
           //     this.editOrdermanagementForm.commodityListDOs.push(this.selectedList[index]);
           // }
         }
-        console.log(this.selectedList);
-        console.log(this.addOrderForm.inventoryGoolsDos);
       }
       const charu = this.selectedList.length - chongfu;
       this.$message({
@@ -1046,10 +1022,6 @@ export default {
             ? `此次添加有重复数据，重复数据${chongfu}条，成功插入${charu}条`
             : `此次成功插入${charu}条`
       });
-      console.log("---------------------------------");
-      console.log(this.addOrderForm.inventoryGoolsDos);
-      console.log("---------------------------------");
-      console.log(this.selectedList);
       this.addOrdermanagementVisible1 = false;
       this.addOrdermanagementVisible2 = false;
       //   this.editOrdermanagementVisible1=false;
@@ -1058,8 +1030,6 @@ export default {
     dialogClosed1(){
       this.$refs.shengchantRef.resetFields();
       this.selectedList = [];
-      console.log("this.selectedList")
-      console.log(this.selectedList)
     },
   }
 };

@@ -89,10 +89,10 @@
         {{scope.row.commodityNumber}}
       </template>
     </el-table-column>
-    <el-table-column label="库存数量" prop="" ></el-table-column>
+    <el-table-column label="库存数量" prop="producinggoodsDOs.ckcTotalstock" ></el-table-column>
     <el-table-column label="生产数量" prop="prolistNumber">
       <template scope="scope">
-        <el-input v-model="scope.row.prolistNumber"></el-input>
+        <el-input v-model="scope.row.prolistNumber" :disabled="scope.row.commodityStatus==1"></el-input>
       </template>
     </el-table-column>
     <el-table-column label="操作" width="135px">
@@ -291,24 +291,29 @@ export default {
         return row.address;
     },
      zhuanweishengchandan(shengchan,prolistNumber) {
-       console.log(shengchan);
-       
         this.$confirm('此操作将转为生产单, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async() => {
           const { data: res } = await this.$http.post("sc/Production/insertproduction",shengchan,prolistNumber);
+          this.showEditOrdermanagement(shengchan.sorderCode,true,1)
+           if (res.body.respCode==500) {
           this.$message({
-            type: 'success',
-            message: '成功转为生产单!'
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
           });
+        }
+          
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消转为生产单'
-          });          
+                  
         });
+        
       },
     yufukuanshuju(){
       this.yufukuan.payexamine=this.shenpiren;

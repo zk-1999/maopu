@@ -261,7 +261,7 @@
         </div>
 
         <div v-if="!lookUpState2">
-          <hr />
+          <div class="fenge1">退货审核-财务复审</div>
         <el-form-item label="审核人：" prop="preturnFushen">
           <el-input v-model="editReturnFrom.preturnFushen" :disabled="true"></el-input>
         </el-form-item>&nbsp; &nbsp;

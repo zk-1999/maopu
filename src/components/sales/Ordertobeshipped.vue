@@ -155,7 +155,7 @@
           <el-table-column label="交货方式" prop="sorderTotalsum"></el-table-column>
           <el-table-column label="商品名称" prop="producinggoodsDOs.productName"></el-table-column>
           <el-table-column label="数量" prop="commodityNumber"></el-table-column>
-          <el-table-column label="已发数量" prop="sorderAuqntityshipped"></el-table-column>
+          <el-table-column label="已发数量" prop="commodityRealnum"></el-table-column>
           <el-table-column label="发货数量" prop="dorderNumbers">
             <template scope="scope">
               <el-input v-model="scope.row.dorderNumbers"></el-input>

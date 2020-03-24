@@ -13,24 +13,31 @@
         :model="chaManageForm"
         ref="chaOrdermanagementRef"
       >
-        <el-form-item label="生产单号：" prop="sorderCode">
+        <el-form-item label="生产单号：" prop="prolistCode">
           <el-input v-model="chaManageForm.prolistCode"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称：" prop="customerId">
-          <el-select v-model="chaManageForm.customerId" placeholder="请选择" class="w100">
+        <el-form-item label="商品名称：" prop="productName">
+          <el-input v-model="chaManageForm.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名称：" prop="basicId">
+                    <el-select v-model="chaManageForm.basicId" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinmingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+        <el-form-item label="生产单状态：" prop="prolistState">
+          <el-select v-model="chaManageForm.prolistState" placeholder="请选择" class="w120">
             <el-option
-              v-for="item in kehu"
-              :key="item.customerId"
-              :label="item.cusName"
-              :value="item.customerId">
+              v-for="item in zhuangtai"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="合同号：" prop="sorderWarehouse">
-          <el-input v-model="chaManageForm.sorderWarehouse"></el-input>
-        </el-form-item>
-        <el-form-item label="交货方式：" prop="sorderTotalsum">
-          <el-input v-model="chaManageForm.sorderTotalsum"></el-input>
         </el-form-item>
         <el-form-item >
           <el-button @click="ManageList">查 询</el-button>
@@ -62,11 +69,11 @@
           {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.sorderDeliverytime==null? '没有交货日期' : scope.row.saleOrderDO.sorderDeliverytime}}
           </template> 
         </el-table-column>
-        <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
-        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column>
+        <!-- <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
+        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column> -->
         <el-table-column prop="prolistState" label="生产单状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待生产</el-tag>
+          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待排程</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='1'">待印刷领料</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='2'">待印刷</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='3'">印刷中</el-tag>
@@ -93,7 +100,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-    title="成品"
+    :title="xianshi ? '查看成品' : '成品'"
     :visible.sync="editManageVisible"
     width="60%"
     :before-close="handleClose">
@@ -117,8 +124,8 @@
         <div class="fenge1">半成品信息</div>
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.banFormingDOs">
-    <el-table-column label="产品名称" prop="supgoolsId" ></el-table-column>
-    <el-table-column label="规格" prop="supgoolssmallType" ></el-table-column>
+    <el-table-column label="产品名称" prop="producinggoodsDO.productName" ></el-table-column>
+    <el-table-column label="规格" prop="producinggoodsDO.productNorms" ></el-table-column>
     <el-table-column label="重量" prop="banPlannum"></el-table-column>
     <el-table-column label="单位" prop="productOutbao">
       <template >
@@ -145,25 +152,25 @@
       
     </el-table-column>
   </el-table>
-  <div class="fenge1">模具信息</div>
-   <el-form-item label="选择模具" prop="goodsBigType">
-          <el-select v-model="editMaterialForm.basicId" placeholder="请选择">
+  <div class="fenge1" v-if="machinedBatchDOs1">模具信息</div>
+   <el-form-item label="选择模具" prop="goodsBigType" v-if="!xianshi">
+          <el-select v-model="editMaterialForm.basicId" placeholder="请选择" >
             <el-option
               v-for="item in editMaterialForm.machinedBatchDOs"
               :key="item.basicId"
-              :label="item.basicRetainone"
+              :label="item.mbatMouldname"
               :value="item.basicId">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-button type="primary" @click="tianmoju">添加</el-button>
-        <el-button type="primary" @click="selected">删除</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="tianmoju">添加</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="selected">删除</el-button>
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="machinedBatchDOs1">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="模具名称" prop="basicRetainone" ></el-table-column>
-    <el-table-column label="模具产能" prop="basicRetainone1" ></el-table-column>
-    <el-table-column label="生产追踪号" prop="basicName"></el-table-column>
+    <el-table-column label="模具名称" prop="mbatMouldname" ></el-table-column>
+    <el-table-column label="模具产能" prop="mbatMouldcapacity" ></el-table-column>
+    <el-table-column label="生产追踪号" prop="mbatCode"></el-table-column>
     <el-table-column label="实际生产数量" prop="mbatReallynum">
 <template scope="scope">
         <el-input v-model="scope.row.mbatReallynum"></el-input>
@@ -173,7 +180,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addMaterial">确 定</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="addMaterial">确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
@@ -349,14 +356,28 @@ export default {
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        prolistCode:'',
-        customerId:'',
+         prolistCode:'',
+        productName:'',
+        basicId:'',
+        prolistState:'',
         line:5,
-        sorderTotalsum:'',
-        sorderWarehouse:'',
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
       },
+      chanpinmingcheng:[],
+       basicDO:{
+         productType:'',
+      },
+      zhuangtai:[
+        {id:0,value:'待生产'},
+        {id:1,value:'待印刷领料'},
+        {id:2,value:'待印刷'},
+        {id:3,value:'印刷中'},
+        {id:4,value:'待成型领料'},
+        {id:5,value:'待成型'},
+        {id:6,value:'成型中'},
+        {id:7,value:'已完成'},
+      ],
       addManageForm1:{
        productLeixing:'',
         // productgoodsId:'',
@@ -664,6 +685,11 @@ export default {
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(prolistCode,xian,sorderStatus) {
+         if(sorderStatus==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("sc/Forming/select",param);
@@ -671,6 +697,7 @@ export default {
       this.producinggoodsDO1.push(res.body.producinggoodsDO);
       this.editMaterialForm.producinggoodsDO= this.producinggoodsDO1;
       this.editMaterialForm.machinedBatchDOs=res.body.machinedBatchDOs;
+      this.machinedBatchDOs1=res.body.machinedBatchDOs1;
       this.editMaterialForm.prolistCode=prolistCode;
       if(res.body.formingPickingDO.machMan){
          this.editMaterialForm.machMan=res.body.formingPickingDO.machMan;
@@ -684,6 +711,8 @@ export default {
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
       this.yinshuafangshi = res;
+       const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.chanpinmingcheng=res2;
     },
 
     handleClose(done) {

@@ -13,24 +13,31 @@
         :model="chaManageForm"
         ref="chaOrdermanagementRef"
       >
-        <el-form-item label="生产单号：" prop="sorderCode">
+        <el-form-item label="生产单号：" prop="prolistCode">
           <el-input v-model="chaManageForm.prolistCode"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称：" prop="customerId">
-          <el-select v-model="chaManageForm.customerId" placeholder="请选择" class="w100">
+        <el-form-item label="商品名称：" prop="productName">
+          <el-input v-model="chaManageForm.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名称：" prop="basicId">
+                    <el-select v-model="chaManageForm.basicId" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinmingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+        <el-form-item label="质检状态：" prop="pbatStatus">
+          <el-select v-model="chaManageForm.pbatStatus" placeholder="请选择" class="w120">
             <el-option
-              v-for="item in kehu"
-              :key="item.customerId"
-              :label="item.cusName"
-              :value="item.customerId">
+              v-for="item in zhuangtai"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="合同号：" prop="sorderWarehouse">
-          <el-input v-model="chaManageForm.sorderWarehouse"></el-input>
-        </el-form-item>
-        <el-form-item label="交货方式：" prop="sorderTotalsum">
-          <el-input v-model="chaManageForm.sorderTotalsum"></el-input>
         </el-form-item>
         <el-form-item >
           <el-button @click="ManageList">查 询</el-button>
@@ -54,17 +61,17 @@
         <el-table-column prop="pbatParameterscode" label="批次号">
         </el-table-column>
         <el-table-column prop="pbatWeight" label="重量"></el-table-column>
-         <el-table-column prop="pbatStatus" label="生产单状态" align="center">
+         <el-table-column prop="pbatStatus" label="质检状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.pbatStatus==null">待质检</el-tag>
-          <el-tag type="danger" v-if="scope.row.pbatStatus=='0'">质检通过</el-tag>
-          <el-tag type="danger" v-if="scope.row.pbatStatus=='1'">质检不通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='0'">待质检</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='1'">质检通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.pbatStatus=='2'">质检不通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showMaterial(scope.row.pbatId,scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.pbatId,scope.row.prolistCode,true,1)" :disabled="scope.row.pbatStatus==1" type="primary" size="small">印刷质检</el-button>
+             <el-button @click="showMaterial(scope.row.pbatId,scope.row.prolistCode,true,1)" :disabled="scope.row.pbatStatus==1||scope.row.pbatStatus==2" type="primary" size="small">印刷质检</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,7 +85,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-    title="印刷质检"
+    :title="xianshi ? '查看印刷质检' : '印刷质检'"
     :visible.sync="editManageVisible"
     width="50%"
     :before-close="handleClose">
@@ -112,8 +119,8 @@
       <el-input v-model="addzhijian.pbatController" :disabled='xianshi'></el-input>
     </el-form-item>
      <el-form-item label="质检结果："  prop="pbatStatus">
-      <el-radio v-model="addzhijian.pbatStatus" label='0' @change="guoqudangqianshijian" :disabled='xianshi'>通过</el-radio>
-      <el-radio v-model="addzhijian.pbatStatus" label='1' @change="guoqudangqianshijian"  :disabled='xianshi'>驳回</el-radio>
+      <el-radio v-model="addzhijian.pbatStatus" :label='1' @change="guoqudangqianshijian" :disabled='xianshi'>通过</el-radio>
+      <el-radio v-model="addzhijian.pbatStatus" :label='2' @change="guoqudangqianshijian"  :disabled='xianshi'>驳回</el-radio>
     </el-form-item>
     <el-form-item label="质检时间：" prop="pbatTime">
       <el-input v-model="addzhijian.pbatTime" :disabled='xianshi'></el-input>
@@ -124,7 +131,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addzhijianpanduan">确 定</el-button>
+        <el-button type="primary" @click="addzhijianpanduan" v-if="!xianshi">确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
@@ -267,13 +274,23 @@ export default {
       manageList:[],
       chaManageForm: {
         prolistCode:'',
-        customerId:'',
-        sorderTotalsum:'',
+        productName:'',
+        basicId:'',
+        pbatStatus:'',
         line:3,
-        sorderWarehouse:'',
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
       },
+      chanpinmingcheng:[],
+       basicDO:{
+         productType:'',
+      },
+      zhuangtai:[
+        {id:0,value:'待质检'},
+        {id:1,value:'质检通过'},
+        {id:2,value:'质检未通过'},
+        
+      ],
       addManageForm1:{
        productLeixing:'',
         // productgoodsId:'',
@@ -359,7 +376,7 @@ export default {
       pbatTime:'',
       pbatRemarks:'',
       pbatId:0,
-      pbatStatus:''
+      pbatStatus:0,
      }
     };
    
@@ -531,7 +548,13 @@ export default {
       }else{
         this.addzhijian.pbatController=res.body.ProductionBatchDO.pbatController;
       }
+      this.addzhijian.pbatStatus=res.body.ProductionBatchDO.pbatStatus;
+      console.log(this.addzhijian.pbatStatus);
+      console.log(this.addzhijian);
 
+      
+      this.addzhijian.pbatTime=res.body.ProductionBatchDO.pbatTime;
+      this.addzhijian.pbatRemarks=res.body.ProductionBatchDO.pbatRemarks;
       this.addzhijian.prolistCode=prolistCode;
 console.log(this.zhijian);
 
@@ -543,6 +566,8 @@ console.log(this.zhijian);
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
       this.yinshuafangshi = res;
+       const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.chanpinmingcheng=res2;
     },
 
     handleClose(done) {

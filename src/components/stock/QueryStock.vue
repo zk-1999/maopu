@@ -65,7 +65,7 @@
           </el-table>
           <el-pagination
             @current-change="handleCurrentChange"
-            :current-page="currentPage"
+            :current-page.sync="chaOrder.pageCode"
             :page-size="10"
             layout="total, prev, pager, next"
             :total="total"
@@ -119,7 +119,7 @@
             </el-row>
           </el-form>
 
-          <el-table border :data="orderList" @selection-change="addSelectionChange">
+          <el-table border :data="orderList">
             <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
             <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
             <el-table-column prop="productName" label="商品名称"></el-table-column>
@@ -132,7 +132,7 @@
           </el-table>
           <el-pagination
             @current-change="handleCurrentChange"
-            :current-page="currentPage"
+            :current-page.sync="chaProductOrder.pageCode"
             :page-size="10"
             layout="total, prev, pager, next"
             :total="total"
@@ -186,7 +186,7 @@
             </el-row>
           </el-form>
 
-          <el-table border :data="orderList" @selection-change="addSelectionChange">
+          <el-table border :data="orderList">
             <!-- <el-table-column type="selection" width="40" align="center"></el-table-column> -->
             <el-table-column type="index" width="50px" align="center" label="序号"></el-table-column>
             <el-table-column prop="productName" label="商品名称"></el-table-column>
@@ -199,7 +199,7 @@
           </el-table>
           <el-pagination
             @current-change="handleCurrentChange"
-            :current-page="currentPage"
+            :current-page.sync="chaHarfProductOrder.pageCode"
             :page-size="10"
             layout="total, prev, pager, next"
             :total="total"
@@ -209,13 +209,12 @@
     </el-card>
     <!-- 新增出库单 -->
     <!-- :title="addOrder?"新增销售订单":"编辑销售订单""  :visible.sync="addOrder || editOrder"-->
-    <el-dialog
+    <!-- <el-dialog
       :title=" '商品库存手动设置' "
       :visible.sync="addOrder"
       width="60%"
       :before-close="handleClose"
     >
-      <!-- 修改库存表单 -->
       <el-form title="库存" inline="true">
         <el-form-item label="商品大类型" prop="porderCode">
           <el-select v-model="chaOrderFrom" placeholder="请选择" class="_small">
@@ -241,18 +240,12 @@
             <el-option value="2" label="全部到货"></el-option>
           </el-select>
         </el-form-item>
-        <!-- 3个按钮 -->
         <el-form-item>
           <el-button type="primary" size="small" class="mar">查 询</el-button>
         </el-form-item>
         <hr />
 
-        <!-- 带有排序功能的商品table -->
-        <!-- :default-sort="{prop: 'date', order: 'descending'}" -->
         <el-table :data="goodsData" style="width: 100%">
-          <!-- <el-table-column prop="date" label="日期" sortable width="180"></el-table-column>
-              <el-table-column prop="name" label="姓名" sortable width="180"></el-table-column>
-          <el-table-column prop="address" label="地址" :formatter="formatter"></el-table-column>-->
 
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop label="商品名称"></el-table-column>
@@ -268,7 +261,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
+          :current-page.sync="chaOrder.pageCode"
           :page-size="10"
           layout="total,  prev, pager, next"
           :total="total"
@@ -278,7 +271,7 @@
         <el-button @click="addCancel()">取 消</el-button>
         <el-button @click="addSave" type="primary">确 认</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -332,12 +325,13 @@ export default {
         pageSize: 10
       },
       // 实际查询数据
-      chaHarfProductOrder: {}
+      chaHarfProductOrder: {},
+
+      addOrder:false,
+      chaOrderFrom:{},
     };
   },
   created() {
-    //自己写的方法
-    this.getWarehouseOptions();
     this.querySmallType();
     this.getPurGoodsList(1);
     this.queryUnit();
@@ -346,8 +340,6 @@ export default {
     // 查询库存单位
     async queryUnit() {
       const { data: res } = await this.$http.post("jc/Basic/selectstorenum");
-      console.log("单位");
-      console.log(res);
       this.unit = res;
     },
     // 表单重置
@@ -367,7 +359,6 @@ export default {
 
         this.delarr += this.selectedList[i].deptId + ",";
       }
-      console.log(this.delarr);
     },
     async deleteRow() {
       let param = new URLSearchParams();
@@ -412,7 +403,6 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     // 解决弹出框title
@@ -432,7 +422,7 @@ export default {
     // 获取仓库列表
     async getWarehouseOptions() {
       const { data: res } = await this.$http.get("/getWarehouseOptions");
-      this.warehouseOptions = res.body.rows; //如何取
+      this.warehouseOptions = res.body.rows; 
     },
     // 查询订单列表
     async queryOrderList() {
@@ -444,10 +434,8 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response);
         })
         .catch(function(error) {
-          console.log(error);
         })
         .then(function() {
           // always executed
@@ -458,7 +446,6 @@ export default {
     //分页相关函数
     handleSizeChange(val) {
       this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
       this.queryOrderList();
     },
     handleCurrentChange(val) {
@@ -484,10 +471,6 @@ export default {
       );
       let orderListMsg = res.body.rows;
 
-      console.log("orderListMsg");
-      console.log(orderListMsg);
-      console.log("this.unit");
-      console.log(this.unit);
       // 封装单位
       orderListMsg.forEach((item, index, array) => {
         this.unit.forEach((u, index2, array2) => {
@@ -501,14 +484,10 @@ export default {
       orderListMsg.forEach((item, index, array) => {
         ids.push(item.suppliergoolsId);
       });
-      console.log("ids");
-      console.log(ids);
       const { data: res1 } = await this.$http.post(
         "jc/suppliergoods/selectSuppliergoolslistmore",
         ids
       );
-      console.log("res1");
-      console.log(res1);
       orderListMsg.forEach((item, index, array) => {
         res1.forEach((good, index2, array2) => {
           if (item.suppliergoolsId == good.suppliergoolsId) {
@@ -520,8 +499,6 @@ export default {
       });
 
       this.orderList = orderListMsg;
-
-      console.log(this.orderList);
 
       this.total = res.body.total;
     },
@@ -546,8 +523,6 @@ export default {
       orderListMsg.forEach((item, index, array) => {
         ids.push(item.productgoodsId);
       });
-      console.log("ids");
-      console.log(ids);
       const { data: res1 } = await this.$http.post(
         "/jc/Produconggoods/selectall",
         ids
@@ -582,7 +557,7 @@ export default {
 
     // 处理标签页切换
     handleClick(tab, event) {
-      console.log(tab, event);
+      this.orderList = [];
       if (tab.paneName == "first") {
         // 查询采购订单
         this.getPurGoodsList(1);
@@ -614,8 +589,6 @@ export default {
       orderListMsg.forEach((item, index, array) => {
         ids.push(item.productgoodsId);
       });
-      console.log("ids");
-      console.log(ids);
       const { data: res1 } = await this.$http.post(
         "/jc/Produconggoods/selectall",
         ids

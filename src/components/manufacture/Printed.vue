@@ -13,24 +13,31 @@
         :model="chaManageForm"
         ref="chaOrdermanagementRef"
       >
-        <el-form-item label="生产单号：" prop="sorderCode">
+       <el-form-item label="生产单号：" prop="prolistCode">
           <el-input v-model="chaManageForm.prolistCode"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称：" prop="customerId">
-          <el-select v-model="chaManageForm.customerId" placeholder="请选择" class="w100">
+        <el-form-item label="商品名称：" prop="productName">
+          <el-input v-model="chaManageForm.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名称：" prop="basicId">
+                    <el-select v-model="chaManageForm.basicId" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinmingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+        <el-form-item label="生产单状态：" prop="prolistState">
+          <el-select v-model="chaManageForm.prolistState" placeholder="请选择" class="w120">
             <el-option
-              v-for="item in kehu"
-              :key="item.customerId"
-              :label="item.cusName"
-              :value="item.customerId">
+              v-for="item in zhuangtai"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="合同号：" prop="sorderWarehouse">
-          <el-input v-model="chaManageForm.sorderWarehouse"></el-input>
-        </el-form-item>
-        <el-form-item label="交货方式：" prop="sorderTotalsum">
-          <el-input v-model="chaManageForm.sorderTotalsum"></el-input>
         </el-form-item>
         <el-form-item >
           <el-button @click="ManageList">查 询</el-button>
@@ -65,11 +72,11 @@
           {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.sorderDeliverytime==null? '没有交货日期' : scope.row.saleOrderDO.sorderDeliverytime}}
           </template> 
         </el-table-column>
-        <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
-        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column>
+        <!-- <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
+        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column> -->
         <el-table-column prop="prolistState" label="生产单状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待生产</el-tag>
+          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待排程</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='1'">待印刷领料</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='2'">待印刷</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='3'">印刷中</el-tag>
@@ -98,10 +105,11 @@
      
     <el-dialog
     
-    title="印刷"
+    :title="xianshi ? '查看印刷' : '印刷'"
     :visible.sync="editManageVisible"
     width="75%"
-    :before-close="handleClose">
+    :before-close="handleClose"
+    @closed="dialogClosed">
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
         <div class="fenge">生产信息</div>
         <el-form-item label="生产单号：" prop="prolistCode">
@@ -121,7 +129,7 @@
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editPrintedForm.materialListDOs">
     <el-table-column type="index" label="序号" width="55" align="center"></el-table-column>
-    <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId"  align="center"></el-table-column>
+    <el-table-column label="物料编码" prop="supplierGoolsDO.supgoolsId"  align="center"></el-table-column>
     <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType"  align="center"></el-table-column>
     <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing" align="center"></el-table-column>
     <el-table-column label="计划使用量" prop="prolistPlannum" align="center"></el-table-column>
@@ -151,12 +159,12 @@
     <el-table-column label="印刷放量" prop="prolistParamenumber" width="80" align="center" ></el-table-column>
     <el-table-column label="计划用纸" prop="prolistUsemetre" align="center" ></el-table-column>
     <el-table-column label="印刷重量" prop="prolistParamemetre"  align="center" ></el-table-column>
-    <el-table-column label="油墨计划用量"  prop="prolistPeweight" align="center" ></el-table-column>
-    <el-table-column label="油墨实际使用量"  prop="productOnege" align="center" >
+    <el-table-column label="油墨用量"  prop="prolistPeweight" align="center" ></el-table-column>
+    <!-- <el-table-column label="油墨实际使用量"  prop="productOnege" align="center" >
       <template scope="scope">
         <el-input v-model="scope.row.prolistPlannum" :disabled='xianshi'></el-input>
       </template>
-    </el-table-column>
+    </el-table-column> -->
   </el-table>
   <div class="fenge1">印刷批次信息</div>
   <el-table border stripe :data="editPrintedForm.productionExecutionDO.productionBatchDOs" >
@@ -173,11 +181,11 @@
         </el-table-column>
         <el-table-column prop="pbatStatus" label="质检状态" align="center" >
           <template slot-scope="scope">
-             <el-tag type="danger">{{scope.row.pbatStatus=='' ? '待质检':scope.row.pbatStatus==0 ? '质检通过':'质检未通过'}}</el-tag>
+             <el-tag type="danger">{{scope.row.pbatStatus=='' ? '待质检':scope.row.pbatStatus==0 ? '待质检':scope.row.pbatStatus==1?'质检通过':'质检未通过'}}</el-tag>
           </template>
         </el-table-column>
       </el-table>
-      <el-button v-if="!xianshi" @click="editPrintedForm.productionExecutionDO.productionBatchDOs.push({})">增加行</el-button>
+      <el-button v-if="!xianshi" @click="editPrintedForm.productionExecutionDO.productionBatchDOs.push({pbatStatus:0})">增加行</el-button>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
@@ -188,7 +196,9 @@
     title="补料"
     :visible.sync="editManageVisible1"
     width="60%"
-    :before-close="handleClose">
+    :before-close="handleClose"
+    @closed="dialogClosed">
+   
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
         <div class="fenge">物料信息</div>
         <el-form-item label="生产单号：" prop="prolistCode">
@@ -230,7 +240,7 @@
       :visible.sync="dialogVisible11"
       width="58%"
       :before-close="handleClose"
-      @closed="dialogClosed('chooseGoodsForm')"
+      
     >
       <el-form :model="chooseGoodsForm" ref="chooseGoodsForm" :inline="true">
         <el-form-item label="商品大类型：" prop="goodsBigType">
@@ -272,7 +282,8 @@
     title="退料"
     :visible.sync="editManageVisible2"
     width="60%"
-    :before-close="handleClose">
+    :before-close="handleClose"
+    @closed="dialogClosed">
     <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
         <div class="fenge">物料信息</div>
         <el-form-item label="生产单号：" prop="prolistCode">
@@ -336,14 +347,29 @@ export default {
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        prolistCode:'',
+          prolistCode:'',
+        productName:'',
+        basicId:'',
+        prolistState:'',
         line:2,
-        customerId:'',
-        sorderTotalsum:'',
-        sorderWarehouse:'',
+        
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
       },
+      chanpinmingcheng:[],
+       basicDO:{
+         productType:'',
+      },
+      zhuangtai:[
+        {id:0,value:'待生产'},
+        {id:1,value:'待印刷领料'},
+        {id:2,value:'待印刷'},
+        {id:3,value:'印刷中'},
+        {id:4,value:'待成型领料'},
+        {id:5,value:'待成型'},
+        {id:6,value:'成型中'},
+        {id:7,value:'已完成'},
+      ],
       addManageForm1:{
        productLeixing:'',
         // productgoodsId:'',
@@ -405,6 +431,7 @@ export default {
       zijinzhanghu:[],
       kehu:[],
     //   this.
+  
     productgoodsIdList:[],
     traceNoList:[],
     };
@@ -415,6 +442,7 @@ export default {
     this.getCookie();
   },
   methods: {
+    
      async selectedqi1(){
       this.editMaterialForm.prolistCode= this.selectedList[0].prolistCode;
       this.editMaterialForm.prolistPlanman=this.shenpiren;
@@ -458,7 +486,7 @@ export default {
       this.editPrintedForm.parametersDO={};
       this.parametersDO1=[];
       let param = new URLSearchParams();
-          param.append("prolistCode", prolistCode);
+      param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("sc/ProductionExecution/selectbyid",param);
       this.editPrintedForm=res.body.SCProductionDO;
        this.editPrintedForm.parametersDO.prolistParameters=this.editPrintedForm.productionDO.prolistParameters;
@@ -483,10 +511,22 @@ export default {
       
     },
     async addPrinted(){
+      console.log(this.editPrintedForm.productionExecutionDO.productionBatchDOs);
+      for (let index = 0; index < this.editPrintedForm.productionExecutionDO.productionBatchDOs.length; index++) {
+        if(Object.keys(this.editPrintedForm.productionExecutionDO.productionBatchDOs[index]).length<=1){
+          this.editPrintedForm.productionExecutionDO.productionBatchDOs.splice(index,1);
+        }
+        
+      }
+      console.log(this.editPrintedForm.productionExecutionDO.productionBatchDOs);
+      
       this.editPrintedForm.parametersDO=this.editPrintedForm.parametersDO[0];
       const { data: res } = await this.$http.post("sc/ProductionExecution/update",this.editPrintedForm);
       this.editManageVisible=false;
     },
+     dialogClosed(){
+        this.$refs.addManageRef.resetFields();
+      },
    async ManageList() {
     //  if (this.chaManageForm.sorderCode!=''||this.chaManageForm.sorderTotalsum!=''||this.chaManageForm.sorderStatus!=''||this.chaManageForm.sorderWarehouse!='') {
     //    this.chaManageForm.pageCode=1;
@@ -497,6 +537,8 @@ export default {
       this.manageList = res.body.rows;
     },
      dialogClosed(val) {
+       this.editMaterialForm.buMaterialListDOs=[];
+      //  this.editMaterialForm.tuiMaterialListDOs=[];
       this.$refs[val].resetFields();
     },
     async changeGoodsBigType(val) {
@@ -628,6 +670,8 @@ console.log(this.editMaterialForm.buMaterialListDOs);
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
       this.yinshuafangshi = res;
+      const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.chanpinmingcheng=res2;
     },
 
     handleClose(done) {

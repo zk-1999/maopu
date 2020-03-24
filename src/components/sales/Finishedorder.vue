@@ -94,13 +94,13 @@
             <el-input v-model="editOrdertobeshippedForm.deliveryMan" disabled></el-input>
           </el-form-item>
           <el-form-item label="发货日期：" prop="deliveryTime">
-            <el-input v-model="editOrdertobeshippedForm.deliveryTime" :disabled="xianshi"></el-input>
+            <el-input v-model="editOrdertobeshippedForm.deliveryTime" disabled></el-input>
           </el-form-item>
           <el-form-item label="发货方式：" prop="deliveryMode">
-            <el-input v-model="editOrdertobeshippedForm.deliveryMode" :disabled="xianshi"></el-input>
+            <el-input v-model="editOrdertobeshippedForm.deliveryMode" disabled></el-input>
           </el-form-item>
           <el-form-item label="备注：" prop="deliveryRemark">
-      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark" :disabled="xianshi"></el-input>
+      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark" disabled></el-input>
     </el-form-item >
           <div class="fenge1">商品信息</div>
       <el-table
@@ -127,7 +127,7 @@
     <el-table-column label="已发数量" prop="saleOrderDO.sorderAuqntityshipped"></el-table-column>
     <el-table-column label="发货数量" prop="dorderNumbers">
        <template scope="scope">
-        <el-input v-model="scope.row.dorderNumbers" :disabled="xianshi"></el-input>
+        <el-input v-model="scope.row.dorderNumbers" disabled></el-input>
       </template>
     </el-table-column>
   </el-table>
@@ -136,19 +136,19 @@
       <el-input v-model="editOrdertobeshippedForm.deliveryReviewedman" :disabled="true"></el-input>
     </el-form-item>
      <el-form-item label="审核结果：" prop="deliveryStatus" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
-      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='1' @change="guoqudangqianshijian">通过</el-radio>
-      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='2' @change="guoqudangqianshijian">驳回</el-radio>
+      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='1' @change="guoqudangqianshijian" :disabled="xianshi">通过</el-radio>
+      <el-radio v-model="editOrdertobeshippedForm.deliveryStatus" label='2' @change="guoqudangqianshijian" :disabled="xianshi">驳回</el-radio>
     </el-form-item>
     <el-form-item label="审核时间：" prop="deliveryReviewedtime" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
-      <el-input v-model="editOrdertobeshippedForm.deliveryReviewedtime"></el-input>
+      <el-input v-model="editOrdertobeshippedForm.deliveryReviewedtime" :disabled="xianshi"></el-input>
     </el-form-item> 
     <el-form-item label="审核描述："  prop="deliveryRemark1" v-if="editOrdertobeshippedForm.deliveryStatus==1||xianshi1||editOrdertobeshippedForm.deliveryStatus==2">
-      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark1"></el-input>
+      <el-input class="w400" v-model="editOrdertobeshippedForm.deliveryRemark1" :disabled="xianshi"></el-input>
     </el-form-item>
   </el-form>
         <span slot="footer" class="dialog-footer">
         <el-button @click="editOrdermanagementVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editOrdertobeshipped" v-if="xianshi1">确 定</el-button>
+        <el-button type="primary" @click="editOrdertobeshipped" v-if="!xianshi">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="delVisible" width="300px">
@@ -316,12 +316,13 @@ export default {
        this.shenpiren= storage.getItem("username")
     },
     async showEditOrdertobeshipped(deliveryCode,xian,zhi) {
-     this.xianshi=xian;
+     
       if(zhi==0){
          this.xianshi1=!xian;
-         
+         this.xianshi=true;
       }else if(zhi==1){
         this.xianshi1=xian;
+        this.xianshi=false;
       }
       let param = new URLSearchParams();
       param.append("deliveryCode", deliveryCode);

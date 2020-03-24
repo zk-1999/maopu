@@ -363,8 +363,6 @@ export default {
     // 查询库存单位
     async queryUnit() {
       const { data: res } = await this.$http.post("jc/Basic/selectstorenum");
-      console.log("单位");
-      console.log(res);
       this.unit = res;
     },
     // 表单重置
@@ -384,7 +382,6 @@ export default {
 
         this.delarr += this.selectedList[i].deptId + ",";
       }
-      console.log(this.delarr);
     },
     async deleteRow() {
       let param = new URLSearchParams();
@@ -429,7 +426,6 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.selectedList = val;
     },
     // 解决弹出框title
@@ -457,10 +453,8 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response);
         })
         .catch(function(error) {
-          console.log(error);
         })
         .then(function() {
           // always executed
@@ -471,7 +465,6 @@ export default {
     //分页相关函数
     handleSizeChange(val) {
       this.salesOrdermanagementForm.pageSize = val;
-      console.log(`每页 ${val} 条`);
       this.queryOrderList();
     },
     handleCurrentChange(val) {
@@ -535,10 +528,6 @@ export default {
             message: "未查询到符合条件商品！"
           });
       }
-      
-      
-
-      console.log(this.orderList);
 
       this.total = res.body.total;
     },
@@ -598,10 +587,7 @@ export default {
             message: "未查询到符合条件商品！"
           });
       }
-      
-      
 
-      console.log(this.orderList);
       this.total = res.body.total;
 
     },
@@ -670,10 +656,6 @@ export default {
           });
         
       }
-      
-      
-
-      console.log(this.orderList);
       this.total = res.body.total;
 
     },

@@ -13,24 +13,31 @@
         :model="chaManageForm"
         ref="chaOrdermanagementRef"
       >
-        <el-form-item label="生产单号：" prop="sorderCode">
+        <el-form-item label="生产单号：" prop="prolistCode">
           <el-input v-model="chaManageForm.prolistCode"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称：" prop="customerId">
-          <el-select v-model="chaManageForm.customerId" placeholder="请选择" class="w100">
+        <el-form-item label="商品名称：" prop="productName">
+          <el-input v-model="chaManageForm.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名称：" prop="basicId">
+                    <el-select v-model="chaManageForm.basicId" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinmingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+        <el-form-item label="生产单状态：" prop="prolistState">
+          <el-select v-model="chaManageForm.prolistState" placeholder="请选择" class="w120">
             <el-option
-              v-for="item in kehu"
-              :key="item.customerId"
-              :label="item.cusName"
-              :value="item.customerId">
+              v-for="item in zhuangtai"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="合同号：" prop="sorderWarehouse">
-          <el-input v-model="chaManageForm.sorderWarehouse"></el-input>
-        </el-form-item>
-        <el-form-item label="交货方式：" prop="sorderTotalsum">
-          <el-input v-model="chaManageForm.sorderTotalsum"></el-input>
         </el-form-item>
         <el-form-item >
           <el-button @click="ManageList">查 询</el-button>
@@ -42,7 +49,7 @@
             type="warning"
             @click="selectedqi"
             :disabled="selectedList.length == 0"
-          >批量生产</el-button>
+          >批量生产排程</el-button>
       <el-table
         :data="manageList"
         striped
@@ -59,7 +66,7 @@
             {{scope.row.saleOrderDO == null ? '自生产' : scope.row.cusName==null? '没有客户名称' : scope.row.saleOrderDO.cusName}}
           </template>
         </el-table-column>
-        <el-table-column prop="sorderWarehouse" label="合同号">
+        <!-- <el-table-column prop="sorderWarehouse" label="合同号">
           <template slot-scope="scope">
             {{scope.row.saleOrderDO == null ? '自生产' : scope.row.sorderWarehouse == null ? '没有合同号' : scope.row.sorderWarehouse}}
           </template>
@@ -73,26 +80,25 @@
           <template slot-scope="scope">
             {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.sorderTotalsum==null? '没有交货方式' : scope.row.saleOrderDO.sorderTotalsum}}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="producinggoodsDO.productName" label="商品名称">
-
         </el-table-column>
         <el-table-column prop="producinggoodsDO.productType" label="产品名称"></el-table-column>
-        <el-table-column prop="saleOrderDO.commodityNumber" label="销售数量">
+        <!-- <el-table-column prop="saleOrderDO.commodityNumber" label="销售数量">
           <template slot-scope="scope">
           {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.commodityNumber==null? '没有销售数量' : scope.row.saleOrderDO.commodityNumber}}
           </template> 
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="prolistNumber" label="生产数量"></el-table-column>
         <el-table-column prop="saleOrderDO.sorderDeliverytime" label="交货日期">
          <template slot-scope="scope">
           {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.sorderDeliverytime==null? '没有交货日期' : scope.row.saleOrderDO.sorderDeliverytime}}
           </template> 
         </el-table-column>
-        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column>
+        <!-- <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column> -->
         <el-table-column prop="prolistState" label="生产单状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待生产</el-tag>
+          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待排程</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='1'">待印刷领料</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='2'">待印刷</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='3'">印刷中</el-tag>
@@ -105,7 +111,7 @@
         <el-table-column label="操作" width="150px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showManage(scope.row.prolistCode,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showManage(scope.row.prolistCode,1)" type="primary" size="small" >编辑</el-button>
+             <el-button @click="showManage(scope.row.prolistCode,1)" :disabled="scope.row.prolistState!='0'" type="primary" size="small" >编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -150,7 +156,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="生产数量：" prop="prolistNumber">
-            <el-input v-model="addManageForm.prolistNumber"></el-input>
+            <el-input @blur="jisuan" v-model="addManageForm.prolistNumber" ></el-input>
         </el-form-item>
         <div v-if="addManageForm.producinggoodsDO.productLeixing==0">
         <div class="fenge1">内杯信息</div>
@@ -290,17 +296,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="印刷放量：" prop="prolistParamenumber">
-            <el-input v-model="addManageForm.prolistParamenumber"></el-input>
+        <el-form-item label="印刷放量：" prop="prolistParamenumber" >
+            <el-input v-model="addManageForm.prolistParamenumber" @blur="jisuan"></el-input>
         </el-form-item>
-        <el-form-item label="印刷重量：" prop="prolistParamemetre">
-            <el-input v-model="addManageForm.prolistParamemetre"></el-input>
+        <!-- <el-form-item label="印刷重量：" prop="prolistParamemetre">
+            <el-input v-model="addManageForm.prolistParamemetre" disabled></el-input>
         </el-form-item>
         <el-form-item label="用纸米数：" prop="prolistUsemetre">
-            <el-input v-model="addManageForm.prolistUsemetre"></el-input>
-        </el-form-item>
+            <el-input v-model="addManageForm.prolistUsemetre" disabled></el-input>
+        </el-form-item> -->
         <el-form-item label="油墨用量：" prop="prolistPeweight">
-            <el-input v-model="addManageForm.prolistPeweight"></el-input>
+            <el-input v-model="addManageForm.prolistPeweight" ></el-input>
         </el-form-item>
         <el-form-item label="备注：" prop="prolistParaexplain">
             <el-input v-model="addManageForm.prolistParaexplain" class="w400"></el-input>
@@ -359,7 +365,7 @@
     </span>
     </el-dialog>
     <el-dialog
-    title="编辑生产单"
+    :title="xianshi==true?'查看生产单':'编辑生产单'"
     :visible.sync="editManageVisible"
     width="60%"
     @open="guoqushangpin"
@@ -401,9 +407,9 @@
         <el-form-item label="交货日期：" prop="sorderDeliverytime" v-if="editManageForm.saleOrderDO!=null">
             <el-input v-model="editManageForm.saleOrderDO.sorderDeliverytime" :disabled='xianshi'></el-input>
         </el-form-item>
-        <el-form-item label="完成日期：" prop="productWanchengtime">
+        <!-- <el-form-item label="完成日期：" prop="productWanchengtime">
             <el-input v-model="editManageForm.productionDO.productWanchengtime" :disabled='xianshi'></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="生产数量：" prop="prolistNumber">
             <el-input v-model="editManageForm.productionDO.prolistNumber" :disabled='xianshi'></el-input>
         </el-form-item>
@@ -549,10 +555,10 @@
             <el-input v-model="editManageForm.productionDO.prolistParamenumber" :disabled='xianshi'></el-input>
         </el-form-item>
         <el-form-item label="印刷重量：" prop="prolistParamemetre">
-            <el-input v-model="editManageForm.productionDO.prolistParamemetre" :disabled='xianshi'></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistParamemetre"  disabled></el-input>
         </el-form-item>
         <el-form-item label="用纸米数：" prop="prolistUsemetre">
-            <el-input v-model="editManageForm.productionDO.prolistUsemetre" :disabled='xianshi'></el-input>
+            <el-input v-model="editManageForm.productionDO.prolistUsemetre"disabled></el-input>
         </el-form-item>
         <el-form-item label="油墨用量：" prop="prolistPeweight">
             <el-input v-model="editManageForm.productionDO.prolistPeweight" :disabled='xianshi'></el-input>
@@ -610,7 +616,7 @@
     
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editManage">确 定</el-button>
+        <el-button type="primary" @click="editManage" v-if="xianshi!=true">确 定</el-button>
     </span>
     </el-dialog>
  <el-dialog title="提示" :visible.sync="delVisibleqi" width="300px">
@@ -641,13 +647,23 @@ export default {
       manageList:[],
       chaManageForm: {
         prolistCode:'',
-        customerId:'',
+        productName:'',
+        basicId:'',
+        prolistState:'',
         line:0,
-        sorderTotalsum:'',
-        sorderWarehouse:'',
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
       },
+      zhuangtai:[
+        {id:0,value:'待生产'},
+        {id:1,value:'待印刷领料'},
+        {id:2,value:'待印刷'},
+        {id:3,value:'印刷中'},
+        {id:4,value:'待成型领料'},
+        {id:5,value:'待成型'},
+        {id:6,value:'成型中'},
+        {id:7,value:'已完成'},
+      ],
       addManageForm1:{
       productLeixing:'',
         // productgoodsId:'',
@@ -717,6 +733,10 @@ export default {
       zijinzhanghu:[],
       kehu:[],
        delarr:[],
+       chanpinmingcheng:[],
+       basicDO:{
+         productType:'',
+      },
     //   this.
     };
   },
@@ -726,6 +746,12 @@ export default {
     this.getCookie();
   },
   methods: {
+    // jisuan(){
+    //   this.addManageForm.prolistParamemetre=this.addManageForm.prolistNumber/this.addManageForm.parametersDO.parametersNumber*this.addManageForm.parametersDO.parametersSinglenum/1000*(1+this.addManageForm.prolistParamenumber);
+    // },
+    // jisuan1(){
+    //   this.addManageForm.prolistParamemetre=this.addManageForm.prolistNumber/this.addManageForm.parametersDO.parametersNumber*this.addManageForm.parametersDO.parametersDoorwidth*(this.addManageForm.producinggoodsDO.productGramabroad)*(1+this.addManageForm.prolistParamenumber);
+    // },
      selectedqi(){
       this.delarr=[];
       this.delVisibleqi = true;
@@ -825,8 +851,11 @@ export default {
     async list(){
       const { data: res } = await this.$http.post("jc/Basic/selectparameters");
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
+       const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.chanpinmingcheng=res2;
       this.kehu = res1;
       this.yinshuafangshi = res;
+      
     },
     handleClose(done) {
       this.$confirm("确认关闭？")

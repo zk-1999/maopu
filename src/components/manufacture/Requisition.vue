@@ -13,24 +13,31 @@
         :model="chaManageForm"
         ref="chaOrdermanagementRef"
       >
-        <el-form-item label="生产单号：" prop="sorderCode">
+       <el-form-item label="生产单号：" prop="prolistCode">
           <el-input v-model="chaManageForm.prolistCode"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称：" prop="customerId">
-          <el-select v-model="chaManageForm.customerId" placeholder="请选择" class="w100">
+        <el-form-item label="商品名称：" prop="productName">
+          <el-input v-model="chaManageForm.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名称：" prop="basicId">
+                    <el-select v-model="chaManageForm.basicId" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinmingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+        <el-form-item label="生产单状态：" prop="prolistState">
+          <el-select v-model="chaManageForm.prolistState" placeholder="请选择" class="w120">
             <el-option
-              v-for="item in kehu"
-              :key="item.customerId"
-              :label="item.cusName"
-              :value="item.customerId">
+              v-for="item in zhuangtai"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="合同号：" prop="sorderWarehouse">
-          <el-input v-model="chaManageForm.sorderWarehouse"></el-input>
-        </el-form-item>
-        <el-form-item label="交货方式：" prop="sorderTotalsum">
-          <el-input v-model="chaManageForm.sorderTotalsum"></el-input>
         </el-form-item>
         <el-form-item >
           <el-button @click="ManageList">查 询</el-button>
@@ -56,11 +63,11 @@
           {{scope.row.saleOrderDO==null? '自生产' : scope.row.saleOrderDO.sorderDeliverytime==null? '没有交货日期' : scope.row.saleOrderDO.sorderDeliverytime}}
           </template> 
         </el-table-column>
-        <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
-        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column>
+        <!-- <el-table-column prop="productWanchengtime" label="生产时间"></el-table-column>
+        <el-table-column prop="productWanchengtime" label="完成时间"></el-table-column> -->
         <el-table-column prop="prolistState" label="生产单状态" align="center">
           <template slot-scope="scope">
-          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待生产</el-tag>
+          <el-tag type="danger" v-if="scope.row.prolistState=='0'">待排程</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='1'">待印刷领料</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='2'">待印刷</el-tag>
           <el-tag type="danger" v-if="scope.row.prolistState=='3'">印刷中</el-tag>
@@ -73,7 +80,7 @@
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showMaterial(scope.row.prolistCode,true,0)" type="success" size="small" :disabled="scope.row.prolistState=='4'">查看</el-button>
-             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" >物料控制</el-button>
+             <el-button @click="showMaterial(scope.row.prolistCode,true,1)" type="primary" size="small" :disabled="scope.row.prolistState=='5'">物料控制</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -87,7 +94,7 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-    title="成品领料"
+    :title="xianshi ? '查看成型领料' : '成型领料'"
     :visible.sync="editManageVisible"
     width="60%"
     :before-close="handleClose">
@@ -100,16 +107,18 @@
             <el-input v-model="editMaterialForm.picMan" disabled></el-input>
         </el-form-item>
         <div class="fenge1">半成品信息</div>
-        <el-button type="primary" @click="xuanzhewuliao">添加</el-button>
-        <el-button type="primary" @click="selected">删除</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="xuanzhewuliao">添加</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="selected">删除</el-button>
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.banFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="产品名称" prop="productType" ></el-table-column>
-    <el-table-column label="规格" prop="productNorms" ></el-table-column>
+    <el-table-column v-if="xianshi" label="产品名称" prop="producinggoodsDO.productName" ></el-table-column>
+    <el-table-column v-if="xianshi" label="规格" prop="producinggoodsDO.productNorms" ></el-table-column>
+    <el-table-column v-if="!xianshi" label="产品名称" prop="productName" ></el-table-column>
+    <el-table-column v-if="!xianshi" label="规格" prop="productNorms" ></el-table-column>
     <el-table-column label="重量" prop="banPlannum">
       <template scope="scope">
-        <el-input v-model="scope.row.banPlannum"></el-input>
+        <el-input v-model="scope.row.banPlannum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
     <el-table-column label="单位" prop="productOutbao">
@@ -119,41 +128,47 @@
     </el-table-column>
   </el-table>
   <div class="fenge1">纸箱包装信息</div>
-        <el-button type="primary" @click="xuanzhewuliao1">添加</el-button>
-        <el-button type="primary" @click="selected">删除</el-button>
+        <el-button type="primary" v-if="!xianshi" @click="xuanzhewuliao1">添加</el-button>
+        <el-button type="primary" v-if="!xianshi"  @click="selected">删除</el-button>
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.xiangFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="纸箱小类型" prop="supgoolsId" ></el-table-column>
-    <el-table-column label="纸箱名称" prop="supgoolssmallType" ></el-table-column>
-    <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
-    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
-    <el-table-column label="数量" prop="xiangPlannum">
+    <el-table-column label="纸箱小类型" prop="supgoolsId" v-if="!xianshi"></el-table-column>
+    <el-table-column label="纸箱名称" prop="supgoolssmallType" v-if="!xianshi"></el-table-column>
+    <el-table-column label="商品描述" prop="supgoolsSplicing" v-if="!xianshi"></el-table-column>
+    <el-table-column label="纸箱小类型" prop="supplierGoolsDO.supgoolsId" v-if="xianshi"></el-table-column>
+    <el-table-column label="纸箱名称" prop="supplierGoolsDO.supgoolssmallType" v-if="xianshi"></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing" v-if="xianshi"></el-table-column>
+    <!-- <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column> -->
+    <el-table-column label="数量" prop="xiangPlannum" >
       <template scope="scope">
-        <el-input v-model="scope.row.xiangPlannum"></el-input>
+        <el-input v-model="scope.row.xiangPlannum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
   </el-table>
   <div class="fenge1">袋子包装信息</div>
-        <el-button type="primary" @click="xuanzhewuliao2">添加</el-button>
-        <el-button type="primary" @click="selected">删除</el-button>
+        <el-button type="primary" v-if="!xianshi"  @click="xuanzhewuliao2">添加</el-button>
+        <el-button type="primary" v-if="!xianshi"  @click="selected">删除</el-button>
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.daiFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="袋子小类型" prop="supgoolsId" ></el-table-column>
-    <el-table-column label="袋子名称" prop="supgoolssmallType" ></el-table-column>
-    <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
-    <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
-    <el-table-column label="数量" prop="daiPlannum">
+    <el-table-column label="袋子小类型" prop="supplierGoolsDO.supgoolsId" v-if="xianshi"></el-table-column>
+    <el-table-column label="袋子名称" prop="supplierGoolsDO.supgoolssmallType" v-if="xianshi"></el-table-column>
+    <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing" v-if="xianshi"></el-table-column>
+    <el-table-column label="袋子小类型" prop="supgoolsId" v-if="!xianshi"></el-table-column>
+    <el-table-column label="袋子名称" prop="supgoolssmallType" v-if="!xianshi"></el-table-column>
+    <el-table-column label="商品描述" prop="supgoolsSplicing" v-if="!xianshi"></el-table-column>
+    <!-- <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column> -->
+    <el-table-column label="数量" prop="daiPlannum" >
       <template scope="scope">
-        <el-input v-model="scope.row.daiPlannum"></el-input>
+        <el-input v-model="scope.row.daiPlannum" :disabled='xianshi'></el-input>
       </template>
     </el-table-column>
   </el-table>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addMaterial">确 定</el-button>
+        <el-button type="primary" @click="addMaterial" v-if="!xianshi" >确 定</el-button>
     </span>
     </el-dialog>
     <el-dialog
@@ -322,13 +337,27 @@ export default {
       manageList:[],
       chaManageForm: {
         prolistCode:'',
-        customerId:'',
+        productName:'',
+        basicId:'',
+        prolistState:'',
         line:4,
-        sorderTotalsum:'',
-        sorderWarehouse:'',
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
       },
+      chanpinmingcheng:[],
+       basicDO:{
+         productType:'',
+      },
+      zhuangtai:[
+        {id:0,value:'待生产'},
+        {id:1,value:'待印刷领料'},
+        {id:2,value:'待印刷'},
+        {id:3,value:'印刷中'},
+        {id:4,value:'待成型领料'},
+        {id:5,value:'待成型'},
+        {id:6,value:'成型中'},
+        {id:7,value:'已完成'},
+      ],
       addManageForm1:{
        productLeixing:'',
         // productgoodsId:'',
@@ -617,6 +646,11 @@ productLeixing: "0",}
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(prolistCode,xian,sorderStatus) {
+        if(sorderStatus==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
     if(sorderStatus==1){
       this.editMaterialForm.banFormingDOs=[];
       this.editMaterialForm.xiangFormingDOs=[];
@@ -641,6 +675,8 @@ productLeixing: "0",}
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
       this.yinshuafangshi = res;
+      const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.chanpinmingcheng=res2;
     },
 
     handleClose(done) {

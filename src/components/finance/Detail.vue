@@ -80,30 +80,25 @@
         </el-tab-pane>
         <el-tab-pane label="账户明细" >
            <el-table
-            :data="detailList"
+            :data="detailList2"
             border
             @selection-change="handleSelectionChange"
           >
-            <!-- <el-table-column type="selection" width="35"></el-table-column> -->
-            <el-table-column type="index" label="序号" width="55"></el-table-column>
-            <el-table-column prop="budgetOrdernumber" label="订单号" ></el-table-column>
-            <el-table-column prop="budgetBusinesstype" label="业务类型"></el-table-column>
-            <el-table-column prop="budgetAccounttype" label="账户类型"></el-table-column>
-            <el-table-column prop="budgfetBelong" label="所属订单"></el-table-column>
-            <el-table-column prop="budgetDesc" label="描述"></el-table-column>
-            <el-table-column prop="budgetCompletetime" label="交易时间"></el-table-column>
-            <el-table-column prop="budgetBudgettype" label="收支类型"></el-table-column>
-            <el-table-column prop="budgetBudgetamount" label="收支金额"></el-table-column>
+            <!-- <el-table-column type="index" label="序号" width="55"></el-table-column> -->
+            <el-table-column prop="advancepayment" label="预收款"></el-table-column>
+            <el-table-column prop="accountreceived" label="应收款"></el-table-column>
+            <el-table-column prop="advancepayment" label="预付款"></el-table-column>
+            <el-table-column prop="accountpayable" label="应付款"></el-table-column>
           </el-table>
 
-          <el-pagination
+          <!-- <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
         :page-size="10"
         layout="total, prev, pager, next"
         :total="total"
-      ></el-pagination>
+      ></el-pagination> -->
         </el-tab-pane>
       </el-tabs>
       <!-- 表格 -->
@@ -186,6 +181,9 @@ export default {
       delarr: "",
       selectedList: [],
       detailList: [],
+      detailList1: [],
+      detailList2: [],
+
       chaDetailForm: {
         budgetBudgettype:'',
         budgetAccounttype:'',
@@ -229,6 +227,7 @@ export default {
   created() {
     //自己写的方法
     this.getDetail();
+    this.getDetail1();
     this.list();
   },
   methods: {
@@ -236,6 +235,14 @@ export default {
       const { data: res } = await this.$http.post("detail/selectDetail",this.chaDetailForm);
       this.detailList = res.body.rows; //如何取
       this.total=res.body.total;
+    },
+    async getDetail1() {
+      const { data: res } = await this.$http.post("money/selectMoney");
+      // this.detailList1 = res.body.result; //如何取
+      this.detailList1[0]=res.body.result;
+      console.log(this.detailList1);
+      this.detailList2=this.detailList1;
+      // this.total=res.body.total;
     },
     async list(){
        const { data: res } = await this.$http.post("jc/Basic/selectzijin");

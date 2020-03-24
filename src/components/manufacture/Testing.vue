@@ -13,24 +13,31 @@
         :model="chaManageForm"
         ref="chaOrdermanagementRef"
       >
-        <el-form-item label="生产单号：" prop="sorderCode">
+        <el-form-item label="生产单号：" prop="prolistCode">
           <el-input v-model="chaManageForm.prolistCode"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称：" prop="customerId">
-          <el-select v-model="chaManageForm.customerId" placeholder="请选择" class="w100">
+        <el-form-item label="商品名称：" prop="productName">
+          <el-input v-model="chaManageForm.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名称：" prop="basicId">
+                    <el-select v-model="chaManageForm.basicId" placeholder="请选择">
+                  <el-option
+                    v-for="item in chanpinmingcheng"
+                    :key="item.basicId"
+                    :label="item.basicRetainone"
+                    :value="item.basicId">
+                  </el-option>
+                </el-select>
+                    </el-form-item>
+        <el-form-item label="质检状态：" prop="mbatStatus">
+          <el-select v-model="chaManageForm.mbatStatus" placeholder="请选择" class="w120">
             <el-option
-              v-for="item in kehu"
-              :key="item.customerId"
-              :label="item.cusName"
-              :value="item.customerId">
+              v-for="item in zhuangtai"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="合同号：" prop="sorderWarehouse">
-          <el-input v-model="chaManageForm.sorderWarehouse"></el-input>
-        </el-form-item>
-        <el-form-item label="交货方式：" prop="sorderTotalsum">
-          <el-input v-model="chaManageForm.sorderTotalsum"></el-input>
         </el-form-item>
         <el-form-item >
           <el-button @click="ManageList">查 询</el-button>
@@ -53,16 +60,17 @@
         <el-table-column prop="mbatCode" label="批次号">
         </el-table-column>
         <el-table-column prop="mbatReallynum" label="重量"></el-table-column>
-         <el-table-column prop="mbatStatus" label="生产单状态" align="center">
+         <el-table-column prop="mbatStatus" label="质检状态" align="center">
           <template slot-scope="scope">
           <el-tag type="danger" v-if="scope.row.mbatStatus=='0'">待质检</el-tag>
-          <el-tag type="danger" v-if="scope.row.mbatStatus=='1'">质检完成料</el-tag>
+          <el-tag type="danger" v-if="scope.row.mbatStatus=='1'">质检通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.mbatStatus=='2'">质检未通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="170px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showMaterial(scope.row.mbatId,scope.row.prolistCode,true,0)" type="success" size="small" >查看</el-button>
-             <el-button @click="showMaterial(scope.row.mbatId,scope.row.prolistCode,true,1)" :disabled="scope.row.mbatStatus==1" type="primary" size="small">成型质检</el-button>
+             <el-button @click="showMaterial(scope.row.mbatId,scope.row.prolistCode,false,1)" :disabled="scope.row.mbatStatus==1||scope.row.mbatStatus==2" type="primary" size="small">成型质检</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -76,11 +84,12 @@
       ></el-pagination>
     </el-card>
     <el-dialog
-    title="成型质检"
+     :title="xianshi ? '查看成品质检' : '成品质检'"
     :visible.sync="editManageVisible"
     width="50%"
-    :before-close="handleClose">
-    <el-form ref="addManageRef" label-width="100px" :inline="true" :model="editMaterialForm" :rules="addManageRules">
+    :before-close="handleClose"
+    @closed="dialogClosed">
+    <el-form ref="addManageRef1" label-width="100px" :inline="true" :model="addzhijian" :rules="addManageRules">
         <div class="fenge">生产信息</div>
         <el-form-item label="生产单号：" prop="prolistCode">
             <el-input v-model="addzhijian.prolistCode" disabled></el-input>
@@ -100,32 +109,35 @@
         <el-table-column prop="id" label="检查内容" align="center"></el-table-column>
         <el-table-column prop="pbatParameterscode" label="检查结果" align="center">
           <template slot-scope="scope">
-             <el-radio v-model="scope.row.value" label=0>正确</el-radio>
-             <el-radio v-model="scope.row.value" label=1>错误</el-radio>
+             <el-radio v-model="scope.row.value" label=0  :disabled="xianshi">正确</el-radio>
+             <el-radio v-model="scope.row.value" label=1  :disabled="xianshi">错误</el-radio>
           </template>
         </el-table-column>
       </el-table>
-       <div class="fenge1" >质检结果信息</div>
+      <!-- <div v-if="addzhijian.mbatController!=''"> -->
+    <div class="fenge1">质检结果信息</div>
     <el-form-item label="质检人：" prop="mbatController" >
-      <el-input v-model="addzhijian.mbatController" ></el-input>
+      <el-input v-model="addzhijian.mbatController" disabled></el-input>
     </el-form-item>
      <el-form-item label="质检结果："  prop="mbatStatus">
-      <el-radio v-model="addzhijian.mbatStatus" label='0' @change="guoqudangqianshijian" >通过</el-radio>
-      <el-radio v-model="addzhijian.mbatStatus" label='1' @change="guoqudangqianshijian" >驳回</el-radio>
+      <el-radio v-model="addzhijian.mbatStatus" :label='1' @change="guoqudangqianshijian" :disabled="xianshi">通过</el-radio>
+      <el-radio v-model="addzhijian.mbatStatus" :label='2' @change="guoqudangqianshijian" :disabled="xianshi">驳回</el-radio>
     </el-form-item>
     <el-form-item label="质检时间：" prop="mbatTime">
-      <el-input v-model="addzhijian.mbatTime" ></el-input>
+      <el-input v-model="addzhijian.mbatTime" :disabled="xianshi"></el-input>
     </el-form-item> 
     <el-form-item label="质检描述："  prop="mbatRemarks">
-      <el-input class="w400" v-model="addzhijian.mbatRemarks" ></el-input>
+      <el-input class="w400" v-model="addzhijian.mbatRemarks" :disabled="xianshi"></el-input>
     </el-form-item>
+      
+       
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addzhijianpanduan">确 定</el-button>
+        <el-button type="primary" v-if="!xianshi"  @click="addzhijianpanduan">确 定</el-button>
     </span>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
     title="物料控制查看"
     :visible.sync="editManageVisible1"
     width="60%"
@@ -141,8 +153,6 @@
         <div class="fenge1">商品信息</div>
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
-    <!-- default-expand-all -->
-    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
     <el-table-column label="物理编码" prop="supplierGoolsDO.supgoolsId" ></el-table-column>
     <el-table-column label="物料名称" prop="supplierGoolsDO.supgoolssmallType" ></el-table-column>
     <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing"></el-table-column>
@@ -161,7 +171,6 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="editManageVisible1 = false">取 消</el-button>
-        <!-- <el-button type="primary" @click="addMaterial">确 定</el-button> -->
     </span>
     </el-dialog>
     
@@ -194,7 +203,6 @@
         <el-table-column prop="supgoolssmallType" label="商品小类型"></el-table-column>
         <el-table-column prop="supgoolsSplicing" label="商品描述"></el-table-column>
         <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column>
-    <!-- <el-table-column label="单位" prop="productOutbao"></el-table-column> -->
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1=false">取 消</el-button>
@@ -207,7 +215,7 @@
           <el-button @click="delVisible11 = false">取 消</el-button>
           <el-button type="primary" @click="deleteRow" >确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <!-- <el-dialog
       title="物料选择"
       :visible.sync="dialogVisible1"
@@ -260,18 +268,28 @@ export default {
       total: 0,
       delarr:[],
       selectedList: [],
-      xianshi:false,
+      xianshi:'',
       xianshi1:true,
       manageList:[],
       chaManageForm: {
-        prolistCode:'',
-        customerId:'',
-        sorderTotalsum:'',
+         prolistCode:'',
+        productName:'',
+        basicId:'',
+        mbatStatus:'',
         line:6,
-        sorderWarehouse:'',
         pageCode: 1, //当前页
         pageSize: 10 //每页显示的记录数
       },
+      chanpinmingcheng:[],
+       basicDO:{
+         productType:'',
+      },
+       zhuangtai:[
+        {id:0,value:'待质检'},
+        {id:1,value:'质检通过'},
+        {id:2,value:'质检未通过'},
+        
+      ],
       addManageForm1:{
        productLeixing:'',
         // productgoodsId:'',
@@ -358,7 +376,7 @@ export default {
       mbatController:'',
       mbatTime:'',
       mbatRemarks:'',
-      mbatStatus:'',
+      mbatStatus:0,
       mbatId:0,
      }
     };
@@ -447,14 +465,16 @@ export default {
     this.addzhijian.mbatDesign=this.zhijian[0].value;
     this.addzhijian.mbatName=this.zhijian[1].value;
     this.addzhijian.mbatWeight=this.zhijian[2].value;
-    this.addzhijian.mbatPatter=this.zhijian[3].value;
+    this.addzhijian.mbatPattern=this.zhijian[3].value;
     this.addzhijian.mbatColor=this.zhijian[4].value;
-    this.addzhijian.mbatCuttin=this.zhijian[5].value;
+    this.addzhijian.mbatCutting=this.zhijian[5].value;
     this.addzhijian.mbatBox=this.zhijian[6].value;
     this.addzhijian.mbatLabel=this.zhijian[7].value;
-    this.addzhijian.mbatSize+=this.zhijian[8].value;this.addzhijian.mbatOneke=this.zhijian[9].value;
+    this.addzhijian.mbatSize=this.zhijian[8].value;
+    this.addzhijian.mbatOneke=this.zhijian[9].value;
     this.addzhijian.mbatOnebei=this.zhijian[10].value;
-    this.addzhijian.mbatGai=this.zhijian[11].value;this.addzhijian.mbatDiegao=this.zhijian[12].value;
+    this.addzhijian.mbatGai=this.zhijian[11].value;
+    this.addzhijian.mbatDiegao=this.zhijian[12].value;
     this.addzhijian.mbatSeal=this.zhijian[13].value;
     this.addzhijian.mbatTape=this.zhijian[14].value;
     const { data: res } = await this.$http.post("sc/Machined/updatebatch",this.addzhijian);
@@ -502,9 +522,12 @@ export default {
       this.shenpiren = storage.getItem("username");
     },
     async showMaterial(mbatId,prolistCode,xian,sorderStatus,) {
-      console.log();
-      
-      
+        if(sorderStatus==0){
+        this.xianshi=true;
+      }else{
+        this.xianshi=false;
+      }
+      // this.xianshi=xian;
       this.addzhijian.mbatId=mbatId;
        let param = new URLSearchParams();
           param.append("mbatId", mbatId);
@@ -529,6 +552,9 @@ export default {
       }else{
          this.addzhijian.mbatController=res.body.MachinedBatchDO.mbatController;
       }
+      this.addzhijian.mbatStatus=res.body.MachinedBatchDO.mbatStatus;
+      this.addzhijian.mbatTime=res.body.MachinedBatchDO.mbatTime;
+       this.addzhijian.mbatRemarks=res.body.MachinedBatchDO.mbatRemarks;
       this.addzhijian.prolistCode=prolistCode;
 console.log(this.zhijian);
 
@@ -540,8 +566,12 @@ console.log(this.zhijian);
       const { data: res1 } = await this.$http.post("jc/customer/selectcustom1");
       this.kehu = res1;
       this.yinshuafangshi = res;
+       const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
+      this.chanpinmingcheng=res2;
     },
-
+    dialogClosed(){
+        this.$refs.addManageRef1.resetFields();
+      },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {

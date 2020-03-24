@@ -1214,7 +1214,7 @@ export default {
         res3.forEach((item, index, arr) => {
           if (purGood.suppliergoolsId == item.suppliergoolsId) {
             // 已到货数量
-            purGood.productDhnumber = item.sum;
+            purGood.productDhnumber = item.supinboundsum;
           }
         });
       });

@@ -540,14 +540,11 @@ export default {
       shengchanlist:[],
       shouruleixing:[],
       zijinzhanghu:[],
-      fukuanzhuangtai: [{
+      fukuanzhuangtai: [ {
           value: '0',
-          label: '待收款'
-        }, {
-          value: '1',
           label: '未收款'
         }, {
-          value: '3',
+          value: '1',
           label: '已收款'
         }],
       // chaigoulist:[],

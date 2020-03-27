@@ -196,7 +196,11 @@
         <el-table-column prop="productType" label="产品名称"></el-table-column>
         <el-table-column prop="productNorms" label="规格"></el-table-column>
         <el-table-column label="库存" prop="kcTotalstock"></el-table-column>
-        <el-table-column label="单位" prop="productOutbao"></el-table-column>
+        <el-table-column label="单位" prop="productOutbao">
+          <template >
+        kg
+      </template>
+        </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1=false">取 消</el-button>

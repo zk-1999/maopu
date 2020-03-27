@@ -28,10 +28,10 @@ axios.interceptors.request.use(config => {
     })
     //配置请求的根路径
     // axios.defaults.baseURL = "http://192.168.31.212:8080/maopu/";
-    // axios.defaults.baseURL = "http://localhost:8090/maopu";
+    // axios.defaults.baseURL = "http://localhost:8090";
     // axios.defaults.baseURL = "http://192.168.31.234:8090/";
 
-axios.defaults.baseURL = "/api";
+axios.defaults.baseURL = "http://localhost:8090";
 // axios.defaults.baseURL = "/maopu/";
 
 //把axios请求放到vue原型上使用this调用￥http发送请求

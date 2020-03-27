@@ -209,7 +209,7 @@
         </el-form-item>
         <div class="fenge1">商品信息</div>
         <el-button type="primary" @click="xuanzhewuliao">选择补料</el-button>
-        <el-button type="primary" @click="selected">删除补料</el-button>
+        <!-- <el-button type="primary" @click="selected">删除补料</el-button> -->
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.buMaterialListDOs">
     <!-- default-expand-all -->
@@ -454,11 +454,24 @@ export default {
       let param = new URLSearchParams();
           param.append("prolistCode", this.selectedList[0].prolistCode);
       const {data:res} = await this.$http.post('sc/BuMateral/selectpliscode',param);
+       
       this.editMaterialForm.tuiMaterialListDOs=res.body;
       this.editManageVisible2=true;
     },
     async addtuihuoshu(){
       const {data:res} = await this.$http.post('sc/BuMateral/inserttuimaterial',this.editMaterialForm);
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
+        this.editManageVisible2=false;
     },
 
     selectedqi(){
@@ -473,6 +486,17 @@ export default {
     
      async deleteRowqi(){
          const {data:res} = await this.$http.post('sc/Production/updatestatusmore',this.delarr);
+          if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
          this.delVisibleqi = false;
          this.ManageList();
      
@@ -488,6 +512,17 @@ export default {
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("sc/ProductionExecution/selectbyid",param);
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.editPrintedForm=res.body.SCProductionDO;
        this.editPrintedForm.parametersDO.prolistParameters=this.editPrintedForm.productionDO.prolistParameters;
        this.editPrintedForm.parametersDO.prolistParamenumber=this.editPrintedForm.productionDO.prolistParamenumber;
@@ -522,6 +557,7 @@ export default {
       
       this.editPrintedForm.parametersDO=this.editPrintedForm.parametersDO[0];
       const { data: res } = await this.$http.post("sc/ProductionExecution/update",this.editPrintedForm);
+       
       this.editManageVisible=false;
     },
      dialogClosed(){
@@ -533,6 +569,7 @@ export default {
     //    this.chaManageForm.pageSize=10;
     //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
+       
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -549,6 +586,17 @@ export default {
         pageCode: this.chooseGoodsForm.pageCode ,
         pageSize:this.chooseGoodsForm.pageSize} }
       );
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -632,6 +680,17 @@ console.log(this.editMaterialForm.buMaterialListDOs);
       },
    async addMaterial(){
        const { data: res } = await this.$http.post("sc/BuMateral/insertbumaterial",this.editMaterialForm);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
        this.editManageVisible1 = false;
         this.ManageList();
     },
@@ -646,6 +705,7 @@ console.log(this.editMaterialForm.buMaterialListDOs);
          let param = new URLSearchParams();
           param.append("prolistCode", prolistCode);
         const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
+         
         if(res.body.rows.length>=1){
           this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
            this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;

@@ -401,7 +401,7 @@ export default {
       this.manageList = res.body.rows;
     },
      dialogClosed(val) {
-      this.$refs[val].resetFields();
+      this.$refs[val].resetFields(); 
     },
     async changeGoodsBigType(val) {
       
@@ -411,6 +411,17 @@ export default {
         pageCode: this.chooseGoodsForm.pageCode ,
         pageSize:this.chooseGoodsForm.pageSize} }
       );
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -478,6 +489,17 @@ export default {
     this.addzhijian.mbatSeal=this.zhijian[13].value;
     this.addzhijian.mbatTape=this.zhijian[14].value;
     const { data: res } = await this.$http.post("sc/Machined/updatebatch",this.addzhijian);
+     if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
     this.editManageVisible=false;
     this.ManageList();
     },
@@ -513,6 +535,17 @@ export default {
      console.log(this.editMaterialForm);
      
        const { data: res } = await this.$http.post("sc/Materal/insertmaterial",this.editMaterialForm);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
        this.editManageVisible = false;
         this.ManageList();
     },
@@ -532,6 +565,17 @@ export default {
        let param = new URLSearchParams();
           param.append("mbatId", mbatId);
        const { data: res } = await this.$http.post("sc/Machined/selectbyid",param);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.zhijian[0].value =res.body.MachinedBatchDO.mbatDesign+'';
       this.zhijian[1].value =res.body.MachinedBatchDO.mbatName+'';
       this.zhijian[2].value =res.body.MachinedBatchDO.mbatWeight+'';

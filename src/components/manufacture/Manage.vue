@@ -63,7 +63,7 @@
         <el-table-column prop="prolistCode" label="生产单号" width="140px"></el-table-column>
         <el-table-column prop="cusName" label="客户名称">
           <template slot-scope="scope">
-            {{scope.row.saleOrderDO == null ? '自生产' : scope.row.cusName==null? '没有客户名称' : scope.row.saleOrderDO.cusName}}
+            {{scope.row.saleOrderDO == null ? '自生产' : scope.row.cusName==null? '没有客户名称' : scope.row.saleOrderDO.customerId}}
           </template>
         </el-table-column>
         <!-- <el-table-column prop="sorderWarehouse" label="合同号">
@@ -762,6 +762,17 @@ export default {
     },
      async deleteRowqi(){
          const {data:res} = await this.$http.post('sc/Production/updatestatusmore',this.delarr);
+          if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
          this.delVisibleqi = false;
          this.ManageList();
      
@@ -772,6 +783,7 @@ export default {
     //    this.chaManageForm.pageSize=10;
     //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
+      
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -788,6 +800,7 @@ export default {
       }
         
         const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.addManageForm1);
+         
         console.log(res.body.rows);
         var productLeixing1=0
         productLeixing1=this.addManageForm.producinggoodsDO.productLeixing;
@@ -807,6 +820,7 @@ export default {
         param.append("productgoodsId", parseInt(this.addManageForm.producinggoodsDO.productgoodsId));
         const { data: res } = await this.$http.post("sc/Production/selectname",param);
         
+        
         if (res.body.respCode==500) {
             // this.guoqushangpin();
           this.$message({
@@ -823,6 +837,17 @@ export default {
     },
     async addManage(){
        const { data: res } = await this.$http.post("sc/Production/addproduction",this.addManageForm);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
        this.ManageList();
        this.addManageVisible=false;
     },
@@ -839,11 +864,23 @@ export default {
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("sc/Production/selectProductionbyid", param);
+       
       this.editManageForm=res.body.SCProductionDO;
       this.editManageVisible = true;
     },
     async editManage(){
       const { data: res } = await this.$http.post("sc/Production/updateProduction", this.editManageForm);
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       console.log(res);
       this.ManageList();
       this.editManageVisible = false;

@@ -396,6 +396,7 @@ export default {
     },
    async ManageList() {
       const { data: res } = await this.$http.post("sc/ProductionExecution/selectBatch",this.chaManageForm);
+      
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -410,6 +411,17 @@ export default {
         pageCode: this.chooseGoodsForm.pageCode ,
         pageSize:this.chooseGoodsForm.pageSize} }
       );
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -475,6 +487,7 @@ export default {
     this.addzhijian.pbatBag=this.zhijian[13].value;
     this.addzhijian.pbatTape=this.zhijian[14].value;
     const { data: res } = await this.$http.post("sc/ProductionExecution/updateBatch",this.addzhijian);
+     
     this.editManageVisible=false;
     this.ManageList();
     },
@@ -510,6 +523,7 @@ export default {
      console.log(this.editMaterialForm);
      
        const { data: res } = await this.$http.post("sc/Materal/insertmaterial",this.editMaterialForm);
+       
        this.editManageVisible = false;
         this.ManageList();
     },
@@ -528,6 +542,7 @@ export default {
        let param = new URLSearchParams();
           param.append("pbatId", pbatId);
        const { data: res } = await this.$http.post("sc/ProductionExecution/selectBatchid",param);
+       
       this.zhijian[0].value =res.body.ProductionBatchDO.pbatGramweight+'' ;
       this.zhijian[1].value =res.body.ProductionBatchDO.pbatDesign+''     ;
       this.zhijian[2].value =res.body.ProductionBatchDO.pbatColor+''      ;
@@ -549,16 +564,9 @@ export default {
         this.addzhijian.pbatController=res.body.ProductionBatchDO.pbatController;
       }
       this.addzhijian.pbatStatus=res.body.ProductionBatchDO.pbatStatus;
-      console.log(this.addzhijian.pbatStatus);
-      console.log(this.addzhijian);
-
-      
       this.addzhijian.pbatTime=res.body.ProductionBatchDO.pbatTime;
       this.addzhijian.pbatRemarks=res.body.ProductionBatchDO.pbatRemarks;
       this.addzhijian.prolistCode=prolistCode;
-console.log(this.zhijian);
-
-     
       this.editManageVisible = true;
     },
     async list(){
@@ -569,7 +577,6 @@ console.log(this.zhijian);
        const { data: res2 } = await this.$http.post("jc/Basic/selectchicunming",this.basicDO);
       this.chanpinmingcheng=res2;
     },
-
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then(_ => {

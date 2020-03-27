@@ -77,7 +77,8 @@
              <template slot-scope="scope">
                 <el-button type="success" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'0',scope.row.reimbursementStatus)" >查看</el-button>
 
-                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'1',scope.row.reimbursementStatus)" :disabled="scope.row.reimbursementStatus==1 || scope.row.reimbursementStatus==3 ||scope.row.reimbursementStatus==5">修改</el-button>
+                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,'1',scope.row.reimbursementStatus)" :disabled="scope.row.reimbursementStatus
+                !=0">修改</el-button>
                 <el-button
                   type="danger"
                   icon="el-icon-delete"

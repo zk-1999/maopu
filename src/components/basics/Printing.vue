@@ -81,11 +81,11 @@
             </el-table-column>
             <el-table-column label="操作" width="180px" fixed="right">
               <template slot-scope="scope">
-                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditPrinting(scope.row.pId)">修改</el-button>
+                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditPrinting(scope.row.pid)">修改</el-button>
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
-                  @click="deletebumen(scope.row.pId)"
+                  @click="deletebumen(scope.row.pid)"
                   size="mini"
                 >删除</el-button>
               </template>

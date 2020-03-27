@@ -452,6 +452,17 @@ export default {
     
      async deleteRowqi(){
          const {data:res} = await this.$http.post('sc/Production/updatestatusmore',this.delarr);
+          if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
          this.delVisibleqi = false;
          this.ManageList();
      
@@ -486,6 +497,7 @@ export default {
     },
    async ManageList() {
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
+       
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -677,6 +689,7 @@ export default {
      console.log(this.editMaterialForm);
      this.editMaterialForm.machinedBatchDOs=this.machinedBatchDOs1;
        const { data: res } = await this.$http.post("sc/Machined/update",this.editMaterialForm);
+        
        this.editManageVisible = false;
         this.ManageList();
     },
@@ -693,6 +706,7 @@ export default {
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("sc/Forming/select",param);
+       
       this.editMaterialForm=res.body.formingPickingDO;
       this.producinggoodsDO1.push(res.body.producinggoodsDO);
       this.editMaterialForm.producinggoodsDO= this.producinggoodsDO1;

@@ -54,14 +54,15 @@
       <!-- </el-row> -->
       <!-- 4个按钮 -->
       <!-- <el-button type="success"  @click="addbumenDialogVisible = true">新 增</el-button> -->
-      <el-button type="warning" @click="selectedqi(1)">提 审</el-button>
+      <!-- <el-button type="warning" @click="selectedqi(1)">提 审</el-button> -->
       <el-table border stripe :data="dispatchListList" @selection-change="handleSelectionChange" align="center">
-            <el-table-column type="selection" width="35"></el-table-column>
+            <!-- <el-table-column type="selection" width="35"></el-table-column> -->
             <el-table-column type="index"  label="序号" width="55" align="center"></el-table-column>
             <el-table-column prop="reimbursementBxnumbers" label="报销单号"></el-table-column>
             <el-table-column prop="reimbursementBxproducer" label="报销制单人"></el-table-column>
             <el-table-column prop="reimbursementType" label="报销类型"></el-table-column>
             <el-table-column prop="reimbursementBxtime" label="制单时间"></el-table-column>
+            <el-table-column prop="reimbursementBxremark" label="备注"></el-table-column>
             <el-table-column prop="reimbursementStatus" label="审核状态">
               <template slot-scope="scope">
                 <el-tag type="danger" v-if="scope.row.reimbursementStatus=='0'">初始化</el-tag>
@@ -72,11 +73,11 @@
                 <el-tag type="danger" v-if="scope.row.reimbursementStatus=='5'">已完成</el-tag>
             </template>
             </el-table-column>
-            <el-table-column prop="reimbursementBxremark" label="备注"></el-table-column>
+            
             <el-table-column label="操作" width="190px">
              <template slot-scope="scope">
                 <el-button type="success" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,true,0)">查 看</el-button>
-                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,true,1)" :disabled=" scope.row.reimbursementStatus==2 ||scope.row.reimbursementStatus==3">审 批</el-button>
+                <el-button type="primary" icon="el-icon-edit" size="mini" @click="showDispatchList(scope.row.reimbursementBxnumbers,true,1)" :disabled=" scope.row.reimbursementStatus!=1">审 批</el-button>
               </template>
             </el-table-column>
           </el-table>

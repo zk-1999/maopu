@@ -112,9 +112,9 @@
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.banFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column v-if="xianshi" label="产品名称" prop="producinggoodsDO.productName" ></el-table-column>
+    <el-table-column v-if="xianshi" label="产品名称" prop="producinggoodsDO.productType" ></el-table-column>
     <el-table-column v-if="xianshi" label="规格" prop="producinggoodsDO.productNorms" ></el-table-column>
-    <el-table-column v-if="!xianshi" label="产品名称" prop="productName" ></el-table-column>
+    <el-table-column v-if="!xianshi" label="产品名称" prop="productType" ></el-table-column>
     <el-table-column v-if="!xianshi" label="规格" prop="productNorms" ></el-table-column>
     <el-table-column label="重量" prop="banPlannum">
       <template scope="scope">
@@ -133,11 +133,14 @@
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.xiangFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="纸箱小类型" prop="supgoolsId" v-if="!xianshi"></el-table-column>
-    <el-table-column label="纸箱名称" prop="supgoolssmallType" v-if="!xianshi"></el-table-column>
+    
+    <el-table-column label="纸箱名称" prop="supgoolsId" v-if="!xianshi"></el-table-column>
+    <el-table-column label="纸箱小类型" prop="supgoolssmallType" v-if="!xianshi"></el-table-column>
+    
     <el-table-column label="商品描述" prop="supgoolsSplicing" v-if="!xianshi"></el-table-column>
-    <el-table-column label="纸箱小类型" prop="supplierGoolsDO.supgoolsId" v-if="xianshi"></el-table-column>
-    <el-table-column label="纸箱名称" prop="supplierGoolsDO.supgoolssmallType" v-if="xianshi"></el-table-column>
+    <el-table-column label="纸箱名称" prop="supplierGoolsDO.supgoolsId" v-if="xianshi"></el-table-column>
+    <el-table-column label="纸箱小类型" prop="supplierGoolsDO.supgoolssmallType" v-if="xianshi"></el-table-column>
+    
     <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing" v-if="xianshi"></el-table-column>
     <!-- <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column> -->
     <el-table-column label="数量" prop="xiangPlannum" >
@@ -152,11 +155,13 @@
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.daiFormingDOs">
     <el-table-column type="selection" width="35" align="center"></el-table-column>
-    <el-table-column label="袋子小类型" prop="supplierGoolsDO.supgoolsId" v-if="xianshi"></el-table-column>
-    <el-table-column label="袋子名称" prop="supplierGoolsDO.supgoolssmallType" v-if="xianshi"></el-table-column>
+    
+    <el-table-column label="袋子名称" prop="supplierGoolsDO.supgoolsId" v-if="xianshi"></el-table-column>
+    <el-table-column label="袋子小类型" prop="supplierGoolsDO.supgoolssmallType" v-if="xianshi"></el-table-column>
     <el-table-column label="商品描述" prop="supplierGoolsDO.supgoolsSplicing" v-if="xianshi"></el-table-column>
-    <el-table-column label="袋子小类型" prop="supgoolsId" v-if="!xianshi"></el-table-column>
-    <el-table-column label="袋子名称" prop="supgoolssmallType" v-if="!xianshi"></el-table-column>
+    
+    <el-table-column label="袋子名称" prop="supgoolsId" v-if="!xianshi"></el-table-column>
+    <el-table-column label="袋子小类型" prop="supgoolssmallType" v-if="!xianshi"></el-table-column>
     <el-table-column label="商品描述" prop="supgoolsSplicing" v-if="!xianshi"></el-table-column>
     <!-- <el-table-column label="库存数量" prop="kcTotalstock"></el-table-column> -->
     <el-table-column label="数量" prop="daiPlannum" >
@@ -422,6 +427,7 @@ export default {
     //    this.chaManageForm.pageSize=10;
     //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
+      
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -446,6 +452,7 @@ export default {
 pageSize: 1000,
 productLeixing: "0",}
       );
+       
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     
@@ -637,6 +644,17 @@ productLeixing: "0",}
      console.log(this.editMaterialForm);
      
        const { data: res } = await this.$http.post("sc/Forming/insert",this.editMaterialForm);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
        this.editManageVisible = false;
         this.ManageList();
     },
@@ -661,7 +679,17 @@ productLeixing: "0",}
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("sc/Forming/select",param);
-      
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.editMaterialForm.banFormingDOs=res.body.formingPickingDO.banFormingDOs;
       this.editMaterialForm.xiangFormingDOs=res.body.formingPickingDO.xiangFormingDOs;
       this.editMaterialForm.daiFormingDOs=res.body.formingPickingDO.daiFormingDOs;

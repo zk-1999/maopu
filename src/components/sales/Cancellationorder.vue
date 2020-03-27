@@ -674,26 +674,26 @@ export default {
     //   this.addOrdermanagementVisible2=true;
     // },
     addyushoukuan() {
-      this.$refs.form.validate(async valid => {
-        if (!valid) return;
-        const { data: res } = await this.$http.post(
-          "advancereceivable/addAdvancereceivable",
-          this.yufukuan
-        );
-        this.editOrdermanagementForm.advanceorderno=res.body.result.advanceorderno;
-        if (res.body.respCode==500) {
-          this.$message({
-            type: "info",
-            message: res.body.msg
-          }); 
-        }else{
-          this.$message({
-            type: "success",
-            message: res.body.msg
-          });
-        }
+      // this.$refs.form.validate(async valid => {
+      //   if (!valid) return;
+      //   const { data: res } = await this.$http.post(
+      //     "advancereceivable/addAdvancereceivable",
+      //     this.yufukuan
+      //   );
+      //   this.editOrdermanagementForm.advanceorderno=res.body.result.advanceorderno;
+      //   if (res.body.respCode==500) {
+      //     this.$message({
+      //       type: "info",
+      //       message: res.body.msg
+      //     }); 
+      //   }else{
+      //     this.$message({
+      //       type: "success",
+      //       message: res.body.msg
+      //     });
+      //   }
         this.addOrdermanagementVisible5 = false;
-      });
+      // });
     },
     addOrdermanagement() {
       this.$refs.addOrdermanagementRef.validate(async valid => {
@@ -796,6 +796,29 @@ export default {
       );
      this.OrdermanagementList();
       this.editOrdermanagementVisible = false;
+      if(this.editOrdermanagementForm.sorderStatus==5){
+        this.$refs.form.validate(async valid => {
+          if (!valid) return;
+          const { data: res } = await this.$http.post(
+            "advancereceivable/addAdvancereceivable",
+            this.yufukuan
+          );
+          this.editOrdermanagementForm.advanceorderno=res.body.result.advanceorderno;
+          if (res.body.respCode==500) {
+            this.$message({
+              type: "info",
+              message: res.body.msg
+            }); 
+          }else{
+            this.$message({
+              type: "success",
+              message: res.body.msg
+            });
+          }
+          // this.addOrdermanagementVisible5 = false;
+        });
+      }
+      
     },
     selected(){
       this.delVisible = true;

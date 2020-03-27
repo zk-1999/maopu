@@ -127,7 +127,7 @@
     title="排程生产单"
     :visible.sync="addManageVisible"
     width="70%"
-    @open="guoqushangpin"
+  
     :before-close="handleClose">
           <el-table
         :data="manageList"
@@ -229,7 +229,14 @@
             <el-input v-model="editManageForm1.stop" disabled></el-input>
         </el-form-item>
         <el-form-item label="产品规格：" prop="productNorms">
-            <el-input v-model="editManageForm1.productNorms" disabled></el-input>
+            <el-select v-model="editManageForm1.productNorms" placeholder="请选择" disabled class="w200">
+            <el-option
+              v-for="item in kehu"
+              :key="item.basicId"
+              :label="item.basicRetainone"
+              :value="item.basicId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="剩余时间/天：" prop="surplus">
             <el-input v-model="editManageForm1.surplus" disabled></el-input>
@@ -382,6 +389,17 @@ export default {
     },
     async jieshupaichengqi(){
          const {data:res} = await this.$http.post('sc/Scheduling/onupdate',this.delarr[0]);
+          if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
          this.delVisibleqi = false;
          this.ManageList();
      
@@ -392,6 +410,7 @@ export default {
        this.chaManageForm.pageSize=10;
      }
       const { data: res } = await this.$http.post("sc/Scheduling/select",this.chaManageForm);
+      
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -408,6 +427,7 @@ export default {
       }
         
         const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.addManageForm1);
+         
         console.log(res.body.rows);
         var productLeixing1=0
         productLeixing1=this.addManageForm.producinggoodsDO.productLeixing;
@@ -443,36 +463,52 @@ export default {
     },
     async addManage(){
        const { data: res } = await this.$http.post("sc/Production/addproduction",this.addManageForm);
+        if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
        this.ManageList();
        this.addManageVisible=false;
     },
     async paicheng(){
       const { data: res } = await this.$http.post("sc/Scheduling/update",this.editManageForm1);
+     if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.ManageList();
       this.editManageVisible=false;
     },
     async showManage(prolistCode,xian,sorderStatus) {
-      // if(xian=='0'){
-      //   this.xianshi=true;
-      //   if(sorderStatus=='0' || sorderStatus=='1'){
-      //     this.xianshi1=false;
-      //     this.xianshi2=false;
-      //   }else if(sorderStatus=='2' || sorderStatus=='3'){
-      //     this.xianshi1=true;
-      //   }else{
-      //     this.xianshi1=true;
-      //     this.xianshi2=true;
-      //   }
-      // }else if(xian=='1'){
-      //   this.xianshi=false;
-      //  this.xianshi1=false;
-      //   this.xianshi2=false;
-      // }
-      this.guoqushangpin();
+    
       let param = new URLSearchParams();
       param.append("prolistCode", prolistCode);
       const { data: res } = await this.$http.post("/sc/Scheduling/selectbyid", param);
-      this.editManageForm1=res.body.SchedulingDO;
+      
+      this.editManageForm1.intime=res.body.SchedulingDO.intime;
+      this.editManageForm1.ontime=res.body.SchedulingDO.ontime;
+      this.editManageForm1.priority=res.body.SchedulingDO.priority;
+      this.editManageForm1.productNorms=Number(res.body.SchedulingDO.productNorms);
+      this.editManageForm1.productionDO=res.body.SchedulingDO.productionDO;
+      this.editManageForm1.prolistCode=res.body.SchedulingDO.prolistCode;
+      this.editManageForm1.sorderCode=res.body.SchedulingDO.sorderCode;
+      this.editManageForm1.start=res.body.SchedulingDO.start;
+      this.editManageForm1.stop=res.body.SchedulingDO.stop;
+      this.editManageForm1.surplus=res.body.SchedulingDO.surplus;
       this.editManageVisible = true;
     },
     async list(){

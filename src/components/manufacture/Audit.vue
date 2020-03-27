@@ -53,7 +53,7 @@
         <el-table-column prop="sorderTotalsum" label="交货方式"></el-table-column>
         <el-table-column prop="sorderAllnumber" label="销售数量"></el-table-column>
         <el-table-column prop="sorderDeliverytime" label="交货日期"></el-table-column>
-        <el-table-column prop="sorderCreatetime" label="下单日期" :formatter="formatter"></el-table-column>
+        <el-table-column prop="sorderCreatetime" label="下单日期"></el-table-column>
         <el-table-column label="操作" width="150px" style="text-align:center">
           <template slot-scope="scope">
              <el-button @click="showEditOrdermanagement(scope.row.sorderCode,true,1)" type="success" size="small" >转为生产单</el-button>
@@ -347,6 +347,7 @@ export default {
        this.chaOrdermanagementForm.pageSize=10;
      }
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderComm",this.chaOrdermanagementForm);
+       
       this.total=res.body.total;
       this.ordermanagementList = res.body.rows;
     },
@@ -362,6 +363,17 @@ export default {
     },
    async shengchanshangping(){
       const { data: res } = await this.$http.post("jc/Produconggoods/selectProducing",this.shengchanFrom);
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       console.log(res);
       this.shengchanlist = res.body.rows;
       this.addOrdermanagementVisible1=true;
@@ -379,6 +391,7 @@ export default {
           "advancereceivable/addAdvancereceivable",
           this.yufukuan
         );
+        
         this.editOrdermanagementForm.advanceorderno=res.body.result.advanceorderno;
         if (res.body.respCode==500) {
           this.$message({
@@ -481,6 +494,7 @@ export default {
       let param = new URLSearchParams();
       param.append("sorderCode", sorderCode);
       const { data: res } = await this.$http.post("xs/saleorder/selectOrderCommbyid", param);
+       
       res.sorderCurrecytype=Number(res.sorderCurrecytype);
       if(res.sorderFushen==null || res.sorderFushen==''){
         res.sorderFushen=this.shenpiren;

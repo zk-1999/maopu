@@ -112,7 +112,7 @@
          <el-table
     style="width: 100%" border @selection-change="handleSelectionChange" :data="editMaterialForm.materialListDOs">
     <!-- default-expand-all -->
-    <!-- <el-table-column type="selection" width="35" align="center"></el-table-column> -->
+    <el-table-column type="selection" width="35" align="center"></el-table-column>
     <el-table-column label="物料编码" prop="supgoolsId" ></el-table-column>
     <el-table-column label="物料名称" prop="supgoolssmallType" ></el-table-column>
     <el-table-column label="商品描述" prop="supgoolsSplicing"></el-table-column>
@@ -357,6 +357,7 @@ export default {
     //    this.chaManageForm.pageSize=10;
     //  }
       const { data: res } = await this.$http.post("sc/Production/selectproduction",this.chaManageForm);
+       
       this.total=res.body.total;
       this.manageList = res.body.rows;
     },
@@ -371,6 +372,17 @@ export default {
         pageCode: this.chooseGoodsForm.pageCode ,
         pageSize:this.chooseGoodsForm.pageSize} }
       );
+       if (res.body.respCode==500) {
+          this.$message({
+            type: "info",
+            message: res.body.msg
+          }); 
+        }else{
+          this.$message({
+            type: "success",
+            message: res.body.msg
+          });
+        }
       this.shangpi = res.body.rows;
       this.total = res.body.total;
     },
@@ -453,6 +465,7 @@ export default {
      console.log(this.editMaterialForm);
      
        const { data: res } = await this.$http.post("sc/Materal/insertmaterial",this.editMaterialForm);
+       
        this.editManageVisible = false;
         this.ManageList();
     },
@@ -470,6 +483,7 @@ export default {
          let param = new URLSearchParams();
           param.append("prolistCode", prolistCode);
         const { data: res } = await this.$http.post("sc/Materal/selctforeach",param);
+        
         if(res.body.rows.length>=1){
           this.editMaterialForm.prolistCode=res.body.rows[0].prolistCode;
            this.editMaterialForm.prolistPlanman=res.body.rows[0].prolistPlanman;

@@ -22,7 +22,7 @@
         "js-queue": "^2.0.0",
         "less": "^3.0.4",
         "less-loader": "^4.1.0",
-        "qs": "^6.8.0",
+        "qs": "^6.8.3",
         "semver": "^6.3.0",
         "vue-cli-plugin-element": "^1.0.1",
         "vue-template-compiler": "^2.6.10",
